@@ -1,2 +1,2 @@
 # bbb
-Big Blue Button - Online learning management tool
+Big Blue Button - Online learning management tool.
