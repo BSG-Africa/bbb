@@ -1,5 +1,6 @@
 package za.co.bsg.models;
 
+
 import javax.persistence.*;
 
 @Entity
