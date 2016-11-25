@@ -9,7 +9,7 @@ target/
 .settings
 .springBeans
 
-### IntelliJ IDEA ###
+### IntelliJ IDEA  ###
 .idea
 *.iws
 *.iml
@@ -22,4 +22,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+
 
