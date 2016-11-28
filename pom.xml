@@ -6,7 +6,7 @@
     <groupId>za.co.bsg</groupId>
     <artifactId>bbb</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>bigbluebutton</name>
     <description>big blue button</description>
