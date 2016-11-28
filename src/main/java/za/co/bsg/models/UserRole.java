@@ -14,6 +14,9 @@ public class UserRole {
     @Column
     private String role;
 
+    public UserRole() {
+    }
+
     public UserRole(String role) {
         this.role = role;
     }
