@@ -18,7 +18,7 @@ public class RootController {
     @RequestMapping("/")
     public String home() {
         System.out.print("Hello");
-        this.PersistStuff();
+//        this.PersistStuff();
 
         // fix database interaction
         return "index";
