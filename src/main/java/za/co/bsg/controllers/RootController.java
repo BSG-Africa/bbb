@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import za.co.bsg.dataAccess.UserRoleDetailsDAO;
 import za.co.bsg.models.User;
-import za.co.bsg.models.UserRole;
 
 @Controller
 public class RootController {
@@ -47,11 +46,11 @@ public class RootController {
 //        String passwordForUSer = password;
 
     }
-    private void PersistStuff() {
-        UserRole userRole = new UserRole("Moderator");
-        User user = new User("kapeshi.kongolo", "Welcome", "Kapeshi", "Kongolo", userRole);
-        userRoleDetailsDAO.save(userRole);
-        userRoleDetailsDAO.saveUser(user);
-    }
+//    private void PersistStuff() {
+//        UserRole userRole = new UserRole("Moderator");
+//        User user = new User("kapeshi.kongolo", "Welcome", "Kapeshi", "Kongolo", userRole);
+//        userRoleDetailsDAO.save(userRole);
+//        userRoleDetailsDAO.saveUser(user);
+//    }
 
 }
