@@ -9,7 +9,7 @@ public class UserRole {
 
     @Id
     @GeneratedValue
-    @Column
+    @Column(nullable = false)
     private int id;
     @Column
     private String role;

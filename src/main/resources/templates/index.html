@@ -2,20 +2,31 @@
         lang="en">
 
 <head>
-    <title>Noma</title>
+    <title>BBB</title>
     <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->
+    <script src="../static/js/index.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+
 </head>
 <body>
+
+<div ng-app="myApp" ng-controller="myCtrl as vm">
 <div class="container-fluid">
-    <form action="">
+    <form action="" name="loginForm" method="post">
         <div class="col-md-3">
             <h1>Login</h1>
             <br></br>
-            Username: <input type="text" name="user">
+            Username: <input type="text" name="user" required="true" ng-model="vm.username">
             </input>
             <br></br>
-            Password: <input type="password" name="password">
+            Password: <input type="password" name="password" required="true" ng-model="vm.password">
             </input>
+            <input type="submit" value="Submit" ng-click="userName()">
+            </input>
+            <!--{{fullName()}}-->
         </div>
         <div class="col-md-2">
             <h1>Not Registered?</h1>
@@ -25,6 +36,25 @@
     </form>
 </div>
 
+</div>
+
+<script>
+    'use strict';
+    var app = angular.module('myApp');
+    app.controller('myCtrl', function myController() {
+        var vm = this;
+        vm.username = "";
+        vm.password = "";
+        vm.userName = userName();
+
+        function userName() {
+            alert("sa");
+            alert(vm.username)
+            return vm.username
+        }
+    })
+
+</script>
 
 </body>
 </html>
