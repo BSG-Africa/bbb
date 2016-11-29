@@ -8,7 +8,7 @@ public class User {
 
     @Id
     @GeneratedValue
-    @Column
+    @Column(nullable = false)
     private int Id;
     @Column
     private String userName;
@@ -18,15 +18,18 @@ public class User {
     private String firstName;
     @Column
     private String lastName;
-    @Column
-    private int userRoleId;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private UserRole userRole;
 
-    public User(String userName, String password, String firstName, String lastName, int userRoleId) {
+    public User(String userName, String password, String firstName, String lastName, UserRole userRole) {
         this.userName = userName;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.userRoleId = userRoleId;
+        this.userRole = userRole;
+    }
+
+    public User() {
     }
 
     public int getId() {
@@ -49,7 +52,7 @@ public class User {
         return lastName;
     }
 
-    public int getUserRoleId() {
-        return userRoleId;
+    public UserRole getUserRole() {
+        return userRole;
     }
 }
