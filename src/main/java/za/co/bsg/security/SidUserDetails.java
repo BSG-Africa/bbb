@@ -1,4 +1,4 @@
-package za.co.bsg.security;
+/*package za.co.bsg.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,3 +42,4 @@ public class SidUserDetails implements UserDetails {
         return false;
     }
 }
+*/

@@ -12,12 +12,15 @@ public class UserRole {
     @Column(nullable = false)
     private int id;
     @Column
+    private int role_id;
+    @Column
     private String role;
 
     public UserRole() {
     }
 
-    public UserRole(String role) {
+    public UserRole(int role_id, String role) {
+        this.role_id = role_id;
         this.role = role;
     }
 
@@ -27,5 +30,9 @@ public class UserRole {
 
     public String getRole() {
         return role;
+    }
+
+    public int getRole_id() {
+        return role_id;
     }
 }
