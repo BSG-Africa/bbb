@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.bsg.models.User;
 import za.co.bsg.models.UserRole;
 
 @Repository
@@ -20,5 +21,11 @@ public class UserRoleDetailsDAO {
     public UserRole save(UserRole userRole) {
         Session session = sessionFactory.getCurrentSession();
         return (UserRole) session.merge(userRole);
+    }
+
+    // this is for testing and needs to be removed at a later stage
+    public User saveUser(User user) {
+        Session session = sessionFactory.getCurrentSession();
+        return (User) session.merge(user);
     }
 }
