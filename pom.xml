@@ -32,11 +32,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!--<dependency>-->
-        <!--<groupId>org.springframework.boot</groupId>-->
-        <!--<artifactId>spring-boot-starter-thymeleaf</artifactId>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -59,6 +54,8 @@
             <artifactId>spring-orm</artifactId>
             <version>4.2.5.RELEASE</version>
         </dependency>
+
+        <!-- FOR PRODUCTION RELEASE ONLY -->
 
         <!--<dependency>-->
         <!--<groupId>org.springframework.boot</groupId>-->
