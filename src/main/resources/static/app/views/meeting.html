@@ -21,7 +21,7 @@
                         </thead>
                         <tr ng-repeat="meetup in meeting" ng-class="{active:$index==selectedRow}"
                             data-ng-click="rowHighilited($index)">
-                            <td>{{meetup.name}}</td>
+                            <td><a href="#"/>{{meetup.name}}</td>
                             <td>{{meetup.moderator}}</td>
                             <td>{{meetup.status}}</td>
                         </tr>
