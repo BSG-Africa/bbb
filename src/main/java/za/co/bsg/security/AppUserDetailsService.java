@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.repository.UserRepository;
 import za.co.bsg.model.User;
 
@@ -136,7 +137,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         appUser.setName(displayName);
         appUser.setUsername(username);
         appUser.setPassword(password);
-        appUser.setRole("ADMIN");
+        appUser.setRole(UserRoleEnum.ADMIN.toString());
         appUser.setEmail(email);
         appUser.setBlocked(blocked);
         return appUser;
