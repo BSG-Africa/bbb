@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.repository.AppUserRepository;
 import za.co.bsg.model.User;
 
@@ -23,7 +24,8 @@ public class HomeController {
         if (appUserRepository.findOneByUsername(appUser.getUsername()) != null) {
             throw new RuntimeException("Username already exist");
         }
-        appUser.setRole("USER");
+        appUser.setRole(UserRoleEnum.USER.toString());
+        appUser.setBlocked(false);
         return new ResponseEntity<User>(appUserRepository.save(appUser), HttpStatus.CREATED);
     }
 
