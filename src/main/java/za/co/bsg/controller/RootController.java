@@ -1,15 +1,15 @@
-package za.co.bsg.controllers;
+package za.co.bsg.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import za.co.bsg.dataAccess.UserRoleDetailsDAO;
+import za.co.bsg.repository.UserRepository;
 
 @Controller
 public class RootController {
-    private UserRoleDetailsDAO userRoleDetailsDAO;
+    private UserRepository userRoleDetailsDAO;
 
     @Autowired
-    public RootController(UserRoleDetailsDAO userRoleDetailsDAO) {
+    public RootController(UserRepository userRoleDetailsDAO) {
         this.userRoleDetailsDAO = userRoleDetailsDAO;
     }
 

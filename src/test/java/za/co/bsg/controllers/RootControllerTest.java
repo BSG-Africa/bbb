@@ -4,7 +4,8 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import za.co.bsg.dataAccess.UserRoleDetailsDAO;
+import za.co.bsg.controller.RootController;
+import za.co.bsg.repository.UserRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,7 +17,7 @@ public class RootControllerTest {
 
     private MockHttpSession mockHttpSession;
     private MockMvc mockMvc;
-    private UserRoleDetailsDAO userDAO;
+    private UserRepository userDAO;
 
     @Test
     public void indexPageIsLoadedCorrectly() throws Exception {
