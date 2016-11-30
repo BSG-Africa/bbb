@@ -11,6 +11,8 @@ import za.co.bsg.models.UserRole;
 
 import java.util.List;
 
+import static org.hibernate.criterion.Restrictions.eq;
+
 @Repository
 @Transactional
 public class UserRoleDetailsDAO {
@@ -30,6 +32,13 @@ public class UserRoleDetailsDAO {
         Session session = sessionFactory.getCurrentSession();
         Criteria criteria = session.createCriteria(UserRole.class);
         return (List<UserRole>) criteria.list();
+    }
+
+    public User getUserbyUsername(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        Criteria criteria = session.createCriteria(User.class);
+        criteria.add(eq("username", username));
+        return (User) criteria.uniqueResult();
     }
 
     // this is for testing and needs to be removed at a later stage
