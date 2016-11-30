@@ -28,8 +28,6 @@ public class User implements UserDetails {
     @Column
     private String role;
     @Column
-    private String email;
-    @Column
     private boolean blocked;
 
     public Long getId() {
@@ -70,14 +68,6 @@ public class User implements UserDetails {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public boolean isBlocked() {
