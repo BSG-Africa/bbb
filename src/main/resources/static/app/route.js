@@ -1,4 +1,4 @@
-angular.module('AddressBook').config(function ($stateProvider, $urlRouterProvider) {
+angular.module('BigBlueButton').config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/page-not-found');
     $stateProvider.state('nav', {
         abstract: true,
@@ -28,15 +28,6 @@ angular.module('AddressBook').config(function ($stateProvider, $urlRouterProvide
             'content@': {
                 templateUrl: 'app/views/users.html',
                 controller: 'UsersController',
-            }
-        }
-    }).state('address', {
-        parent: 'nav',
-        url: '/',
-        views: {
-            'content@': {
-                templateUrl: 'app/views/address.html',
-                controller: 'AddressController'
             }
         }
     }).state('page-not-found', {
