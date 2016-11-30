@@ -1,4 +1,4 @@
-angular.module('AddressBook')
+angular.module('BigBlueButton')
 // Creating the Angular Controller
     .controller('LoginController', function ($http, $scope, $state, AuthService, $rootScope) {
 
@@ -22,7 +22,7 @@ angular.module('AddressBook')
                     $http.defaults.headers.common['Authorization'] = 'Basic ' + base64Credential;
                     AuthService.user = res;
                     $rootScope.$broadcast('LoginSuccessful');
-                    $state.go('address');
+                    //$state.go('address');
                 } else {
                     $scope.message = 'Authetication Failed !';
                 }

@@ -1,5 +1,5 @@
 // Creating angular Application with module name "AddressBook"
-angular.module('AddressBook', ['ui.router'])
+angular.module('BigBlueButton', ['ui.router'])
 
 // If we implement the basic security in spring boot then the response will
 // contains the header 'WWW-Authenticate: Basic'. So the browser will popup a
