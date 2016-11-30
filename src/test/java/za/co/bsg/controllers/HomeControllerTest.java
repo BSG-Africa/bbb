@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import za.co.bsg.controller.RootController;
+import za.co.bsg.controller.HomeController;
 import za.co.bsg.repository.UserRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
-public class RootControllerTest {
+public class HomeControllerTest {
 
     private MockHttpSession mockHttpSession;
     private MockMvc mockMvc;
@@ -28,8 +28,7 @@ public class RootControllerTest {
     }
 
     private void setUpFixture() {
-        mockMvc = standaloneSetup(new RootController(
-                userDAO))
+        mockMvc = standaloneSetup(new HomeController())
                 .setViewResolvers(getInternalResourceViewResolver()).build();
     }
 

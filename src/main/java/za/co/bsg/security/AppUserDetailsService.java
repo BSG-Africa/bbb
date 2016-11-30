@@ -23,7 +23,6 @@ import javax.naming.directory.*;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
