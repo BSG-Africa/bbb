@@ -22,7 +22,7 @@ angular.module('BigBlueButton')
                     $http.defaults.headers.common['Authorization'] = 'Basic ' + base64Credential;
                     AuthService.user = res;
                     $rootScope.$broadcast('LoginSuccessful');
-                    $state.go('register');
+                    $state.go('meeting');
                 } else {
                     $scope.message = 'Authetication Failed !';
                 }
