@@ -13,6 +13,11 @@ public class UserRole {
     private int id;
     @Column
     private int role_id;
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Column
     private String role;
 
