@@ -1,6 +1,7 @@
-package za.co.bsg.models;
+package za.co.bsg.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,61 +11,81 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
-    private int Id;
+    private Long id;
     @Column
+    private String name;
+    @Column(unique = true)
     private String username;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column
     private String password;
     @Column
-    private String firstName;
+    private String role;
     @Column
-    private String lastName;
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private UserRole userRole;
+    private String email;
+    @Column
+    private boolean blocked;
 
-    public User(String username, String password, String firstName, String lastName, UserRole userRole) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userRole = userRole;
+    public Long getId() {
+        return id;
     }
 
-    public User() {
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setRole(String role) {
-        this.userRole.setRole(role);
+    public String getName() {
+        return name;
     }
 
-    public int getId() {
-        return Id;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getUsername() {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getRole() {
+        return role;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     @JsonIgnore
@@ -95,7 +116,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(userRole.getRole()));
+        authorities.add(new SimpleGrantedAuthority(role));
         return authorities;
     }
 }

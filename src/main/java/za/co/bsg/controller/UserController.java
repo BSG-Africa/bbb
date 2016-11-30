@@ -1,4 +1,4 @@
-package za.co.bsg.controllers;
+package za.co.bsg.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,17 +7,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import za.co.bsg.dataAccess.AppUserRepository;
-import za.co.bsg.models.User;
+import za.co.bsg.repository.AppUserRepository;
+import za.co.bsg.model.User;
 
 import java.util.List;
 
-/**
- * @author Sarath Muraleedharan
- */
 @RestController
 @RequestMapping(value = "/api")
-public class AppUserRestController {
+public class UserController {
     @Autowired
     private AppUserRepository appUserRepository;
 

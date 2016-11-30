@@ -22,7 +22,7 @@ public class PersistenceConfiguration {
                                                   @Qualifier("hibernateProperties") Properties properties) {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setPackagesToScan("za.co.bsg.models");
+        sessionFactory.setPackagesToScan("za.co.bsg.model");
         sessionFactory.setHibernateProperties(properties);
 
         return sessionFactory;

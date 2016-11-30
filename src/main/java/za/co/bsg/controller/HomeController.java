@@ -1,4 +1,4 @@
-package za.co.bsg.controllers;
+package za.co.bsg.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,16 +7,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import za.co.bsg.dataAccess.AppUserRepository;
-import za.co.bsg.models.User;
+import za.co.bsg.repository.AppUserRepository;
+import za.co.bsg.model.User;
 
 import java.security.Principal;
 
-/**
- * @author Sarath Muraleedharan
- */
 @RestController
-public class HomeRestController {
+public class HomeController {
 
     @Autowired
     private AppUserRepository appUserRepository;
