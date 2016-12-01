@@ -1,0 +1,29 @@
+{
+  "name": "bbb",
+  "version": "1.0.0",
+  "dependencies": {
+    "angular-ui-router": "0.2.18",
+    "angular": "1.5.3",
+    "jquery": "2.2.3",
+    "bootstrap": "3.3.6",
+    "ng-table": "0.5.4",
+    "ng-dialog": "0.6.4"
+  },
+  "devDependencies": {
+    "gulp": "*",
+    "gulp-ruby-sass": "*",
+    "gulp-util": "*",
+    "gulp-rename": "*",
+    "map-stream": "*",
+    "gulp-livereload": "*",
+    "gulp-concat": "*",
+    "gulp-uglify": "*",
+    "gulp-watch": "*"
+  },
+  "license": "ISC",
+  "main": "gulpfile.js",
+  "scripts": {
+    "start": "gulp copy-lib-files"
+  },
+  "description": ""
+}
