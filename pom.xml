@@ -5,7 +5,7 @@
 
     <groupId>za.co.bsg</groupId>
     <artifactId>bbb</artifactId>
-    <version>UI</version>
+    <version>ui</version>
     <packaging>war</packaging>
 
     <name>bigbluebutton</name>
