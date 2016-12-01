@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.repository.UserRepository;
 import za.co.bsg.model.User;
+import za.co.bsg.util.UtilServiceImp;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -22,7 +23,6 @@ import javax.naming.directory.*;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -40,6 +40,9 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     @Autowired
     UserRepository userRoleDetailsDAO;
 
+    @Autowired
+    UtilServiceImp utilServiceImp;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User appUser = userRoleDetailsDAO.getUserByUsername(username);
@@ -48,53 +51,58 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        User details = new User();
         final String username = authentication.getName();
         final String password = authentication.getCredentials().toString();
-        logger.log(Level.FINE, "Performing logon into '" + ldapUrl + "' with credentials '" + username + "'/'" + password.replaceAll(".", "*") + "'");
 
         DirContext context = null;
         try {
-            context = getDirContext(principalPrefix + username, password);
-            logger.log(Level.FINE, "User '" + username + "' has been successfully logged on");
-            User details;
-            if(context!=null){
-                System.out.println("Successfully logged on " + ldapUrl);
-                if (userRoleDetailsDAO.getUserByUsername(username) == null) {
-                    System.out.println("CREATING " + username);
-                    details = loadUserByUsername(context, username, password);
-                    userRoleDetailsDAO.saveUser(details);
+            if(utilServiceImp.usernameContainsCompanyEmail(username)){
+                String sidUsername = utilServiceImp.getUsernameFromEmail(username);
+                context = this.getDirContext(principalPrefix + sidUsername, password);
+                if(context!=null){
+                    System.out.println("Successfully logged  "+ username + " on " + ldapUrl);
+                    if (userRoleDetailsDAO.getUserByUsername(username) == null) {
+                        this.createUser(context, sidUsername, username, password);
+                    }
+                    details = userRoleDetailsDAO.getUserByUsername(username);
+                    System.out.println("Loaded " + details.getName());
                 }
-                details = userRoleDetailsDAO.getUserByUsername(username);
-                System.out.println("Found " + details.getName());
-            } else {
-                System.out.println("Getting local user "+username);
-                details = userRoleDetailsDAO.getUserByUsername(username);
+            } else{
+                details = this.additionalAuthentication(username, password);
             }
             return new UsernamePasswordAuthenticationToken(details, password, details.getAuthorities());
         } catch (NamingException ex) {
-            logger.log(Level.SEVERE, "Could not login into '" + ldapUrl + "'", ex);
+            System.out.println("Could not login into '" + ldapUrl + ": " + ex);
             throw new BadCredentialsException(ex.getMessage());
         } finally {
             if (context != null) {
                 try {
                     context.close();
                 } catch (NamingException ex) {
-                    logger.log(Level.WARNING, "Could not close DirContext", ex);
+                    System.out.println("Could not close DirContext: " + ex);
                 }
             }
         }
     }
 
-    private User loadUserByUsername(DirContext context, String username, String password) throws UsernameNotFoundException {
+    private void createUser(DirContext context, String sidUsername, String username, String password) {
+        String passwordHashed = utilServiceImp.hashPassword(password);
+        User details = this.loadUserByUsername(context, sidUsername, username, passwordHashed);
+        System.out.println(details);
+        userRoleDetailsDAO.saveUser(details);
+    }
+
+    private User loadUserByUsername(DirContext context, String sidUsername, String username, String password) throws UsernameNotFoundException {
         try {
             SearchControls controls = new SearchControls();
             controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
             // search for username
             NamingEnumeration<SearchResult> renum = context.search(userSearchBase, "(&(objectClass=user)(sAMAccountName={0}))",
-                    new Object[]{username}, controls);
+                    new Object[]{sidUsername}, controls);
             if (!renum.hasMoreElements()) {
-                throw new UsernameNotFoundException("User '" + username + "' is not exist");
+                throw new UsernameNotFoundException("User '" + sidUsername + "' is not exist");
             }
             SearchResult result = renum.next();
             final Attributes attributes = result.getAttributes();
@@ -105,16 +113,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
             if (attr != null) {
                 displayName = attr.get().toString();
             }
-            if (!StringUtils.hasText(displayName)) displayName = username;
-            logger.log(Level.FINE, "Display name: " + displayName);
-
-            // User's email
-            String email = null;
-            attr = attributes.get(emailAttribute);
-            if (attr != null) {
-                email = attr.get().toString();
-            }
-            logger.log(Level.FINE, "E-mail: " + email);
+            if (!StringUtils.hasText(displayName)) displayName = sidUsername;
 
             // Is user blocked
             boolean blocked = false;
@@ -122,23 +121,21 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
             if (attr != null) {
                 blocked = (Long.parseLong(attr.get().toString()) & 2) != 0;
             }
-            logger.log(Level.FINE, "Blocked: " + blocked);
 
-            User appUser = getAppUser(username, password, displayName, email, blocked);
+            User appUser = getAppUser(username, password, displayName, blocked);
             return appUser;
         } catch (NamingException ex) {
-            logger.log(Level.SEVERE, "Could not find user '" + username + "'", ex);
+            System.out.println("Could not find user '" + sidUsername + ": "+ ex);
             throw new UsernameNotFoundException(ex.getMessage());
         }
     }
 
-    private User getAppUser(String username, String password, String displayName, String email, boolean blocked) {
+    private User getAppUser(String username, String password, String displayName, boolean blocked) {
         User appUser = new User();
         appUser.setName(displayName);
         appUser.setUsername(username);
         appUser.setPassword(password);
         appUser.setRole(UserRoleEnum.ADMIN.toString());
-        appUser.setEmail(email);
         appUser.setBlocked(blocked);
         return appUser;
     }
@@ -157,11 +154,24 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         try {
             context = new InitialLdapContext(props, CONTROLS);
         } catch (NamingException e) {
-            logger.log(Level.SEVERE, "Authentication failed for " + username + ": " + e, e);
+            System.out.println("Authentication failed for " + username + ": " + e);
             return null;
         }
 
         return context;
+    }
+
+    private User additionalAuthentication(String username, String password) {
+            User user = userRoleDetailsDAO.getUserByUsername(username);
+            if (password == null || password.length() == 0) {
+                return null;
+            }
+
+            String passwordHash = utilServiceImp.hashPassword(password);
+            if (!passwordHash.equals(user.getPassword())) {
+                return null;
+            }
+        return user;
     }
 
     private static final Control[] CONTROLS = new Control[]{new FastBindConnectionControl()};
