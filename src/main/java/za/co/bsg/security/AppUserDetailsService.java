@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import za.co.bsg.enums.UserRoleEnum;
-import za.co.bsg.repository.UserRepository;
 import za.co.bsg.model.User;
+import za.co.bsg.repository.UserRepository;
 import za.co.bsg.util.UtilServiceImp;
 
 import javax.naming.Context;
@@ -22,7 +22,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.*;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
-import java.util.*;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 
@@ -57,18 +57,18 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
 
         DirContext context = null;
         try {
-            if(utilServiceImp.usernameContainsCompanyEmail(username)){
+            if (utilServiceImp.usernameContainsCompanyEmail(username)) {
                 String sidUsername = utilServiceImp.getUsernameFromEmail(username);
                 context = this.getDirContext(principalPrefix + sidUsername, password);
-                if(context!=null){
-                    System.out.println("Successfully logged  "+ username + " on " + ldapUrl);
+                if (context != null) {
+                    System.out.println("Successfully logged  " + username + " on " + ldapUrl);
                     if (userRoleDetailsDAO.getUserByUsername(username) == null) {
                         this.createUser(context, sidUsername, username, password);
                     }
                     details = userRoleDetailsDAO.getUserByUsername(username);
                     System.out.println("Loaded " + details.getName());
                 }
-            } else{
+            } else {
                 details = this.additionalAuthentication(username, password);
             }
             return new UsernamePasswordAuthenticationToken(details, password, details.getAuthorities());
@@ -125,7 +125,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
             User appUser = getAppUser(username, password, displayName, blocked);
             return appUser;
         } catch (NamingException ex) {
-            System.out.println("Could not find user '" + sidUsername + ": "+ ex);
+            System.out.println("Could not find user '" + sidUsername + ": " + ex);
             throw new UsernameNotFoundException(ex.getMessage());
         }
     }
@@ -162,15 +162,15 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     }
 
     private User additionalAuthentication(String username, String password) {
-            User user = userRoleDetailsDAO.getUserByUsername(username);
-            if (password == null || password.length() == 0) {
-                return null;
-            }
+        User user = userRoleDetailsDAO.getUserByUsername(username);
+        if (password == null || password.length() == 0) {
+            return null;
+        }
 
-            String passwordHash = utilServiceImp.hashPassword(password);
-            if (!passwordHash.equals(user.getPassword())) {
-                return null;
-            }
+        String passwordHash = utilServiceImp.hashPassword(password);
+        if (!passwordHash.equals(user.getPassword())) {
+            return null;
+        }
         return user;
     }
 
