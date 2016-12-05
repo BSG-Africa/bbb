@@ -40,4 +40,5 @@ public class HomeControllerTest {
         viewResolver.setSuffix(".html");
         return viewResolver;
     }
-}*/
+}
+*/
