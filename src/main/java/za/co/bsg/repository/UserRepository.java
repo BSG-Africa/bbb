@@ -6,5 +6,5 @@ import za.co.bsg.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    public User findUserByUsername(String username);
+    User findUserByUsername(String username);
 }

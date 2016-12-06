@@ -89,7 +89,6 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     private void createUser(DirContext context, String sidUsername, String username, String password) {
         String passwordHashed = utilServiceImp.hashPassword(password);
         User details = this.loadUserByUsername(context, sidUsername, username, passwordHashed);
-        System.out.println(details);
         userRepository.save(details);
     }
 
