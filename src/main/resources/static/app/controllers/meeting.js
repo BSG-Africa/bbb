@@ -1,5 +1,5 @@
 angular.module('BigBlueButton')
-    .controller('MeetingController', function ($http, $scope, AuthService) {
+    .controller('MeetingController', function ($http, $scope, AuthService, $state) {
 
         $scope.meeting = [
             {
@@ -34,5 +34,9 @@ angular.module('BigBlueButton')
         $scope.rowHighlighted = function (row) {
             $scope.selectedRow2 = row;
         }
+
+        $scope.createMeeting = function () {
+            $state.go('create-meeting');
+        };
 
     });

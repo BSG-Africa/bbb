@@ -27,6 +27,15 @@ angular.module('BigBlueButton').config(function ($stateProvider, $urlRouterProvi
                 controller: 'MeetingController'
             }
         }
+    }).state('create-meeting', {
+        parent: 'nav',
+        url: '/meeting/create',
+        views: {
+            'content@': {
+                templateUrl: 'app/views/create-meeting.html',
+                controller: 'CreateMeetingController'
+            }
+        }
     }).state('users', {
         parent: 'nav',
         url: '/users',
