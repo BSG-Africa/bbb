@@ -1,4 +1,4 @@
-// Creating angular Application with module name "AddressBook"
+// Creating angular Application with module name "BigBlueButton"
 angular.module('BigBlueButton', ['ui.router'])
 
 // If we implement the basic security in spring boot then the response will
