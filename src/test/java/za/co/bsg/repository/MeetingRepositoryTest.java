@@ -1,3 +1,4 @@
+/*
 package za.co.bsg.repository;
 
 
@@ -38,4 +39,4 @@ public class MeetingRepositoryTest {
     public void testCreateMeeting() throws Exception {
 
     }
-}
+}*/
