@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 import za.co.bsg.services.MeetingManagementService;
@@ -26,15 +23,19 @@ public class MeetingController {
         this.meetingManagementService = meetingManagementService;
     }
 
-    @RequestMapping(value = "/availableMeetings", method = RequestMethod.GET)
-    public List<Meeting> availableMeetings(){
+    @RequestMapping(value = "/available/all", method = RequestMethod.GET)
+    public @ResponseBody List<Meeting> availableMeetings(){
         // To be fetched from the repository
         List<Meeting> availableMeeting = new ArrayList<Meeting>() ;
-        availableMeeting.add(new Meeting());
+        Meeting e = new Meeting();
+        e.setName("Communications toolkit");
+        e.setCreatedBy("Ivhani");
+        e.setStatus("started");
+        availableMeeting.add(e);
         return  availableMeeting;
     }
 
-    @RequestMapping(value = "/userMeetings", method = RequestMethod.GET)
+    @RequestMapping(value = "/myMeetings", method = RequestMethod.GET)
     public List<Meeting> userMeetings(){
         // To be fetched from the repository
         List<Meeting> userMeetings = new ArrayList<Meeting>() ;
