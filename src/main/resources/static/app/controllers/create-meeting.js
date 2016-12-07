@@ -1,5 +1,5 @@
 angular.module('BigBlueButton')
-    .controller('CreateMeetingController', function ($http, $scope, AuthService) {
+    .controller('CreateMeetingController', function ($http, $scope, AuthService, $state) {
         $scope.createMeeting = function () {
             $scope.user = AuthService.user;
             // TODO : Ivhani Please remove this
@@ -8,6 +8,7 @@ angular.module('BigBlueButton')
             $http.post('/api/meeting/create', $scope.meeting).success(function (res) {
 
                 $scope.message = "Meeting creation successfull !";
+                $state.go('meeting');
             }).error(function (error) {
                 $scope.message = error.message;
             });
