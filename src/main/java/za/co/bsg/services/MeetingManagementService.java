@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import za.co.bsg.model.Meeting;
 
+import java.util.List;
+
 @Service
 public class MeetingManagementService {
     MeetingDataService meetingDataService;
@@ -18,5 +20,9 @@ public class MeetingManagementService {
         Meeting persistedMeeting = meetingDataService.Save(meeting);
         // Communicate to BBB
         return persistedMeeting;
+    }
+
+    public List<Meeting> GetAllMeetings() {
+        return meetingDataService.RetrieveAll();
     }
 }
