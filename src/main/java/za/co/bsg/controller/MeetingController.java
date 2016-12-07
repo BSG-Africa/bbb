@@ -44,7 +44,7 @@ public class MeetingController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Meeting> createUser(@RequestBody Meeting meeting) {
+    public ResponseEntity<Meeting> createMeeting(@RequestBody Meeting meeting) {
         Meeting persistedMeeting = meetingManagementService.CreateMeeting(meeting);
         return new ResponseEntity<Meeting>(persistedMeeting, HttpStatus.OK);
     }
