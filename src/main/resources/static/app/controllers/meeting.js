@@ -28,20 +28,18 @@ angular.module('BigBlueButton')
         };
 
         function getAvailableMeetings () {
-            $http.get('api/meeting/available/all').success(function (res) {
+            $http.get('api/availableMeetings').success(function (res) {
                 $scope.meeting = res;
                 $scope.message = '';
 
             }).error(function (error) {
                 $scope.message = error.message;
             });
-            return meetings;
         };
 
 
 
         $scope.getMyMeetings = function () {
-            myMeetings
             $state.go('myMeetings');
         };
         getAvailableMeetings();

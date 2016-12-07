@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/meeting")
+@RequestMapping(value = "/api")
 public class MeetingController {
 
     private MeetingManagementService meetingManagementService;
@@ -23,15 +23,9 @@ public class MeetingController {
         this.meetingManagementService = meetingManagementService;
     }
 
-    @RequestMapping(value = "/available/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/availableMeetings", method = RequestMethod.GET)
     public @ResponseBody List<Meeting> availableMeetings(){
-        // To be fetched from the repository
-        List<Meeting> availableMeeting = new ArrayList<Meeting>() ;
-        Meeting e = new Meeting();
-        e.setName("Communications toolkit");
-        e.setCreatedBy("Ivhani");
-        e.setStatus("started");
-        availableMeeting.add(e);
+        List<Meeting> availableMeeting = meetingManagementService.GetAllMeetings();
         return  availableMeeting;
     }
 
@@ -44,7 +38,7 @@ public class MeetingController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/meeting/create", method = RequestMethod.POST)
     public ResponseEntity<Meeting> createMeeting(@RequestBody Meeting meeting) {
         Meeting persistedMeeting = meetingManagementService.CreateMeeting(meeting);
         return new ResponseEntity<Meeting>(persistedMeeting, HttpStatus.OK);

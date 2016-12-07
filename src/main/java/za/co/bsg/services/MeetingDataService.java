@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.repository.MeetingRepository;
 
+import java.util.List;
+
 @Service
 public class MeetingDataService {
 
@@ -17,5 +19,9 @@ public class MeetingDataService {
 
     public Meeting Save(Meeting meeting){
         return (Meeting) meetingRepository.save(meeting);
+    }
+
+    public List<Meeting> RetrieveAll(){
+        return (List<Meeting>) meetingRepository.findAll();
     }
 }
