@@ -2,9 +2,8 @@ package za.co.bsg.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import za.co.bsg.model.User;
+import za.co.bsg.model.Meeting;
 
 @Repository
-public interface AppUserRepository extends JpaRepository<User, Long> {
-    public User findOneByUsername(String username);
+public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 }
