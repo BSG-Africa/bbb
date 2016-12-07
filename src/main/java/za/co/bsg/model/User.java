@@ -16,8 +16,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false)
-    private Long id;
+    private long id;
     @Column
     private String name;
     @Column(unique = true)
@@ -30,11 +29,11 @@ public class User implements UserDetails {
     @Column
     private boolean blocked;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -105,7 +104,7 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        Collection<GrantedAuthority> authorities = new ArrayList();
         authorities.add(new SimpleGrantedAuthority(role));
         return authorities;
     }

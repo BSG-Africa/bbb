@@ -38,14 +38,14 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     private String principalPrefix = "BSG\\";
 
     @Autowired
-    UserRepository userRoleDetailsDAO;
+    UserRepository userRepository;
 
     @Autowired
     UtilServiceImp utilServiceImp;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User appUser = userRoleDetailsDAO.getUserByUsername(username);
+        User appUser = userRepository.findUserByUsername(username);
         return appUser;
     }
 
@@ -62,10 +62,10 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
                 context = this.getDirContext(principalPrefix + sidUsername, password);
                 if (context != null) {
                     System.out.println("Successfully logged  " + username + " on " + ldapUrl);
-                    if (userRoleDetailsDAO.getUserByUsername(username) == null) {
+                    if (userRepository.findUserByUsername(username) == null) {
                         this.createUser(context, sidUsername, username, password);
                     }
-                    details = userRoleDetailsDAO.getUserByUsername(username);
+                    details = userRepository.findUserByUsername(username);
                     System.out.println("Loaded " + details.getName());
                 }
             } else {
@@ -89,8 +89,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     private void createUser(DirContext context, String sidUsername, String username, String password) {
         String passwordHashed = utilServiceImp.hashPassword(password);
         User details = this.loadUserByUsername(context, sidUsername, username, passwordHashed);
-        System.out.println(details);
-        userRoleDetailsDAO.saveUser(details);
+        userRepository.save(details);
     }
 
     private User loadUserByUsername(DirContext context, String sidUsername, String username, String password) throws UsernameNotFoundException {
@@ -162,7 +161,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     }
 
     private User additionalAuthentication(String username, String password) {
-        User user = userRoleDetailsDAO.getUserByUsername(username);
+        User user = userRepository.findUserByUsername(username);
         if (password == null || password.length() == 0) {
             return null;
         }
