@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import za.co.bsg.dataAccess.MeetingDAO;
 import za.co.bsg.model.Meeting;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
@@ -19,11 +18,11 @@ public class MeetingManagementServiceTest {
 
     private MeetingManagementService meetingManagementService;
     @Mock
-    private MeetingDAO meetingDAO;
+    private MeetingDataService meetingDataService;
 
     @Before
     public void init() {
-        meetingManagementService = new MeetingManagementService(meetingDAO);
+        meetingManagementService = new MeetingManagementService(meetingDataService);
     }
 
     @Test
@@ -33,7 +32,7 @@ public class MeetingManagementServiceTest {
         meeting.setName("C1/D1 Induction");
 
         // Expectations
-        when(meetingDAO.Save(meeting)).thenReturn(meeting);
+        when(meetingDataService.Save(meeting)).thenReturn(meeting);
 
         // Exercise SUT
         Meeting actualMeeting  = meetingManagementService.CreateMeeting(meeting);

@@ -3,7 +3,7 @@ angular.module('BigBlueButton')
         $scope.createMeeting = function () {
             $http.post('/api/meeting/create', $scope.meeting).success(function (res) {
 
-                $scope.message = "Registration successfull !";
+                $scope.message = "Meeting creation successfull !";
             }).error(function (error) {
                 $scope.message = error.message;
             });
