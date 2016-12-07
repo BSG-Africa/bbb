@@ -1,18 +1,6 @@
 angular.module('BigBlueButton')
     .controller('MeetingController', function ($http, $scope, AuthService, $state) {
 
-        $scope.meeting = [
-            {
-                name: 'Meeting 1',
-                moderator: 'Kapeshi',
-                status: 'Not Started'
-            },
-            {
-                name: 'Meeting 1',
-                moderator: 'Kapeshi',
-                status: 'Started'
-            }
-        ];
 
         $scope.yourMeeting = [
             {
@@ -39,4 +27,22 @@ angular.module('BigBlueButton')
             $state.go('create-meeting');
         };
 
+        function getAvailableMeetings () {
+            $http.get('api/meeting/available/all').success(function (res) {
+                $scope.meeting = res;
+                $scope.message = '';
+
+            }).error(function (error) {
+                $scope.message = error.message;
+            });
+            return meetings;
+        };
+
+
+
+        $scope.getMyMeetings = function () {
+            myMeetings
+            $state.go('myMeetings');
+        };
+        getAvailableMeetings();
     });
