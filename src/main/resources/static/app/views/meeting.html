@@ -1,68 +1,46 @@
 <div class="container">
-    <div class=" col-md-8 col-md-offset-2">
-        <div class="panel panel-default">
-            <div class="panel-heading">Available Meetings</div>
-            <div class="panel-body">
-                <div class="col-md-12">
-
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>
-                                Meeting Name
-                            </th>
-                            <th>
-                                Moderator Name
-                            </th>
-                            <th>
-                                Status
-                            </th>
-                        </tr>
-                        </thead>
-                        <tr ng-repeat="meetup in meeting" ng-class="{active:$index==selectedRow}"
-                            data-ng-click="rowHighilited($index)">
-                            <td><a href="#"/>{{meetup.name}}</td>
-                            <td>{{meetup.createdBy}}</td>
-                            <td>{{meetup.status}}</td>
-                        </tr>
-                    </table>
-
-                </div>
-            </div>
+    <div class="col-md-8 col-md-offset-2 available-meetings">
+        <h3>Available Meetings</h3>
+        <div class="btn-group-vertical btn-group-md">
+            <button class="btn btn-default btn-info"
+                    ng-repeat="meetup in meeting"
+                    ng-class="{active:$index==selectedRow}"
+                    data-ng-click="rowHighilited($index)">
+                <span class="pull-left">{{meetup.name}}: {{meetup.createdBy}}</span>
+                <span class="glyphicon glyphicon-circle-arrow-right pull-right" aria-hidden="true"></span>
+                <span class="pull-right">{{meetup.status}}</span>
+            </button>
         </div>
     </div>
 
-    <div class=" col-md-8 col-md-offset-2">
-        <div class="panel panel-default">
-            <div class="panel-heading">Your Meetings</div>
-            <div class="panel-body">
-                <div class="col-md-12">
-                    <table class="table table-bordered" id="table">
-                        <thead>
-                        <tr>
-                            <th>
-                                Meeting Name
-                            </th>
-                            <th>
-                                Moderator Name
-                            </th>
-                            <th>
-                                Status
-                            </th>
-                        </tr>
-                        </thead>
-                        <tr ng-repeat="meetup in yourMeeting" ng-class="{active:$index==selectedRow2}"
-                            data-ng-click="rowHighlighted($index)">
-                            <td>{{meetup.name}}</td>
-                            <td>{{meetup.moderator}}</td>
-                            <td>{{meetup.status}}</td>
-                        </tr>
-                    </table>
-                    <button type="button" class="btn btn-default" ng-click="createMeeting()">Create</button>
-                    <button type="button" class="btn btn-default">Edit</button>
-                    <button type="button" class="btn btn-default">Delete</button>
-                </div>
-            </div>
+    <div class="col-md-8 col-md-offset-2 your-meetings">
+        <h3>Manage Your Meetings</h3>
+
+        <table class="table table-condensed" id="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Moderator</th>
+                    <th>Status</th>
+                    <th class="checked"></th>
+                </tr>
+            </thead>
+            <tr ng-repeat="meetup in yourMeeting" ng-class="{active:$index==selectedRow2}"
+                data-ng-click="rowHighlighted($index)">
+                <td>{{meetup.name}}</td>
+                <td>{{meetup.moderator}}</td>
+                <td>{{meetup.status}}</td>
+                <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+            </tr>
+        </table>
+
+        <button type="button" class="btn btn-default btn-info" ng-click="createMeeting()">Create</button>
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-default">Edit</button>
+            <button type="button" class="btn btn-default">Delete</button>
+            <button type="button" class="btn btn-default btn-info start pull-right">
+                Start <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+            </button>
         </div>
     </div>
 </div>
