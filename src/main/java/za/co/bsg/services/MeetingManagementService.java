@@ -30,4 +30,8 @@ public class MeetingManagementService {
         // Communicate to BBB
         return persistedMeeting;
     }
+
+    public List<Meeting> GetAllMeetings() {
+        return meetingDataService.RetrieveAll();
+    }
 }
