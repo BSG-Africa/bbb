@@ -13,15 +13,23 @@ public class MeetingDataService {
     @Autowired
     MeetingRepository meetingRepository;
 
-    public List<Meeting> findByCreatedBy(String createdBy){
-        return meetingRepository.findByCreatedBy(createdBy);
+    public List<Meeting> findByCreatedBy(int userId){
+        return meetingRepository.findByCreatedBy(userId);
     }
 
-    public Meeting Save(Meeting meeting){
+    public Meeting save(Meeting meeting) {
         return (Meeting) meetingRepository.save(meeting);
     }
 
-    public List<Meeting> RetrieveAll(){
+    public List<Meeting> retrieveAll() {
         return (List<Meeting>) meetingRepository.findAll();
+    }
+
+    public void delete(Long meetingId) {
+        meetingRepository.delete(meetingId);
+    }
+
+    public Meeting retrieve(Long meetingId) {
+        return meetingRepository.findOne(meetingId);
     }
 }
