@@ -31,7 +31,7 @@ public class MeetingController {
     @RequestMapping(value = "/myMeetings", method = RequestMethod.GET)
     public List<Meeting> userMeetings(){
         // To be fetched from the repository
-        List<Meeting> userMeetings = new ArrayList<Meeting>() ;
+        List<Meeting> userMeetings = new ArrayList();
         userMeetings.add(new Meeting());
         userMeetings = meetingManagementService.GetMeetingsByUser(0);
         return  userMeetings;

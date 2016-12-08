@@ -1,18 +1,11 @@
-<div class=" col-md-4 col-md-offset-4">
-    <div class="panel panel-default">
-        <div class="panel-heading">New meeting</div>
-        <div class="panel-body">
-            <div class="col-md-12">
-                <form ng-submit="createMeeting()">
-                    <div class="form-group">
-                        <label for="meetingName">Meeting name:</label> <input type="txt"
-                                                                       class="form-control" ng-model="meeting.name"
-                                                                       id="meetingName">
-                    </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
-                    <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
-                </form>
-            </div>
+<h3>Create Meeting</h3>
+
+<div class="bsg-form register">
+    <form ng-submit="createMeeting()">
+        <div class="form-group">
+            <input type="txt" class="form-control input-lg" ng-model="meeting.name" id="meetingName" placeholder="Please provide a meeting name">
         </div>
-    </div>
+        <button type="submit" class="btn btn-default btn-info btn-lg">Create</button>
+        <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
+    </form>
 </div>
