@@ -34,6 +34,7 @@ public class MeetingController {
         // To be fetched from the repository
         List<Meeting> userMeetings = new ArrayList<Meeting>() ;
         userMeetings.add(new Meeting());
+        userMeetings = meetingManagementService.GetMeetingsByUser(0);
         return  userMeetings;
     }
 

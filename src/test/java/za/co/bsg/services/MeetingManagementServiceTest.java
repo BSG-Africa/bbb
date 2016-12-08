@@ -57,6 +57,20 @@ public class MeetingManagementServiceTest {
         List<Meeting> actualMeetings  = meetingManagementService.GetAllMeetings();
 
         assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(Collections.singletonList(meeting))));
+    }
 
+    @Test
+    public void GetMeetingsByUserShouldReturnAllMeetingsByUserId() throws Exception {
+        // Setup fixture
+        Meeting meeting = new Meeting();
+        meeting.setName("C1/D1 Induction");
+
+        // Expectations
+        when(meetingDataService.RetrieveAll()).thenReturn(Collections.singletonList(meeting));
+
+        // Exercise SUT
+        List<Meeting> actualMeetings  = meetingManagementService.GetAllMeetings();
+
+        assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(Collections.singletonList(meeting))));
     }
 }
