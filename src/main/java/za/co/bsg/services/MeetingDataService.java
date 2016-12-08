@@ -17,10 +17,6 @@ public class MeetingDataService {
         return meetingRepository.findByCreatedBy(createdBy);
     }
 
-    public List<Meeting> findAll(){
-        return meetingRepository.findAll();
-    }
-
     public Meeting Save(Meeting meeting){
         return (Meeting) meetingRepository.save(meeting);
     }

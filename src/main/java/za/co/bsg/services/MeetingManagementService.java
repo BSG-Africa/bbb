@@ -15,10 +15,6 @@ public class MeetingManagementService {
         this.meetingDataService = meetingDataService;
     }
 
-    public  List<Meeting> findAllMeetings(){
-        return meetingDataService.findAll();
-    }
-
     public List<Meeting> findAllUserMeetings(String moderator){
         return meetingDataService.findByCreatedBy(moderator);
     }
