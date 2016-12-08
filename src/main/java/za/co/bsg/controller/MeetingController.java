@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.services.MeetingManagementService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,7 @@ public class MeetingController {
     @RequestMapping(value = "/myMeetings", method = RequestMethod.GET)
     public List<Meeting> userMeetings(){
         // To be fetched from the repository
-        List<Meeting> userMeetings = new ArrayList<Meeting>() ;
+        List<Meeting> userMeetings = new ArrayList();
         userMeetings.add(new Meeting());
         userMeetings = meetingManagementService.GetMeetingsByUser(0);
         return  userMeetings;
