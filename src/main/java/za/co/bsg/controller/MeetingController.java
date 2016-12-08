@@ -43,4 +43,9 @@ public class MeetingController {
         Meeting persistedMeeting = meetingManagementService.CreateMeeting(meeting);
         return new ResponseEntity<Meeting>(persistedMeeting, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/meeting/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Meeting> deleteMeeting(@PathVariable Long id) {
+        return meetingManagementService.deleteMeeting(id);
+    }
 }

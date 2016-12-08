@@ -24,4 +24,12 @@ public class MeetingDataService {
     public List<Meeting> RetrieveAll(){
         return (List<Meeting>) meetingRepository.findAll();
     }
+
+    public void delete(Long meetingId) {
+        meetingRepository.delete(meetingId);
+    }
+
+    public Meeting retrieve(Long meetingId) {
+        return meetingRepository.findOne(meetingId);
+    }
 }
