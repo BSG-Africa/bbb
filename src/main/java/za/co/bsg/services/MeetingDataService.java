@@ -17,11 +17,11 @@ public class MeetingDataService {
         return meetingRepository.findByCreatedBy(userId);
     }
 
-    public Meeting Save(Meeting meeting){
+    public Meeting save(Meeting meeting) {
         return (Meeting) meetingRepository.save(meeting);
     }
 
-    public List<Meeting> RetrieveAll(){
+    public List<Meeting> retrieveAll() {
         return (List<Meeting>) meetingRepository.findAll();
     }
 

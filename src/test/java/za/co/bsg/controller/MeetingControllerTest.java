@@ -3,24 +3,20 @@ package za.co.bsg.controller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import za.co.bsg.model.Meeting;
 import za.co.bsg.services.MeetingManagementService;
 
-
 import static java.util.Arrays.asList;
-import static java.util.Collections.*;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -40,7 +36,7 @@ public class MeetingControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(new MeetingController(meetingManagementService)).build();
 
         // Setup Expectation
-        given(this.meetingManagementService.CreateMeeting(meeting1)).willReturn(meeting1);
+        given(this.meetingManagementService.createMeeting(meeting1)).willReturn(meeting1);
 
         // Exercise SUT
          mvc.perform(get("/api/meeting/create"))
@@ -59,7 +55,7 @@ public class MeetingControllerTest {
 
         this.mvc = MockMvcBuilders.standaloneSetup(new MeetingController(meetingManagementService)).build();
         // Setup Expectation
-        given(this.meetingManagementService.GetAllMeetings()).willReturn(asList(meeting1));
+        given(this.meetingManagementService.getAllMeetings()).willReturn(asList(meeting1));
 
         // Exercise SUT
         this.mvc.perform(get("/api/availableMeetings"))
@@ -71,7 +67,7 @@ public class MeetingControllerTest {
                 .andExpect(jsonPath("$[0].status", is("Not Started")));
 
         // Verify
-        verify(meetingManagementService, times(1)).GetAllMeetings();
+        verify(meetingManagementService, times(1)).getAllMeetings();
         verifyNoMoreInteractions(meetingManagementService);
     }
 
@@ -84,7 +80,7 @@ public class MeetingControllerTest {
 
         // Setup Expectation
         int userId = 12;
-        given(this.meetingManagementService.GetMeetingsByUser(userId)).willReturn(singletonList(meeting1));
+        given(this.meetingManagementService.getMeetingsByUser(userId)).willReturn(singletonList(meeting1));
 
         // Exercise SUT
         this.mvc.perform(get("/api/{userId}/myMeetings", userId))
@@ -96,7 +92,7 @@ public class MeetingControllerTest {
                 .andExpect(jsonPath("$[0].status", is("Not Started")));
 
         // Verify
-        verify(meetingManagementService, times(1)).GetMeetingsByUser(userId);
+        verify(meetingManagementService, times(1)).getMeetingsByUser(userId);
         verifyNoMoreInteractions(meetingManagementService);
 
     }

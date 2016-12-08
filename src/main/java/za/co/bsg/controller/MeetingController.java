@@ -23,18 +23,18 @@ public class MeetingController {
 
     @RequestMapping(value = "/availableMeetings", method = RequestMethod.GET)
     public @ResponseBody List<Meeting> availableMeetings(){
-        return meetingManagementService.GetAllMeetings();
+        return meetingManagementService.getAllMeetings();
     }
 
-    @RequestMapping(value = "/{userId}/myMeetings", method = RequestMethod.GET)
+    @RequestMapping(value = "/myMeetings/{userId}", method = RequestMethod.GET)
     public List<Meeting> userMeetings(@PathVariable("userId") int userId){
-        return meetingManagementService.GetMeetingsByUser(userId);
+        return meetingManagementService.getMeetingsByUser(userId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/meeting/create", method = RequestMethod.POST)
     public ResponseEntity<Meeting> createMeeting(@RequestBody Meeting meeting) {
-        Meeting persistedMeeting = meetingManagementService.CreateMeeting(meeting);
+        Meeting persistedMeeting = meetingManagementService.createMeeting(meeting);
         return new ResponseEntity<Meeting>(persistedMeeting, HttpStatus.OK);
     }
 
