@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
-    <S extends Meeting> List<S> findByCreatedBy(String createdBy);
+    <S extends Meeting> List<S> findByCreatedBy(int userId);
 }

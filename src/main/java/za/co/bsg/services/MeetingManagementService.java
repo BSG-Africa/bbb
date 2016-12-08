@@ -16,8 +16,8 @@ public class MeetingManagementService {
         this.meetingDataService = meetingDataService;
     }
 
-    public List<Meeting> findAllUserMeetings(String moderator){
-        return meetingDataService.findByCreatedBy(moderator);
+    public List<Meeting> findAllUserMeetings(int userId){
+        return meetingDataService.findByCreatedBy(userId);
     }
 
     public Meeting CreateMeeting(Meeting meeting) {
@@ -37,7 +37,7 @@ public class MeetingManagementService {
         Meeting m = new Meeting();
         m.setName("Induction");
         m.setStatus("Not Started");
-        m.setCreatedBy("Ivhani Mase");
+        m.setCreatedBy(userId);
         meetings.add(m);
         return meetings;
     }

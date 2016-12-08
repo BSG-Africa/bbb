@@ -22,18 +22,13 @@ public class MeetingController {
     }
 
     @RequestMapping(value = "/availableMeetings", method = RequestMethod.GET)
-    public @ResponseBody    List<Meeting> availableMeetings(){
-        List<Meeting> availableMeeting = meetingManagementService.GetAllMeetings();
-        return  availableMeeting;
+    public @ResponseBody List<Meeting> availableMeetings(){
+        return meetingManagementService.GetAllMeetings();
     }
 
-    @RequestMapping(value = "/myMeetings", method = RequestMethod.GET)
-    public List<Meeting> userMeetings(){
-        // To be fetched from the repository
-        List<Meeting> userMeetings = new ArrayList<Meeting>() ;
-        userMeetings.add(new Meeting());
-        userMeetings = meetingManagementService.GetMeetingsByUser(0);
-        return  userMeetings;
+    @RequestMapping(value = "/{userId}/myMeetings", method = RequestMethod.GET)
+    public List<Meeting> userMeetings(@PathVariable("userId") int userId){
+        return meetingManagementService.GetMeetingsByUser(userId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
