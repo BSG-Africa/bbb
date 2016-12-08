@@ -92,6 +92,10 @@
             <version>1.9.13</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
         <!--SECURITY-->
         <dependency>
             <groupId>org.springframework.security</groupId>
