@@ -51,7 +51,7 @@
                             </th>
                         </tr>
                         </thead>
-                        <tr ng-repeat="meetup in yourMeeting" ng-class="{active:$index==selectedRow2}"
+                        <tr ng-repeat="meetup in myMeeting" ng-class="{active:$index==myMeetingsSelectedRow}"
                             data-ng-click="rowHighlighted($index)">
                             <td><a href="#"/>{{meetup.name}}</td>
                             <td>{{meetup.createdBy}}</td>
@@ -60,7 +60,8 @@
                     </table>
                     <button type="button" class="btn btn-default" ng-click="createMeeting()">Create</button>
                     <button type="button" class="btn btn-default">Edit</button>
-                    <button type="button" class="btn btn-default">Delete</button>
+                    <button type="button" class="btn btn-default" ng-click="deleteMeeting()">Delete</button>
+                    <div class="alert alert-info margin-top-5" ng-show="message">{{deleteMessage}}</div>
                 </div>
             </div>
         </div>
