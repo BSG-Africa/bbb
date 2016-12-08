@@ -2,24 +2,22 @@ package za.co.bsg.services;
 
 
 import com.shazam.shazamcrest.matcher.Matchers;
-import com.shazam.shazamcrest.matcher.Matchers;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import za.co.bsg.model.Meeting;
-
-import java.util.List;
 
 import java.util.Collections;
 import java.util.List;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static java.util.Arrays.asList;
-import static java.util.Collections.*;
+import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -99,6 +97,22 @@ public class MeetingManagementServiceTest {
         List<Meeting> actualMeetings  = meetingManagementService.GetAllMeetings();
 
         assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(Collections.singletonList(meeting))));
+    }
+
+    @Test
+    public void DeleteMeetingWhenMeetingIsNotDeletedShouldReturnNoContent() throws Exception {
+        // Setup fixture
+        long meetingId = 101;
+        Meeting meeting = new Meeting();
+        meeting.setName("C1/D1 Induction");
+
+        // Expectations
+        when(meetingDataService.retrieve(meetingId)).thenReturn(meeting);
+        ResponseEntity<Meeting> expectedMeeting = new ResponseEntity<Meeting>(meeting, HttpStatus.NO_CONTENT);
+        // Exercise SUT
+        ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting((long) meetingId);
+
+        assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(expectedMeeting)));
     }
 
 
