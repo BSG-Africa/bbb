@@ -18,29 +18,29 @@
 
         <table class="table table-condensed" id="table">
             <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Moderator</th>
-                    <th>Status</th>
-                    <th class="checked"></th>
-                </tr>
+            <tr>
+                <th>Title</th>
+                <th>Moderator</th>
+                <th>Status</th>
+                <th class="checked"></th>
+            </tr>
             </thead>
-            <tr ng-repeat="meetup in yourMeeting" ng-class="{active:$index==selectedRow2}"
+            <tr ng-repeat="meetup in myMeeting" ng-class="{active:$index==myMeetingsSelectedRow}"
                 data-ng-click="rowHighlighted($index)">
                 <td>{{meetup.name}}</td>
                 <td>{{meetup.moderator}}</td>
                 <td>{{meetup.status}}</td>
                 <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
             </tr>
-        </table>
-
-        <button type="button" class="btn btn-default btn-info" ng-click="createMeeting()">Create</button>
-        <div class="btn-group pull-right">
-            <button type="button" class="btn btn-default">Edit</button>
-            <button type="button" class="btn btn-default">Delete</button>
-            <button type="button" class="btn btn-default btn-info start pull-right">
-                Start <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
-            </button>
+                    </table>
+                    <button type="button" class="btn btn-default" ng-click="createMeeting()">Create</button>
+                    <div class="alert alert-info margin-top-5" ng-show="message">{{deleteMessage}}</div>
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default">Edit</button>
+                        <button type="button" class="btn btn-default" ng-click="deleteMeeting()">Delete</button>
+                        <button type="button" class="btn btn-default btn-info start pull-right">
+                            Start <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+                        </button>
         </div>
     </div>
 </div>

@@ -1,6 +1,8 @@
 package za.co.bsg.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import za.co.bsg.model.Meeting;
 
@@ -39,6 +41,18 @@ public class MeetingManagementService {
         m.setStatus("Not Started");
         m.setCreatedBy(userId);
         meetings.add(m);
-        return meetings;
+        return meetingDataService.RetrieveAll();
+    }
+
+    public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {
+        Meeting meetingToDelete = meetingDataService.retrieve(meetingId);
+        meetingDataService.delete(meetingId);
+        Meeting deletedMeeting = meetingDataService.retrieve(meetingId);
+
+        if (deletedMeeting == null || (deletedMeeting != null && meetingToDelete.getId().equals(deletedMeeting.getId()))) {
+            return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.OK);
+        }
     }
 }
