@@ -24,4 +24,8 @@ public class MeetingDataService {
     public Meeting Save(Meeting meeting){
         return (Meeting) meetingRepository.save(meeting);
     }
+
+    public List<Meeting> RetrieveAll(){
+        return (List<Meeting>) meetingRepository.findAll();
+    }
 }
