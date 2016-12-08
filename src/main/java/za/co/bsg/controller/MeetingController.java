@@ -9,10 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import za.co.bsg.model.Meeting;
-import za.co.bsg.model.User;
 import za.co.bsg.services.MeetingManagementService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,18 +26,14 @@ public class MeetingController {
 
     @RequestMapping(value = "/availableMeetings", method = RequestMethod.GET)
     public List<Meeting> availableMeetings(){
-        // To be fetched from the repository
-        List<Meeting> availableMeeting = new ArrayList<Meeting>() ;
-        availableMeeting.add(new Meeting());
-        return  availableMeeting;
+        return meetingManagementService.findAllMeetings();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/userMeetings", method = RequestMethod.GET)
-    public List<Meeting> userMeetings(){
-        // To be fetched from the repository
-        List<Meeting> userMeetings = new ArrayList<Meeting>() ;
-        userMeetings.add(new Meeting());
-        return  userMeetings;
+    public List<Meeting> userMeetings(@RequestBody Meeting meeting){
+        String moderator = meeting.getCreatedBy();
+        return meetingManagementService.findAllUserMeetings(moderator);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
