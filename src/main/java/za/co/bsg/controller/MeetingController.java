@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.services.MeetingManagementService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,24 +22,24 @@ public class MeetingController {
     }
 
     @RequestMapping(value = "/availableMeetings", method = RequestMethod.GET)
-    public @ResponseBody    List<Meeting> availableMeetings(){
-        List<Meeting> availableMeeting = meetingManagementService.GetAllMeetings();
-        return  availableMeeting;
+    public @ResponseBody List<Meeting> availableMeetings(){
+        return meetingManagementService.getAllMeetings();
     }
 
-    @RequestMapping(value = "/myMeetings", method = RequestMethod.GET)
-    public List<Meeting> userMeetings(){
-        // To be fetched from the repository
-        List<Meeting> userMeetings = new ArrayList();
-        userMeetings.add(new Meeting());
-        userMeetings = meetingManagementService.GetMeetingsByUser(0);
-        return  userMeetings;
+    @RequestMapping(value = "/myMeetings/{userId}", method = RequestMethod.GET)
+    public List<Meeting> userMeetings(@PathVariable("userId") int userId){
+        return meetingManagementService.getMeetingsByUser(userId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/meeting/create", method = RequestMethod.POST)
     public ResponseEntity<Meeting> createMeeting(@RequestBody Meeting meeting) {
-        Meeting persistedMeeting = meetingManagementService.CreateMeeting(meeting);
+        Meeting persistedMeeting = meetingManagementService.createMeeting(meeting);
         return new ResponseEntity<Meeting>(persistedMeeting, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/meeting/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Meeting> deleteMeeting(@PathVariable Long id) {
+        return meetingManagementService.deleteMeeting(id);
     }
 }

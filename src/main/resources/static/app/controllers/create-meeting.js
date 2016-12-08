@@ -3,7 +3,7 @@ angular.module('BigBlueButton')
         $scope.createMeeting = function () {
             $scope.user = AuthService.user;
             // TODO : Ivhani Please remove this
-            $scope.meeting.createdBy = $scope.user.principal.name;
+            $scope.meeting.createdBy = $scope.user.principal.id;
             $scope.meeting.status = "Not started";
             $http.post('/api/meeting/create', $scope.meeting).success(function (res) {
 

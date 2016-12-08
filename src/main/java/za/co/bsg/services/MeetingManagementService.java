@@ -1,6 +1,8 @@
 package za.co.bsg.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import za.co.bsg.model.Meeting;
 
@@ -16,29 +18,41 @@ public class MeetingManagementService {
         this.meetingDataService = meetingDataService;
     }
 
-    public List<Meeting> findAllUserMeetings(String moderator){
-        return meetingDataService.findByCreatedBy(moderator);
+    public List<Meeting> findAllUserMeetings(int userId){
+        return meetingDataService.findByCreatedBy(userId);
     }
 
-    public Meeting CreateMeeting(Meeting meeting) {
+    public Meeting createMeeting(Meeting meeting) {
         // TODO: Ivhani: Check Code Analysis and implement suggestions where applicable
         // Communicate to DB - persist
-        Meeting persistedMeeting = meetingDataService.Save(meeting);
+        Meeting persistedMeeting = meetingDataService.save(meeting);
         // Communicate to BBB
         return persistedMeeting;
     }
 
-    public List<Meeting> GetAllMeetings() {
-        return meetingDataService.RetrieveAll();
+    public List<Meeting> getAllMeetings() {
+        return meetingDataService.retrieveAll();
     }
 
-    public List<Meeting> GetMeetingsByUser(int userId) {
+    public List<Meeting> getMeetingsByUser(int userId) {
         List<Meeting> meetings = new ArrayList<Meeting>();
         Meeting m = new Meeting();
         m.setName("Induction");
         m.setStatus("Not Started");
-        m.setCreatedBy("Ivhani Mase");
+        m.setCreatedBy(userId);
         meetings.add(m);
-        return meetings;
+        return meetingDataService.retrieveAll();
+    }
+
+    public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {
+        Meeting meetingToDelete = meetingDataService.retrieve(meetingId);
+        meetingDataService.delete(meetingId);
+        Meeting deletedMeeting = meetingDataService.retrieve(meetingId);
+
+        if (deletedMeeting == null || (deletedMeeting != null && meetingToDelete.getId().equals(deletedMeeting.getId()))) {
+            return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.OK);
+        }
     }
 }

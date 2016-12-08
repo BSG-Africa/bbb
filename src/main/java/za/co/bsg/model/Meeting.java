@@ -25,13 +25,13 @@ public class Meeting implements Serializable {
     private String attendeePassword;
 
     @Column
-    private String createdBy;
+    private int createdBy;
 
     @Column
     private Date createdDate;
 
     @Column
-    private String modifiedBy;
+    private int modifiedBy;
 
     @Column
     private Date modifiedDate;
@@ -55,7 +55,7 @@ public class Meeting implements Serializable {
     private String logoutURL;
 
     @Column
-    private String voiceBridge;
+    private int voiceBridge;
 
     @Column
     private String status;
@@ -101,11 +101,11 @@ public class Meeting implements Serializable {
         this.attendeePassword = attendeePassword;
     }
 
-    public String getCreatedBy() {
+    public int getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -117,11 +117,11 @@ public class Meeting implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public String getModifiedBy() {
+    public int getModifiedBy() {
         return modifiedBy;
     }
 
-    public void setModifiedBy(String modifiedBy) {
+    public void setModifiedBy(int modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
 
@@ -181,11 +181,11 @@ public class Meeting implements Serializable {
         this.logoutURL = logoutURL;
     }
 
-    public String getVoiceBridge() {
+    public int getVoiceBridge() {
         return voiceBridge;
     }
 
-    public void setVoiceBridge(String voiceBridge) {
+    public void setVoiceBridge(int voiceBridge) {
         this.voiceBridge = voiceBridge;
     }
 
