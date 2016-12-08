@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.services.MeetingManagementService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
