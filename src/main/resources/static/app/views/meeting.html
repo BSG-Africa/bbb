@@ -53,8 +53,8 @@
                         </thead>
                         <tr ng-repeat="meetup in yourMeeting" ng-class="{active:$index==selectedRow2}"
                             data-ng-click="rowHighlighted($index)">
-                            <td>{{meetup.name}}</td>
-                            <td>{{meetup.moderator}}</td>
+                            <td><a href="#"/>{{meetup.name}}</td>
+                            <td>{{meetup.createdBy}}</td>
                             <td>{{meetup.status}}</td>
                         </tr>
                     </table>
