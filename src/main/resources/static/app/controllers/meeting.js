@@ -2,19 +2,6 @@ angular.module('BigBlueButton')
     .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams) {
         $scope.user = AuthService.user;
 
-        $scope.myMeeting = [
-            {
-                name: 'Meeting 4',
-                moderator: 'Kape4444shi',
-                status: 'Not Started'
-            },
-            {
-                name: 'Meeting r41',
-                moderator: 'Kaper4shi',
-                status: 'Started'
-            }
-        ];
-
         $scope.rowHighilited = function (row) {
             $scope.selectedRow = row;
         }
@@ -53,7 +40,7 @@ angular.module('BigBlueButton')
         function getMyMeetings () {
             var userId = $scope.user.principal.id;
 
-            $http.get('api/myMeetings', userId).success(function (res) {
+            $http.get('api/myMeetings/' + userId).success(function (res) {
                 $scope.myMeeting = res;
                 $scope.message = '';
 

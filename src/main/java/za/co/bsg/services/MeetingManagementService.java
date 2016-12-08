@@ -22,26 +22,26 @@ public class MeetingManagementService {
         return meetingDataService.findByCreatedBy(userId);
     }
 
-    public Meeting CreateMeeting(Meeting meeting) {
+    public Meeting createMeeting(Meeting meeting) {
         // TODO: Ivhani: Check Code Analysis and implement suggestions where applicable
         // Communicate to DB - persist
-        Meeting persistedMeeting = meetingDataService.Save(meeting);
+        Meeting persistedMeeting = meetingDataService.save(meeting);
         // Communicate to BBB
         return persistedMeeting;
     }
 
-    public List<Meeting> GetAllMeetings() {
-        return meetingDataService.RetrieveAll();
+    public List<Meeting> getAllMeetings() {
+        return meetingDataService.retrieveAll();
     }
 
-    public List<Meeting> GetMeetingsByUser(int userId) {
+    public List<Meeting> getMeetingsByUser(int userId) {
         List<Meeting> meetings = new ArrayList<Meeting>();
         Meeting m = new Meeting();
         m.setName("Induction");
         m.setStatus("Not Started");
         m.setCreatedBy(userId);
         meetings.add(m);
-        return meetingDataService.RetrieveAll();
+        return meetingDataService.retrieveAll();
     }
 
     public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {

@@ -60,10 +60,10 @@ public class MeetingManagementServiceTest {
         meeting.setName("C1/D1 Induction");
 
         // Expectations
-        when(meetingDataService.Save(meeting)).thenReturn(meeting);
+        when(meetingDataService.save(meeting)).thenReturn(meeting);
 
         // Exercise SUT
-        Meeting actualMeeting  = meetingManagementService.CreateMeeting(meeting);
+        Meeting actualMeeting = meetingManagementService.createMeeting(meeting);
 
         assertThat(actualMeeting, CoreMatchers.is(sameBeanAs(meeting)));
 
@@ -76,10 +76,10 @@ public class MeetingManagementServiceTest {
         meeting.setName("C1/D1 Induction");
 
         // Expectations
-        when(meetingDataService.RetrieveAll()).thenReturn(Collections.singletonList(meeting));
+        when(meetingDataService.retrieveAll()).thenReturn(Collections.singletonList(meeting));
 
         // Exercise SUT
-        List<Meeting> actualMeetings  = meetingManagementService.GetAllMeetings();
+        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings();
 
         assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(Collections.singletonList(meeting))));
     }
@@ -91,10 +91,10 @@ public class MeetingManagementServiceTest {
         meeting.setName("C1/D1 Induction");
 
         // Expectations
-        when(meetingDataService.RetrieveAll()).thenReturn(Collections.singletonList(meeting));
+        when(meetingDataService.retrieveAll()).thenReturn(Collections.singletonList(meeting));
 
         // Exercise SUT
-        List<Meeting> actualMeetings  = meetingManagementService.GetAllMeetings();
+        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings();
 
         assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(Collections.singletonList(meeting))));
     }
