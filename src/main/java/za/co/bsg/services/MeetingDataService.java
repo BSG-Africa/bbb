@@ -13,8 +13,8 @@ public class MeetingDataService {
     @Autowired
     MeetingRepository meetingRepository;
 
-    public List<Meeting> findByCreatedBy(String createdBy){
-        return meetingRepository.findByCreatedBy(createdBy);
+    public List<Meeting> findByCreatedBy(int userId){
+        return meetingRepository.findByCreatedBy(userId);
     }
 
     public Meeting Save(Meeting meeting){

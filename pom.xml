@@ -56,6 +56,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.shazam</groupId>
             <artifactId>shazamcrest</artifactId>
             <version>0.11</version>

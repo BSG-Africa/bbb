@@ -38,11 +38,11 @@ public class MeetingManagementServiceTest {
     public void findAllUserMeetings_ShouldReturnMeetingsOfCurrentLoggedOnModerator(){
 
         // Setup fixture
-        Meeting moderatorMeeting = buildMeeting(1L, "Technology Meeting", "ModeratorName");
+        Meeting moderatorMeeting = buildMeeting(1L, "Technology Meeting", 12);
 
         // TODO: Tiyani : Integration Test
         //Meeting nonCurrentModeratorMeeting = buildMeeting(2L, "A&D Meeting", "ModeratorName");
-        String moderator = "Moderator";
+        int moderator = 12;
 
         // Set Expectations
         when(meetingDataService.findByCreatedBy(moderator)).thenReturn(singletonList(moderatorMeeting));
@@ -102,7 +102,7 @@ public class MeetingManagementServiceTest {
     }
 
 
-    public Meeting buildMeeting(Long id, String name, String createdBy){
+    public Meeting buildMeeting(Long id, String name, int createdBy){
         Meeting meeting = new Meeting();
         meeting.setId(id);
         meeting.setName(name);
