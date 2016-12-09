@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import za.co.bsg.model.Meeting;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,16 +17,8 @@ public class MeetingManagementService {
         this.meetingDataService = meetingDataService;
     }
 
-    public List<Meeting> findAllUserMeetings(int userId){
-        return meetingDataService.findByCreatedBy(userId);
-    }
-
     public Meeting createMeeting(Meeting meeting) {
-        // TODO: Ivhani: Check Code Analysis and implement suggestions where applicable
-        // Communicate to DB - persist
-        Meeting persistedMeeting = meetingDataService.save(meeting);
-        // Communicate to BBB
-        return persistedMeeting;
+        return meetingDataService.save(meeting);
     }
 
     public List<Meeting> getAllMeetings() {
@@ -35,13 +26,7 @@ public class MeetingManagementService {
     }
 
     public List<Meeting> getMeetingsByUser(int userId) {
-        List<Meeting> meetings = new ArrayList<Meeting>();
-        Meeting m = new Meeting();
-        m.setName("Induction");
-        m.setStatus("Not Started");
-        m.setCreatedBy(userId);
-        meetings.add(m);
-        return meetingDataService.retrieveAll();
+        return meetingDataService.retrieveAllByUserId(userId);
     }
 
     public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {
