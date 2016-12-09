@@ -162,15 +162,11 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
 
     private User additionalAuthentication(String username, String password) {
         User user = userRepository.findUserByUsername(username);
-        if (password == null || password.length() == 0) {
-            return null;
+        String passwordHash = utilServiceImp.hashPassword(password == null ? "" : password);
+        if (user != null && passwordHash.equals(user.getPassword())) {
+                return user;
         }
-
-        String passwordHash = utilServiceImp.hashPassword(password);
-        if (!passwordHash.equals(user.getPassword())) {
-            return null;
-        }
-        return user;
+        return new User();
     }
 
     private static final Control[] CONTROLS = new Control[]{new FastBindConnectionControl()};
