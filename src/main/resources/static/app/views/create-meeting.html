@@ -3,9 +3,92 @@
 <div class="bsg-form register">
     <form ng-submit="createMeeting()">
         <div class="form-group">
-            <input type="txt" class="form-control input-lg" ng-model="meeting.name" id="meetingName" placeholder="Please provide a meeting name">
+            <input type="txt" class="form-control input-lg" ng-model="meeting.name" id="meetingName"
+                   placeholder="Please provide a meeting name">
         </div>
+        <div class="form-group">
+            <input type="txt" class="form-control input-lg" ng-model="meeting.welcomeMessage" id="meetingWelcomeMessage"
+                   placeholder="Please provide a welcome Message">
+        </div>
+        <div class="form-group hidden">
+            <input type="txt" class="form-control input-lg" ng-model="meeting.agenda" id="meetingAgenda"
+                   placeholder="Please provide a name">
+        </div>
+        <div class="form-group hidden">
+            <input type="txt" class="form-control input-lg" ng-model="meeting.voiceBridge" id="voiceBridge"
+                   placeholder="Please provide a name">
+        </div>
+        <div>
+            <div>Additional Information</div>
+            <ul>
+                <li ng-repeat="elemnt in additionalInformationElemnt">
+                    <div>
+                        <div id={{elemnt.id}} style="display:inline">
+                                            <span ng-model="elemnt.additionalInformation" ng-hide="editorEnabled"
+                                                  ng-click="editorEnabled=true">
+                                                {{elemnt.additionalInformation}}
+                                            </span>
+
+                            <div>
+                                <input ng-model="elemnt.additionalInformation" ng-show="editorEnabled">
+                            </div>
+                            <div style="display:inline">
+                                            <span>
+                                                <input type="text" ng-model="elemnt.answer" placeholder="Answer"
+                                                       required/>
+                                            </span>
+                            </div>
+                                        <span ng-hide="elemnt.length == 1">
+                                            <a href ng-click="additionalInformationElemnt.splice($index, 1)">Remove</a>
+                                        </span>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a href ng-click="newItem($event)">New Additional Information</a>
+                </li>
+            </ul>
+        </div>
+
         <button type="submit" class="btn btn-default btn-info btn-lg">Create</button>
         <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
     </form>
 </div>
+
+<!--    <div>
+        <div>Additional Information</div>
+        <ul>
+            <li ng-repeat="elemnt in additionalInformationElemnt">
+                <div>
+                    <div id={{elemnt.id}} style="display:inline" >
+                            <span  ng-model="elemnt.additionalInformation" ng-hide="editorEnabled" ng-click="editorEnabled=true">
+                                {{elemnt.additionalInformation}}
+                            </span>
+                        <div  ng-show="editorEnabled">
+                            <input  ng-model="elemnt.additionalInformation" ng-show="editorEnabled" >
+                            <button href="#" ng-click="editorEnabled=false">Done editing</button>
+                        </div>
+                    </div>
+                    <div style="display:inline">
+                            <span>
+                                <input type="text" ng-model="elemnt.answer" placeholder="Answer" required/>
+                            </span>
+                    </div>
+                        <span ng-hide="elemnt.length == 1">
+                            <a href ng-click="additionalInformationElemnt.splice($index, 1)">Remove</a>
+                        </span>
+                </div>
+                <hr/>
+            </li>
+            <li>
+                <a href ng-click="newItem($event)">New Additional Information</a>
+            </li>
+        </ul>
+    </div>-->
+<!--    <div>
+        <button ng-click="showitems($event)">Submit</button>
+    </div>
+    <div id="displayitems" style="visibility:hidden;">
+        {{additionalInformationElemnt}}
+    </div>-->
+
