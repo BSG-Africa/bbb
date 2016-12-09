@@ -36,8 +36,6 @@ public class MeetingManagementService {
         // Communicate to DB - persist
         User user = userDataService.findUserById(meeting.getCreatedBy());
         meeting.setMeetingId(utilService.generateMeetingId());
-        meeting.setWelcomeMessage("Put welcome message here");
-
         String moderatorURL  = bigBlueButtonAPI.getJoinURL(meeting, user, "<br>"+meeting.getWelcomeMessage()+"<br>", null, null);
         String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "bbb-ui/");
         String inviteURL = url + "create.jsp?action=invite&meetingID=" + URLEncoder.encode(meeting.getMeetingId(), "UTF-8");
