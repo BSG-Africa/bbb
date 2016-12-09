@@ -52,11 +52,11 @@ public class MeetingManagementServiceTest {
         int moderator = 12;
 
         // Set Expectations
-        when(meetingDataService.findByCreatedBy(moderator)).thenReturn(singletonList(moderatorMeeting));
+        when(meetingDataService.retrieveAllByUserId(moderator)).thenReturn(singletonList(moderatorMeeting));
         List<Meeting> expectedMeeting = singletonList(moderatorMeeting);
 
         // Exercise SUT
-        List<Meeting> actualMeeting = meetingManagementService.findAllUserMeetings(moderator);
+        List<Meeting> actualMeeting = meetingManagementService.getMeetingsByUser(moderator);
 
         // Verify
         assertThat(actualMeeting, Matchers.sameBeanAs(expectedMeeting));

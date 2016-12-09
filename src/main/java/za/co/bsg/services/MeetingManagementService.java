@@ -8,14 +8,10 @@ import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 import za.co.bsg.services.api.BigBlueButtonAPI;
 import za.co.bsg.util.UtilService;
-import za.co.bsg.util.UtilServiceImp;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class MeetingManagementService {
@@ -33,10 +29,6 @@ public class MeetingManagementService {
         this.userDataService = userDataService;
         this.bigBlueButtonAPI = bigBlueButtonAPI;
         this.utilService = utilService;
-    }
-
-    public List<Meeting> findAllUserMeetings(int userId){
-        return meetingDataService.findByCreatedBy(userId);
     }
 
     public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
@@ -61,14 +53,8 @@ public class MeetingManagementService {
         return meetingDataService.retrieveAll();
     }
 
-    public List<Meeting> getMeetingsByUser(int userId) {
-        List<Meeting> meetings = new ArrayList<Meeting>();
-        Meeting m = new Meeting();
-        m.setName("Induction");
-        m.setStatus("Not Started");
-        m.setCreatedBy(userId);
-        meetings.add(m);
-        return meetingDataService.retrieveAll();
+    public List<Meeting> getMeetingsByUser(long userId) {
+        return meetingDataService.retrieveAllByUserId(userId);
     }
 
     public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {
