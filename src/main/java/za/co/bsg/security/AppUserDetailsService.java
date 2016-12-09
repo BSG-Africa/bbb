@@ -69,7 +69,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
                     System.out.println("Loaded " + details.getName());
                 }
             } else {
-//                details = this.additionalAuthentication(username, password);
+                details = this.additionalAuthentication(username, password);
             }
             return new UsernamePasswordAuthenticationToken(details, password, details.getAuthorities());
         } catch (NamingException ex) {

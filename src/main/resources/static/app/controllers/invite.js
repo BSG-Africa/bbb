@@ -1,14 +1,6 @@
 angular.module('BigBlueButton')
-    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window) {
+    .controller('InviteController', function ($http, $scope, AuthService, $state, $stateParams) {
         $scope.user = AuthService.user;
-
-        $scope.rowHighilited = function (row) {
-            $scope.selectedRow = row;
-        }
-
-        $scope.rowHighlighted = function (row) {
-            $scope.myMeetingsSelectedRow = row;
-        }
 
         $scope.createMeeting = function () {
             $state.go('create-meeting');
@@ -25,14 +17,6 @@ angular.module('BigBlueButton')
             }).error(function (error) {
                 $scope.deleteMessage = error.message;
             });
-        };
-
-        $scope.goToMeetingAsModerator = function () {
-            $window.location.href = $scope.meeting[$scope.myMeetingsSelectedRow].moderatorURL;
-        };
-
-        $scope.goToMeetingAsAttendee = function () {
-            $window.location.href = $scope.meeting[$scope.myMeetingsSelectedRow].inviteURL;
         };
 
         function getAvailableMeetings () {
@@ -56,7 +40,4 @@ angular.module('BigBlueButton')
                 $scope.message = error.message;
             });
         };
-
-       getAvailableMeetings();
-        getMyMeetings ();
     });

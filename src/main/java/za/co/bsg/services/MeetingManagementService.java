@@ -5,26 +5,53 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import za.co.bsg.model.Meeting;
+import za.co.bsg.model.User;
+import za.co.bsg.services.api.BigBlueButtonAPI;
+import za.co.bsg.util.UtilService;
+import za.co.bsg.util.UtilServiceImp;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MeetingManagementService {
     MeetingDataService meetingDataService;
 
+    UserDataService userDataService;
+
+    BigBlueButtonAPI bigBlueButtonAPI;
+
+    UtilService utilService;
+
     @Autowired
-    public MeetingManagementService(MeetingDataService meetingDataService){
+    public MeetingManagementService(MeetingDataService meetingDataService, UserDataService userDataService, BigBlueButtonAPI bigBlueButtonAPI, UtilService utilService){
         this.meetingDataService = meetingDataService;
+        this.userDataService = userDataService;
+        this.bigBlueButtonAPI = bigBlueButtonAPI;
+        this.utilService = utilService;
     }
 
     public List<Meeting> findAllUserMeetings(int userId){
         return meetingDataService.findByCreatedBy(userId);
     }
 
-    public Meeting createMeeting(Meeting meeting) {
+    public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
         // TODO: Ivhani: Check Code Analysis and implement suggestions where applicable
         // Communicate to DB - persist
+        User user = userDataService.findUserById(meeting.getCreatedBy());
+        meeting.setMeetingId(utilService.generateMeetingId());
+        meeting.setWelcomeMessage("Put welcome message here");
+
+        String moderatorURL  = bigBlueButtonAPI.getJoinURL(meeting, user, "<br>"+meeting.getWelcomeMessage()+"<br>", null, null);
+        String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "bbb-ui/");
+        String inviteURL = url + "create.jsp?action=invite&meetingID=" + URLEncoder.encode(meeting.getMeetingId(), "UTF-8");
+        meeting.setModeratorURL(moderatorURL);
+        meeting.setInviteURL(inviteURL);
+
         Meeting persistedMeeting = meetingDataService.save(meeting);
         // Communicate to BBB
         return persistedMeeting;
