@@ -12,7 +12,7 @@ angular.module('BigBlueButton')
             $scope.meeting.agenda = $scope.additionalInfo;
             $scope.meeting.createdBy = $scope.user.principal.id;
             $scope.meeting.status = "Not started";
-            $http.post('/api/meeting/create', $scope.meeting).success(function (res) {
+            $http.post('api/meeting/create', $scope.meeting).success(function (res) {
 
                 $scope.message = "Meeting creation successfull !";
                 $state.go('meeting');

@@ -16,7 +16,7 @@ angular.module('BigBlueButton')
 
         $scope.deleteMeeting = function () {
             var a = $scope.meeting[$scope.myMeetingsSelectedRow].id;
-            $http.delete('/api/meeting/delete/' + $scope.meeting[$scope.myMeetingsSelectedRow].id).success(function (res) {
+            $http.delete('api/meeting/delete/' + $scope.meeting[$scope.myMeetingsSelectedRow].id).success(function (res) {
                 $scope.deleteMessage = "Success!";
                 var current = $state.current;
                 var params = angular.copy($stateParams);
