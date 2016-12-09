@@ -1,10 +1,12 @@
 package za.co.bsg.services.api;
 
+import org.springframework.stereotype.Service;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 
 import java.util.Map;
 
+@Service
 public interface BigBlueButtonAPI {
 
     public String getUrl();
@@ -21,7 +23,7 @@ public interface BigBlueButtonAPI {
 
     public String getJoinMeetingURL(String username, String meetingID, String password, String clientURL);
 
-    public String getJoinURL(Meeting meeting, User user, String xmlParam);
+    public String getJoinURL(Meeting meeting, User user, String welcome, Map<String, String> metadata, String xml);
 
     public String getMeetings() throws BigBlueButtonException;
 }

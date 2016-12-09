@@ -2,6 +2,7 @@ package za.co.bsg.services.api;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -20,15 +21,16 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Random;
 
+@Service
 public class BigBlueButtonImp implements BigBlueButtonAPI {
     @Override
     public String getUrl() {
-        return null;
+        return "https://learning.bsg.co.za/bigbluebutton/";
     }
 
     @Override
     public String getSalt() {
-        return null;
+        return "aa3dda0b9ffc3a0b5047c9c444d91ab5";
     }
 
     @Override
@@ -315,15 +317,14 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
     }
 
     @Override
-    public String getJoinURL(Meeting meeting, User user, String xml) {
+    public String getJoinURL(Meeting meeting, User user, String welcome, Map<String, String> metadata, String xml) {
         String base_url_create = getUrl() + "api/create?";
         String base_url_join = getUrl() + "api/join?";
-
+        String record = "false";
         String welcome_param = "";
-        if ((meeting.getWelcomeMessage() != null) && !meeting.getWelcomeMessage().equals("")) {
-            welcome_param = "&welcome=" + urlEncode(meeting.getWelcomeMessage());
+        if ((welcome != null) && !welcome.equals("")) {
+            welcome_param = "&welcome=" + urlEncode(welcome);
         }
-
         String xml_param = "";
         if ((xml != null) && !xml.equals("")) {
             xml_param = xml;
@@ -332,49 +333,28 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         Random random = new Random();
         String voiceBridge_param = "&voiceBridge=" + (70000 + random.nextInt(9999));
 
-        //
-        // When creating a meeting, the 'name' parameter is the name of the meeting (not to be confused with
-        // the username).  For example, the name could be "Fred's meeting" and the meetingID could be "ID-1234312".
-        //
-        // While name and meetingID should be different, we'll keep them the same.  Why?  Because calling api/create?
-        // with a previously used meetingID will return same meetingToken (regardless if the meeting is running or not).
-        //
-        // This means the first person to call getJoinURL with meetingID="Demo Meeting" will actually create the
-        // meeting.  Subsequent calls will return the same meetingToken and thus subsequent users will join the same
-        // meeting.
-        //
-        // Note: We're hard-coding the password for moderator and attendee (viewer) for purposes of demo.
-        //
-
-        String create_parameters = "name=" + urlEncode(meeting.getMeetingId())
+        String create_parameters = "name=" + urlEncode(meeting.getName())
                 + "&meetingID=" + urlEncode(meeting.getMeetingId()) + welcome_param + voiceBridge_param
                 + "&attendeePW=ap&moderatorPW=mp"
                 + "&isBreakoutRoom=false"
-                + getMetaData( null );
-
-
+                + "&record=" + record + getMetaData( metadata );
         // Attempt to create a meeting using meetingID
         Document doc = null;
         try {
             String url = base_url_create + create_parameters
                     + "&checksum="
-                    + checksum("create" + create_parameters + getUrl());
+                    + checksum("create" + create_parameters + getSalt());
             doc = parseXml( postURL( url, xml_param ) );
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         if (doc.getElementsByTagName("returncode").item(0).getTextContent()
                 .trim().equals("SUCCESS")) {
-
             //
             // Looks good, now return a URL to join that meeting
             //
-
             String join_parameters = "meetingID=" + urlEncode(meeting.getMeetingId())
                     + "&fullName=" + urlEncode(user.getUsername()) + "&password=mp";
-
             return base_url_join + join_parameters + "&checksum="
                     + checksum("join" + join_parameters + getSalt());
         }
