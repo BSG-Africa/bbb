@@ -28,10 +28,16 @@ angular.module('BigBlueButton')
         };
 
         $scope.goToMeetingAsModerator = function () {
-            $window.location.href = $scope.meeting[$scope.myMeetingsSelectedRow].moderatorURL;
+            $http.post('api/meeting/start', $scope.meeting[$scope.myMeetingsSelectedRow]).success(function (res) {
+                $scope.message = "Meeting start successfull !";
+                $window.location.href = $scope.meeting[$scope.myMeetingsSelectedRow].moderatorURL;
+            }).error(function (error) {
+                $scope.message = error.message;
+            });
         };
 
         $scope.goToMeetingAsAttendee = function () {
+
             $window.location.href = $scope.meeting[$scope.myMeetingsSelectedRow].inviteURL;
         };
 

@@ -111,8 +111,8 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
     }
 
     @Override
-    public String isMeetingRunning(Meeting meeting) {
-        return null;
+    public boolean isMeetingRunning(Meeting meeting) {
+        return isMeetingRunning(meeting.getMeetingId());
     }
 
     private String getBaseURL(String path, String api_call) {
@@ -237,7 +237,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
                 + checksum("end" + end_parameters + getSalt());
     }
 
-    public String isMeetingRunning(String meetingID) {
+    public boolean isMeetingRunning(String meetingID) {
         Document doc = null;
         try {
             doc = parseXml( getURL( getURLisMeetingRunning(meetingID) ));
@@ -246,15 +246,9 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         }
         if (doc.getElementsByTagName("returncode").item(0).getTextContent()
                 .trim().equals("SUCCESS")) {
-            return doc.getElementsByTagName("running").item(0).getTextContent()
-                    .trim();
+            return true;
         }
-        return "Error "
-                + doc.getElementsByTagName("messageKey").item(0)
-                .getTextContent().trim()
-                + ": "
-                + doc.getElementsByTagName("message").item(0).getTextContent()
-                .trim();
+        return false;
     }
 
     public String getURLisMeetingRunning(String meetingID) {
