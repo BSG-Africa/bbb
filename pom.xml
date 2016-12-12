@@ -28,7 +28,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!-- TOMCAT FOR PRODUCTION RELEASE ONLY -->
+        <!-- TOMCAT FOR PRODUCTION RELEASE ONLY  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
