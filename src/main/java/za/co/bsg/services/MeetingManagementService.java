@@ -32,15 +32,20 @@ public class MeetingManagementService {
     }
 
     public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
+        // Communicate to BB and DB - persist
         User user = userDataService.findUserById(meeting.getCreatedBy());
         meeting.setMeetingId(utilService.generateMeetingId());
-        String moderatorURL  = bigBlueButtonAPI.getJoinURL(meeting, user, "<br>"+meeting.getWelcomeMessage()+"<br>", null, null);
+        String moderatorURL  = bigBlueButtonAPI.createPublicMeeting(meeting, user, "<br>" + meeting.getWelcomeMessage() + "<br>", null, null);
         String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "bbb-ui/");
-        String inviteURL = url + "create.jsp?action=invite&meetingID=" + URLEncoder.encode(meeting.getMeetingId(), "UTF-8");
+        String inviteURL = url + "#/invite?meetingID=" + URLEncoder.encode(meeting.getMeetingId(), "UTF-8");
         meeting.setModeratorURL(moderatorURL);
         meeting.setInviteURL(inviteURL);
 
         return meetingDataService.save(meeting);
+    }
+
+    public String getInviteURL(String name, String meetingId)  {
+        return bigBlueButtonAPI.getPublicJoinURL(name, meetingId);
     }
 
     public List<Meeting> getAllMeetings() {
@@ -56,7 +61,7 @@ public class MeetingManagementService {
         meetingDataService.delete(meetingId);
         Meeting deletedMeeting = meetingDataService.retrieve(meetingId);
 
-        if (deletedMeeting == null || (deletedMeeting != null && meetingToDelete.getId().equals(deletedMeeting.getId()))) {
+        if (deletedMeeting == null || (meetingToDelete.getId().equals(deletedMeeting.getId()))) {
             return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.OK);

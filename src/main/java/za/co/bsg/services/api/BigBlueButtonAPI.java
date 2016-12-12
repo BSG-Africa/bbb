@@ -13,17 +13,13 @@ public interface BigBlueButtonAPI {
 
     public String getSalt();
 
-    public Meeting createMeeting(Meeting meeting) throws BigBlueButtonException;
+    public String getPublicAttendeePW();
 
-    public boolean getMeetingStatus(String meetingID) throws BigBlueButtonException;
+    public String getPublicModeratorPW();
 
-    public Map<String, Object> getMeetingInfo(String meetingID, String password) throws BigBlueButtonException;
+    public String createPublicMeeting(Meeting meeting, User user, String welcome, Map<String, String> metadata, String xml);
 
-    public boolean endMeeting(String meetingID, String password) throws BigBlueButtonException;
+    public String getPublicJoinURL(String username, String meetingID);
 
-    public String getJoinMeetingURL(String username, String meetingID, String password, String clientURL);
-
-    public String getJoinURL(Meeting meeting, User user, String welcome, Map<String, String> metadata, String xml);
-
-    public String getMeetings() throws BigBlueButtonException;
+    public String isMeetingRunning(Meeting meeting);
 }

@@ -16,7 +16,7 @@ angular.module('BigBlueButton')
 
         $scope.deleteMeeting = function () {
             var a = $scope.meeting[$scope.myMeetingsSelectedRow].id;
-            $http.delete('/api/meeting/delete/' + $scope.meeting[$scope.myMeetingsSelectedRow].id).success(function (res) {
+            $http.delete('api/meeting/delete/' + $scope.meeting[$scope.myMeetingsSelectedRow].id).success(function (res) {
                 $scope.deleteMessage = "Success!";
                 var current = $state.current;
                 var params = angular.copy($stateParams);
@@ -33,6 +33,14 @@ angular.module('BigBlueButton')
 
         $scope.goToMeetingAsAttendee = function () {
             $window.location.href = $scope.meeting[$scope.myMeetingsSelectedRow].inviteURL;
+        };
+
+        $scope.shareLink = function () {
+            var link = "mailto:"+ ''
+                + "?subject=Shared%20Link: " + escape('Big Blue Button Session')
+                + "&body=" + escape($scope.meeting[$scope.myMeetingsSelectedRow].inviteURL);
+
+            window.location.href = link;
         };
 
         function getAvailableMeetings () {

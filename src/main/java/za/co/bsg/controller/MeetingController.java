@@ -28,7 +28,7 @@ public class MeetingController {
     }
 
     @RequestMapping(value = "/myMeetings/{userId}", method = RequestMethod.GET)
-    public List<Meeting> userMeetings(@PathVariable("userId") int userId){
+    public List<Meeting> userMeetings(@PathVariable("userId") long userId){
         return meetingManagementService.getMeetingsByUser(userId);
     }
 
