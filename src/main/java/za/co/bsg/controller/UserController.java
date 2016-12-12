@@ -7,9 +7,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import za.co.bsg.repository.UserRepository;
 import za.co.bsg.model.User;
-import za.co.bsg.util.UtilServiceImp;
+import za.co.bsg.repository.UserRepository;
+import za.co.bsg.util.UtilService;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    UtilServiceImp utilServiceImp;
+    UtilService utilService;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public List<User> users() {
@@ -59,7 +59,7 @@ public class UserController {
         if (userRepository.findUserByUsername(appUser.getUsername()) != null) {
             throw new RuntimeException("Username already exist");
         }
-        String passwordHashed = utilServiceImp.hashPassword(appUser.getPassword());
+        String passwordHashed = utilService.hashPassword(appUser.getPassword());
         appUser.setPassword(passwordHashed);
         return new ResponseEntity<User>(userRepository.save(appUser), HttpStatus.CREATED);
     }

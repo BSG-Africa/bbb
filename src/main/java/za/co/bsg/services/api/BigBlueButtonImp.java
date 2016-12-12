@@ -2,12 +2,12 @@ package za.co.bsg.services.api;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import za.co.bsg.config.AppPropertiesConfiguration;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 
@@ -19,92 +19,119 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
-import java.util.Random;
 
 @Service
 public class BigBlueButtonImp implements BigBlueButtonAPI {
+
+    @Autowired
+    AppPropertiesConfiguration appPropertiesConfiguration;
+    // BBB API Keys
+    protected final static String API_SERVER_PATH = "api/";
+    protected final static String API_CREATE = "create";
+    protected final static String API_JOIN = "join";
+    protected final static String API_SUCCESS = "SUCCESS";
+    protected final static String API_RETURNED = "returncode";
+
     @Override
     public String getUrl() {
-        return "https://learning.bsg.co.za/bigbluebutton/";
+        return appPropertiesConfiguration.getBbbURL();
     }
 
     @Override
     public String getSalt() {
-        return "aa3dda0b9ffc3a0b5047c9c444d91ab5";
+        return appPropertiesConfiguration.getBbbSalt();
     }
 
     @Override
-    public Meeting createMeeting(Meeting meeting) throws BigBlueButtonException {
-        String base_url_create = getUrl() + "api/create?";
+    public String getPublicAttendeePW() {
+        return appPropertiesConfiguration.getAttendeePW();
+    }
+
+    @Override
+    public String getPublicModeratorPW() {
+        return appPropertiesConfiguration.getModeratorPW();
+    }
+
+    @Override
+    public String createPublicMeeting(Meeting meeting, User user, String welcome, Map<String, String> metadata, String xml) {
+        String base_url_create = getBaseURL(API_SERVER_PATH, API_CREATE);
+        String base_url_join = getBaseURL(API_SERVER_PATH, API_JOIN);
 
         String welcome_param = "";
-
-        String attendee_password_param = "&attendeePW=ap";
-        String moderator_password_param = "&moderatorPW=mp";
-        String voice_bridge_param = "";
-        String logoutURL_param = "";
-        String moderatorWelcomeMsg_param = "";
-
-        if ((meeting.getWelcomeMessage() != null) && !meeting.getWelcomeMessage().equals("")) {
-            welcome_param = "&welcome=" + urlEncode(meeting.getWelcomeMessage());
+        if ((welcome != null) && !welcome.equals("")) {
+            welcome_param = "&welcome=" + urlEncode(welcome);
+        }
+        String xml_param = "";
+        if ((xml != null) && !xml.equals("")) {
+            xml_param = xml;
         }
 
-        if ((meeting.getModeratorPassword() != null) && !meeting.getModeratorPassword().equals("")) {
-            moderator_password_param = "&moderatorPW=" + urlEncode(meeting.getModeratorPassword());
-        }
+        // build query
+        StringBuilder query = new StringBuilder();
+        query.append("&name=");
+        query.append(urlEncode(meeting.getName()));
+        query.append("&meetingID=");
+        query.append(urlEncode(meeting.getMeetingId()));
+        query.append(welcome_param);
+        query.append("&voiceBridge=");
+        query.append(meeting.getVoiceBridge() == 0 ? urlEncode("011 215 6666") : urlEncode(String.valueOf(meeting.getVoiceBridge())));
+        query.append("&attendeePW=");
+        query.append(getPublicAttendeePW());
+        query.append("&moderatorPW=");
+        query.append(getPublicModeratorPW());
+        query.append("&isBreakoutRoom=false");
+        query.append("&record=");
+        query.append("false");
+        query.append(getMetaData( metadata ));
 
-        if ((meeting.getWelcomeMessage() != null) && !meeting.getWelcomeMessage().equals("")) {
-            moderatorWelcomeMsg_param = "&moderatorOnlyMessage=" + urlEncode(meeting.getWelcomeMessage());
-        }
-
-        if ((meeting.getAttendeePassword() != null) && !meeting.getAttendeePassword().equals("")) {
-            attendee_password_param = "&attendeePW=" + urlEncode(meeting.getAttendeePassword());
-        }
-
-        if (meeting.getVoiceBridge() > 0){
-            voice_bridge_param = "&voiceBridge=" + urlEncode(String.valueOf(meeting.getVoiceBridge()));
-        } else {
-            // No voice bridge number passed, so we'll generate a random one for this meeting
-            Random random = new Random();
-            Integer n = 70000 + random.nextInt(9999);
-            voice_bridge_param = "&voiceBridge=" + n;
-        }
-
-        if ((meeting.getLogoutURL() != null) && !meeting.getLogoutURL().equals("")) {
-            logoutURL_param = "&logoutURL=" + urlEncode(meeting.getLogoutURL());
-        }
-
-        //
-        // Now create the URL
-        //
-
-        String create_parameters = "name=" + urlEncode(meeting.getMeetingId())
-                + "&meetingID=" + urlEncode(meeting.getMeetingId()) + welcome_param
-                + attendee_password_param + moderator_password_param
-                + moderatorWelcomeMsg_param + voice_bridge_param + logoutURL_param;
-
+        //Make API call
         Document doc = null;
-
         try {
-            // Attempt to create a meeting using meetingID
-            String xml = getURL(base_url_create + create_parameters
+            String url = base_url_create + query.toString()
                     + "&checksum="
-                    + checksum("create" + create_parameters + getSalt()));
-            doc = parseXml(xml);
+                    + checksum(API_CREATE + query.toString() + getSalt());
+            doc = parseXml( postURL( url, xml_param ) );
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        if (doc.getElementsByTagName("returncode").item(0).getTextContent().trim().equals("SUCCESS")) {
-            return meeting;
+        if (doc.getElementsByTagName(API_RETURNED).item(0).getTextContent()
+                .trim().equals(API_SUCCESS)) {
+            // Looks good, now return a URL to join that meeting
+            String join_parameters = "meetingID=" + urlEncode(meeting.getMeetingId())
+                    + "&fullName=" + urlEncode(user.getName()) + "&password="+getPublicModeratorPW();
+            return base_url_join + join_parameters + "&checksum="
+                    + checksum(API_JOIN + join_parameters + getSalt());
         }
 
-        String message = "Error "
-                + doc.getElementsByTagName("messageKey").item(0).getTextContent().trim()
+        return doc.getElementsByTagName("messageKey").item(0).getTextContent()
+                .trim()
                 + ": "
                 + doc.getElementsByTagName("message").item(0).getTextContent()
                 .trim();
+    }
+
+    @Override
+    public String isMeetingRunning(Meeting meeting) {
         return null;
+    }
+
+    private String getBaseURL(String path, String api_call) {
+        StringBuilder url = new StringBuilder(getUrl());
+        if (url.toString().endsWith("/bigbluebutton")){
+            url.append("/");
+        }
+        url.append(path);
+        url.append(api_call);
+        url.append("?");
+        return url.toString();
+    }
+
+    public String getPublicJoinURL(String name, String meetingID) {
+        String base_url_join = getUrl() + "api/join?";
+        String join_parameters = "meetingID=" + urlEncode(meetingID)
+                + "&fullName=" + urlEncode(name) + "&password="+getPublicAttendeePW();
+        return base_url_join + join_parameters + "&checksum="
+                + checksum(API_JOIN + join_parameters + getSalt());
     }
 
     private String urlEncode(String s) {
@@ -114,24 +141,6 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
             e.printStackTrace();
         }
         return "";
-    }
-
-    private String encodeURIComponent(String component)   {
-        String result = null;
-
-        try {
-            result = URLEncoder.encode(component, "UTF-8")
-                    .replaceAll("\\%28", "(")
-                    .replaceAll("\\%29", ")")
-                    .replaceAll("\\+", "%20")
-                    .replaceAll("\\%27", "'")
-                    .replaceAll("\\%21", "!")
-                    .replaceAll("\\%7E", "~");
-        } catch (UnsupportedEncodingException e) {
-            result = component;
-        }
-
-        return result;
     }
 
     private Document parseXml(String xml)
@@ -147,8 +156,8 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         String metadata_params = "";
 
         if ( metadata!=null ){
-            for(String metakey : metadata.keySet()){
-                metadata_params = metadata_params + "&meta_" + urlEncode(metakey) + "=" + urlEncode(metadata.get(metakey));
+            for(String key : metadata.keySet()){
+                metadata_params = metadata_params + "&meta_" + urlEncode(key) + "=" + urlEncode(metadata.get(key));
             }
         }
 
@@ -165,47 +174,6 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return checksum;
     }
 
-    public static String getURL(String url) {
-        StringBuffer response = null;
-
-        try {
-            URL u = new URL(url);
-            HttpURLConnection httpConnection = (HttpURLConnection) u.openConnection();
-
-            httpConnection.setUseCaches(false);
-            httpConnection.setDoOutput(true);
-            httpConnection.setRequestMethod("GET");
-
-            httpConnection.connect();
-            int responseCode = httpConnection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                InputStream input = httpConnection.getInputStream();
-
-                // Read server's response.
-                response = new StringBuffer();
-                Reader reader = new InputStreamReader(input, "UTF-8");
-                reader = new BufferedReader(reader);
-                char[] buffer = new char[1024];
-                for (int n = 0; n >= 0;) {
-                    n = reader.read(buffer, 0, buffer.length);
-                    if (n > 0)
-                        response.append(buffer, 0, n);
-                }
-
-                input.close();
-                httpConnection.disconnect();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (response != null) {
-            return response.toString();
-        } else {
-            return "";
-        }
-    }
-
     public static String postURL(String targetURL, String urlParameters)
     {
         return postURL(targetURL, urlParameters, "text/xml");
@@ -215,7 +183,6 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
     {
         URL url;
         HttpURLConnection connection = null;
-        int responseCode = 0;
         try {
             //Create connection
             url = new URL(targetURL);
@@ -270,151 +237,71 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
                 + checksum("end" + end_parameters + getSalt());
     }
 
-    @Override
-    public boolean getMeetingStatus(String meetingID) throws BigBlueButtonException {
-        return false;
-    }
-
-    @Override
-    public Map<String, Object> getMeetingInfo(String meetingID, String password) throws BigBlueButtonException {
-        return null;
-    }
-
-    @Override
-    public boolean endMeeting(String meetingID, String password) throws BigBlueButtonException {
+    public String isMeetingRunning(String meetingID) {
         Document doc = null;
         try {
-            String xml = getURL(getEndMeetingURL(meetingID, password));
-            doc = parseXml(xml);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (doc.getElementsByTagName("returncode").item(0).getTextContent()
-                .trim().equals("SUCCESS")) {
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public String getJoinMeetingURL(String username, String meetingID, String password, String clientURL) {
-        String base_url_join = getUrl() + "api/join?";
-        String clientURL_param = "";
-
-        if ((clientURL != null) && !clientURL.equals("")) {
-            clientURL_param = "&redirectClient=true&clientURL=" + urlEncode( clientURL );
-        }
-
-
-        String join_parameters = "meetingID=" + urlEncode(meetingID)
-                + "&fullName=" + urlEncode(username) + "&password="
-                + urlEncode(password) +  clientURL_param;
-
-        return base_url_join + join_parameters + "&checksum="
-                + checksum("join" + join_parameters + getSalt());
-    }
-
-    @Override
-    public String getJoinURL(Meeting meeting, User user, String welcome, Map<String, String> metadata, String xml) {
-        String base_url_create = getUrl() + "api/create?";
-        String base_url_join = getUrl() + "api/join?";
-        String record = "false";
-        String welcome_param = "";
-        if ((welcome != null) && !welcome.equals("")) {
-            welcome_param = "&welcome=" + urlEncode(welcome);
-        }
-        String xml_param = "";
-        if ((xml != null) && !xml.equals("")) {
-            xml_param = xml;
-        }
-
-        Random random = new Random();
-        String voiceBridge_param = "&voiceBridge=" + (70000 + random.nextInt(9999));
-
-        String create_parameters = "name=" + urlEncode(meeting.getName())
-                + "&meetingID=" + urlEncode(meeting.getMeetingId()) + welcome_param + voiceBridge_param
-                + "&attendeePW=ap&moderatorPW=mp"
-                + "&isBreakoutRoom=false"
-                + "&record=" + record + getMetaData( metadata );
-        // Attempt to create a meeting using meetingID
-        Document doc = null;
-        try {
-            String url = base_url_create + create_parameters
-                    + "&checksum="
-                    + checksum("create" + create_parameters + getSalt());
-            doc = parseXml( postURL( url, xml_param ) );
+            doc = parseXml( getURL( getURLisMeetingRunning(meetingID) ));
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (doc.getElementsByTagName("returncode").item(0).getTextContent()
                 .trim().equals("SUCCESS")) {
-            //
-            // Looks good, now return a URL to join that meeting
-            //
-            String join_parameters = "meetingID=" + urlEncode(meeting.getMeetingId())
-                    + "&fullName=" + urlEncode(user.getUsername()) + "&password=mp";
-            return base_url_join + join_parameters + "&checksum="
-                    + checksum("join" + join_parameters + getSalt());
+            return doc.getElementsByTagName("running").item(0).getTextContent()
+                    .trim();
         }
-
-        return doc.getElementsByTagName("messageKey").item(0).getTextContent()
-                .trim()
+        return "Error "
+                + doc.getElementsByTagName("messageKey").item(0)
+                .getTextContent().trim()
                 + ": "
                 + doc.getElementsByTagName("message").item(0).getTextContent()
                 .trim();
     }
 
-    @Override
-    public String getMeetings() throws BigBlueButtonException {
+    public String getURLisMeetingRunning(String meetingID) {
+        String meetingParameters = "meetingID=" + urlEncode(meetingID);
+        return getUrl() + "api/isMeetingRunning?" + meetingParameters
+                + "&checksum="
+                + checksum("isMeetingRunning" + meetingParameters + getSalt());
+    }
+
+    public static String getURL(String url) {
+        StringBuffer response = null;
+
         try {
-            Document doc = parseXml( getURL( getMeetingsURL() ));
+            URL u = new URL(url);
+            HttpURLConnection httpConnection = (HttpURLConnection) u.openConnection();
 
-            // tags needed for parsing xml documents
-            final String startTag = "<meetings>";
-            final String endTag = "</meetings>";
-            final String startResponse = "<response>";
-            final String endResponse = "</response>";
+            httpConnection.setUseCaches(false);
+            httpConnection.setDoOutput(true);
+            httpConnection.setRequestMethod("GET");
 
-            // if the request succeeded, then calculate the checksum of each meeting and insert it into the document
-            NodeList meetingsList = doc.getElementsByTagName("meeting");
+            httpConnection.connect();
+            int responseCode = httpConnection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                InputStream input = httpConnection.getInputStream();
 
-            String newXMldocument = startTag;
-            for (int i = 0; i < meetingsList.getLength(); i++) {
-                Element meeting = (Element) meetingsList.item(i);
-                String meetingID = meeting.getElementsByTagName("meetingID").item(0).getTextContent();
-                String password = meeting.getElementsByTagName("moderatorPW").item(0).getTextContent();
-
-                String data = getURL( getMeetingInfoURL(meetingID, password) );
-
-                if (data.indexOf("<response>") != -1) {
-                    int startIndex = data.indexOf(startResponse) + startTag.length();
-                    int endIndex = data.indexOf(endResponse);
-                    newXMldocument +=  "<meeting>" + data.substring(startIndex, endIndex) + "</meeting>";
+                // Read server's response.
+                response = new StringBuffer();
+                Reader reader = new InputStreamReader(input, "UTF-8");
+                reader = new BufferedReader(reader);
+                char[] buffer = new char[1024];
+                for (int n = 0; n >= 0;) {
+                    n = reader.read(buffer, 0, buffer.length);
+                    if (n > 0)
+                        response.append(buffer, 0, n);
                 }
+
+                input.close();
+                httpConnection.disconnect();
             }
-            newXMldocument += endTag;
-
-            return newXMldocument;
         } catch (Exception e) {
-            e.printStackTrace(System.out);
-            return null;
+            e.printStackTrace();
         }
-    }
 
-    public String getMeetingsURL() {
-        String meetingParameters = "random=" + new Random().nextInt(9999);
-        return getUrl() + "api/getMeetings?" + meetingParameters
-                + "&checksum="
-                + checksum("getMeetings" + meetingParameters + getSalt());
-    }
-
-    public String getMeetingInfoURL(String meetingID, String password) {
-        String meetingParameters = "meetingID=" + urlEncode(meetingID)
-                + "&password=" + password;
-        return getUrl() + "api/getMeetingInfo?" + meetingParameters
-                + "&checksum="
-                + checksum("getMeetingInfo" + meetingParameters + getSalt());
+        if (response != null) {
+            return response.toString();
+        } else {
+            return "";
+        }
     }
 }

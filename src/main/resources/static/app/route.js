@@ -75,5 +75,14 @@ angular.module('BigBlueButton').config(function ($stateProvider, $urlRouterProvi
                 controller: 'RegisterController'
             }
         }
+    }).state('invite', {
+        parent: 'nav',
+        url: '/invite',
+        views: {
+            'content@': {
+                templateUrl: 'app/views/invite.html',
+                controller: 'InviteController'
+            }
+        }
     });
 });
