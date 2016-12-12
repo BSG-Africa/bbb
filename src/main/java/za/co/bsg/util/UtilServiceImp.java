@@ -19,4 +19,9 @@ public class UtilServiceImp implements UtilService {
     public boolean usernameContainsCompanyEmail(String username) {
         return Util.usernameContainsEmail(username);
     }
+
+    @Override
+    public String generateMeetingId() {
+        return Util.generateMeetingId();
+    }
 }

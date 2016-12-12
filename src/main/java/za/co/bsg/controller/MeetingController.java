@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.services.MeetingManagementService;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,12 @@ public class MeetingController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/meeting/create", method = RequestMethod.POST)
     public ResponseEntity<Meeting> createMeeting(@RequestBody Meeting meeting) {
-        Meeting persistedMeeting = meetingManagementService.createMeeting(meeting);
+        Meeting persistedMeeting = null;
+        try {
+            persistedMeeting = meetingManagementService.createMeeting(meeting);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<Meeting>(persistedMeeting, HttpStatus.OK);
     }
 
