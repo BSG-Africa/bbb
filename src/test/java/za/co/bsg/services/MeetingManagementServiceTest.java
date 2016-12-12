@@ -44,19 +44,21 @@ public class MeetingManagementServiceTest {
     @Test
     public void findAllUserMeetings_ShouldReturnMeetingsOfCurrentLoggedOnModerator(){
 
+        User user = new User();
+        user.setId(12);
         // Setup fixture
-        Meeting moderatorMeeting = buildMeeting(1L, "Technology Meeting", 12);
+        Meeting moderatorMeeting = buildMeeting(1L, "Technology Meeting", user);
 
         // TODO: Tiyani : Integration Test
         //Meeting nonCurrentModeratorMeeting = buildMeeting(2L, "A&D Meeting", "ModeratorName");
         int moderator = 12;
 
         // Set Expectations
-        when(meetingDataService.retrieveAllByUserId(moderator)).thenReturn(singletonList(moderatorMeeting));
+        when(meetingDataService.retrieveAllByUserId(user)).thenReturn(singletonList(moderatorMeeting));
         List<Meeting> expectedMeeting = singletonList(moderatorMeeting);
 
         // Exercise SUT
-        List<Meeting> actualMeeting = meetingManagementService.getMeetingsByUser(moderator);
+        List<Meeting> actualMeeting = meetingManagementService.getMeetingsByUser(user.getId());
 
         // Verify
         assertThat(actualMeeting, Matchers.sameBeanAs(expectedMeeting));
@@ -66,17 +68,18 @@ public class MeetingManagementServiceTest {
     public void CreateMeetingShouldPersistMeetingAndReturnResult() throws Exception {
         // Setup fixture
         Meeting meeting = new Meeting();
-        meeting.setCreatedBy(1l);
+        User user = new User();
+        user.setId(11);
+        meeting.setCreatedBy(user);
         meeting.setName("C1/D1 Induction");
 
-        User user = new User();
         user.setUsername("KapeshiKongolo");
         user.setPassword("123444");
 
         // Expectations
         when(meetingDataService.save(meeting)).thenReturn(meeting);
         when(utilService.generateMeetingId()).thenReturn("123434");
-        when(userDataService.findUserById(meeting.getCreatedBy())).thenReturn(user);
+        when(userDataService.findUserById(meeting.getCreatedBy().getId())).thenReturn(user);
         when(bigBlueButtonAPI.getJoinURL(meeting, user, "", null, null)).thenReturn("http://localhost/bigbluebutton/");
         when(bigBlueButtonAPI.getUrl()).thenReturn("http://localhost/bigbluebutton/");
 
@@ -134,7 +137,7 @@ public class MeetingManagementServiceTest {
     }
 
 
-    public Meeting buildMeeting(Long id, String name, int createdBy){
+    public Meeting buildMeeting(Long id, String name, User createdBy) {
         Meeting meeting = new Meeting();
         meeting.setId(id);
         meeting.setName(name);

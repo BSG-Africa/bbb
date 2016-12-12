@@ -7,7 +7,7 @@ angular.module('BigBlueButton')
             }
             $scope.user = AuthService.user;
             $scope.meeting.agenda = $scope.additionalInfo;
-            $scope.meeting.createdBy = $scope.user.principal.id;
+            $scope.meeting.createdBy = $scope.user.principal;
             //$scope.meeting.moderator = $scope.user.principal;
             $scope.meeting.status = "Not started";
             $http.post('/api/meeting/create', $scope.meeting).success(function (res) {
