@@ -77,7 +77,7 @@ public class MeetingManagementServiceTest {
         when(meetingDataService.save(meeting)).thenReturn(meeting);
         when(utilService.generateMeetingId()).thenReturn("123434");
         when(userDataService.findUserById(meeting.getCreatedBy())).thenReturn(user);
-        when(bigBlueButtonAPI.getJoinURL(meeting, user, "", null, null)).thenReturn("http://localhost/bigbluebutton/");
+        when(bigBlueButtonAPI.createPublicMeeting(meeting, user, "", null, null)).thenReturn("http://localhost/bigbluebutton/");
         when(bigBlueButtonAPI.getUrl()).thenReturn("http://localhost/bigbluebutton/");
 
         // Exercise SUT

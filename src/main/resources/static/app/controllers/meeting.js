@@ -35,6 +35,14 @@ angular.module('BigBlueButton')
             $window.location.href = $scope.meeting[$scope.myMeetingsSelectedRow].inviteURL;
         };
 
+        $scope.shareLink = function () {
+            var link = "mailto:"+ ''
+                + "?subject=Shared%20Link: " + escape('Big Blue Button Session')
+                + "&body=" + escape($scope.meeting[$scope.myMeetingsSelectedRow].inviteURL);
+
+            window.location.href = link;
+        };
+
         function getAvailableMeetings () {
             $http.get('api/availableMeetings').success(function (res) {
                 $scope.meeting = res;

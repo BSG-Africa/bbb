@@ -3,6 +3,8 @@ package za.co.bsg.model;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "meeting")
@@ -65,6 +67,9 @@ public class Meeting implements Serializable {
 
     @Column
     private String inviteURL;
+
+    @Transient
+    private Map<String, String> meta = new HashMap<String, String>();
 
 
     public Long getId() {
@@ -221,5 +226,13 @@ public class Meeting implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Map<String, String> getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Map<String, String> meta) {
+        this.meta = meta;
     }
 }
