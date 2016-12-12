@@ -230,13 +230,6 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         }
     }
 
-    public String getEndMeetingURL(String meetingID, String moderatorPassword) {
-        String end_parameters = "meetingID=" + urlEncode(meetingID) + "&password="
-                + urlEncode(moderatorPassword);
-        return getUrl() + "api/end?" + end_parameters + "&checksum="
-                + checksum("end" + end_parameters + getSalt());
-    }
-
     public String isMeetingRunning(String meetingID) {
         Document doc = null;
         try {
