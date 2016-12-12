@@ -64,6 +64,11 @@ public class MeetingManagementServiceTest {
         assertThat(actualMeeting, Matchers.sameBeanAs(expectedMeeting));
     }
 
+/*    @Test
+    public void startMeetingWhenMeetingIsValid_ShouldUpdateDatabaseWithStatusOfMeeting{
+
+    }*/
+
     @Test
     public void CreateMeetingShouldPersistMeetingAndReturnResult() throws Exception {
         // Setup fixture

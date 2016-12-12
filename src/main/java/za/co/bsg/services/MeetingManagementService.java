@@ -73,4 +73,9 @@ public class MeetingManagementService {
             return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.OK);
         }
     }
+
+    public Meeting startMeeting(Meeting meeting) {
+        boolean isValid = bigBlueButtonAPI.isMeetingRunning(meeting);
+        return meeting;
+    }
 }
