@@ -21,13 +21,13 @@
 
         <input type="text"
                class="form-control"
-               ng-model="moderatorPassword"
+               ng-model="meeting.moderator"
                bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
                placeholder="Moderator"
                bs-typeahead
                ng-model-options="{ debounce: 100 }">
 
-        
+
         <!--<div>
             <div>Additional Information</div>
             <ul>

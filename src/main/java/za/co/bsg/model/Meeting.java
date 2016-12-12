@@ -27,6 +27,9 @@ public class Meeting implements Serializable {
     @Column
     private long createdBy;
 
+    @ManyToOne
+    private User moderator;
+
     @Column
     private Date createdDate;
 
@@ -221,5 +224,13 @@ public class Meeting implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public User getModerator() {
+        return moderator;
+    }
+
+    public void setModerator(User moderator) {
+        this.moderator = moderator;
     }
 }
