@@ -43,8 +43,11 @@ public class MeetingManagementService {
         return meetingDataService.save(meeting);
     }
 
-    public List<Meeting> getAllMeetings() {
-        return meetingDataService.retrieveAll();
+    public List<Meeting> getAllMeetings(long userId) {
+        List<Meeting> allMeetings = meetingDataService.retrieveAll();
+        List<Meeting> myMeetings = this.getMeetingsByUser(userId);
+        allMeetings.removeAll(myMeetings);
+        return allMeetings;
     }
 
     public List<Meeting> getMeetingsByUser(long userId) {

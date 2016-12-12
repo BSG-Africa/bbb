@@ -22,9 +22,11 @@ public class MeetingController {
         this.meetingManagementService = meetingManagementService;
     }
 
-    @RequestMapping(value = "/availableMeetings", method = RequestMethod.GET)
-    public @ResponseBody List<Meeting> availableMeetings(){
-        return meetingManagementService.getAllMeetings();
+    @RequestMapping(value = "/availableMeetings/{userId}", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<Meeting> availableMeetings(@PathVariable("userId") long userId) {
+        return meetingManagementService.getAllMeetings(userId);
     }
 
     @RequestMapping(value = "/myMeetings/{userId}", method = RequestMethod.GET)

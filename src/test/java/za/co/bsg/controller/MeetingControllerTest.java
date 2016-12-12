@@ -54,13 +54,14 @@ public class MeetingControllerTest {
     public void testAvailableMeetings_ShouldReturnAllAvailableMeetings() throws Exception {
 
         // Setup Fixtures
+        long userId = 12;
         User user = new User();
         user.setId(12);
         Meeting meeting1 = buildMeeting("A&D Meeting", user, "Not Started");
 
         this.mvc = MockMvcBuilders.standaloneSetup(new MeetingController(meetingManagementService)).build();
         // Setup Expectation
-        given(this.meetingManagementService.getAllMeetings()).willReturn(asList(meeting1));
+        given(this.meetingManagementService.getAllMeetings(userId)).willReturn(asList(meeting1));
 
         // Exercise SUT
         this.mvc.perform(get("/api/availableMeetings"))
@@ -72,7 +73,7 @@ public class MeetingControllerTest {
                 .andExpect(jsonPath("$[0].status", is("Not Started")));
 
         // Verify
-        verify(meetingManagementService, times(1)).getAllMeetings();
+        verify(meetingManagementService, times(1)).getAllMeetings(userId);
         verifyNoMoreInteractions(meetingManagementService);
     }
 
