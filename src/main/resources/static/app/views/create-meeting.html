@@ -18,6 +18,16 @@
             <input type="txt" class="form-control input-lg" ng-model="meeting.voiceBridge" id="voiceBridge"
                    placeholder="Please provide a name">
         </div>
+
+        <input type="text"
+               class="form-control"
+               ng-model="moderatorPassword"
+               bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
+               placeholder="Moderator"
+               bs-typeahead
+               ng-model-options="{ debounce: 100 }">
+
+
         <div>
             <div>Additional Information</div>
             <ul>
@@ -54,41 +64,3 @@
         <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
     </form>
 </div>
-
-<!--    <div>
-        <div>Additional Information</div>
-        <ul>
-            <li ng-repeat="elemnt in additionalInformationElemnt">
-                <div>
-                    <div id={{elemnt.id}} style="display:inline" >
-                            <span  ng-model="elemnt.additionalInformation" ng-hide="editorEnabled" ng-click="editorEnabled=true">
-                                {{elemnt.additionalInformation}}
-                            </span>
-                        <div  ng-show="editorEnabled">
-                            <input  ng-model="elemnt.additionalInformation" ng-show="editorEnabled" >
-                            <button href="#" ng-click="editorEnabled=false">Done editing</button>
-                        </div>
-                    </div>
-                    <div style="display:inline">
-                            <span>
-                                <input type="text" ng-model="elemnt.answer" placeholder="Answer" required/>
-                            </span>
-                    </div>
-                        <span ng-hide="elemnt.length == 1">
-                            <a href ng-click="additionalInformationElemnt.splice($index, 1)">Remove</a>
-                        </span>
-                </div>
-                <hr/>
-            </li>
-            <li>
-                <a href ng-click="newItem($event)">New Additional Information</a>
-            </li>
-        </ul>
-    </div>-->
-<!--    <div>
-        <button ng-click="showitems($event)">Submit</button>
-    </div>
-    <div id="displayitems" style="visibility:hidden;">
-        {{additionalInformationElemnt}}
-    </div>-->
-
