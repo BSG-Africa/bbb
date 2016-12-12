@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.util.ReflectionTestUtils;
+import za.co.bsg.config.AppPropertiesConfiguration;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 
@@ -16,12 +18,16 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {BigBlueButtonImp.class},
+@ContextConfiguration(classes = {BigBlueButtonImp.class, AppPropertiesConfiguration.class},
         loader = AnnotationConfigContextLoader.class)
 public class BigBlueButtonImpTest {
 
     @Autowired
     private BigBlueButtonAPI bigBlueButtonAPI;
+
+    @Autowired
+    AppPropertiesConfiguration appPropertiesConfiguration;
+
 
     @Test
     public void testCreateMeeting() throws Exception {
@@ -35,15 +41,14 @@ public class BigBlueButtonImpTest {
         Meeting meeting = new Meeting();
         meeting.setMeetingId(meetingID);
         meeting.setName("Testing Meeting");
-        //
-        // This is the URL for to join the meeting as moderator
-        //
 
-        String joinURL  = bigBlueButtonAPI.getJoinURL(meeting, user, "<br>Welcome to Quibety Home.<br>", null, null);
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "bbbURL", "http://test-install.blindsidenetworks.com/bigbluebutton/", String.class);
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "bbbSalt", "8cd8ef52e8e101574e400365b55e11a6");
+        String joinURL  = bigBlueButtonAPI.createPublicMeeting(meeting, user, "<br>Welcome to Quibety Home.<br>", null, null);
         System.out.println(joinURL);
         String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "demo/");
         System.out.println(url);
-        String inviteURL = url + "create.jsp?action=invite&meetingID=" + URLEncoder.encode(meetingID, "UTF-8");
+        String inviteURL = url + "invite.html?action=invite&meetingID=" + URLEncoder.encode(meetingID, "UTF-8");
         System.out.println(inviteURL);
         boolean response = true;
 
