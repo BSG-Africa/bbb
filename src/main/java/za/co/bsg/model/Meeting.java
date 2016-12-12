@@ -24,8 +24,8 @@ public class Meeting implements Serializable {
     @Column
     private String attendeePassword;
 
-    @Column
-    private long createdBy;
+    @ManyToOne
+    private User createdBy;
 
     @ManyToOne
     private User moderator;
@@ -130,11 +130,11 @@ public class Meeting implements Serializable {
         this.id = id;
     }
 
-    public long getCreatedBy() {
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(long createdBy) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 
