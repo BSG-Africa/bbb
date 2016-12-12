@@ -79,7 +79,7 @@ public class MeetingManagementServiceTest {
         // Expectations
         when(meetingDataService.save(meeting)).thenReturn(meeting);
         when(utilService.generateMeetingId()).thenReturn("123434");
-        when(userDataService.findUserById(meeting.getCreatedBy())).thenReturn(user);
+        when(userDataService.findUserById(meeting.getCreatedBy().getId())).thenReturn(user);
         when(bigBlueButtonAPI.createPublicMeeting(meeting, user, "", null, null)).thenReturn("http://localhost/bigbluebutton/");
         when(bigBlueButtonAPI.getUrl()).thenReturn("http://localhost/bigbluebutton/");
 
