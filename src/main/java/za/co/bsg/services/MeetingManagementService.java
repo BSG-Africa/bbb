@@ -32,8 +32,6 @@ public class MeetingManagementService {
     }
 
     public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
-        // TODO: Ivhani: Check Code Analysis and implement suggestions where applicable
-        // Communicate to DB - persist
         User user = userDataService.findUserById(meeting.getCreatedBy());
         meeting.setMeetingId(utilService.generateMeetingId());
         String moderatorURL  = bigBlueButtonAPI.getJoinURL(meeting, user, "<br>"+meeting.getWelcomeMessage()+"<br>", null, null);
@@ -42,9 +40,7 @@ public class MeetingManagementService {
         meeting.setModeratorURL(moderatorURL);
         meeting.setInviteURL(inviteURL);
 
-        Meeting persistedMeeting = meetingDataService.save(meeting);
-        // Communicate to BBB
-        return persistedMeeting;
+        return meetingDataService.save(meeting);
     }
 
     public List<Meeting> getAllMeetings() {

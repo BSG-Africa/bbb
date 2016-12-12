@@ -5,10 +5,7 @@ angular.module('BigBlueButton')
             for (var i = 0; i < $scope.additionalInformationElemnt.length; i++) {
                 $scope.additionalInfo = $scope.additionalInfo + $scope.additionalInformationElemnt[i].additionalInformation + ': ' + $scope.additionalInformationElemnt[i].answer + ',';
             }
-            console.log($scope.additionalInfo);
-            //$scope.meeting.agenda = $scope.additionalInfo;
             $scope.user = AuthService.user;
-            // TODO : Ivhani Please remove this
             $scope.meeting.agenda = $scope.additionalInfo;
             $scope.meeting.createdBy = $scope.user.principal.id;
             $scope.meeting.status = "Not started";
@@ -52,13 +49,10 @@ angular.module('BigBlueButton')
                 var result = _.filter(employees, function (i) {
                     return ~i.name.toLowerCase().indexOf(query);
                 });
-
                 return result;
             }
-
             return null;
         };
-
 
         function getAllUsers() {
             $http.get('api/users').success(function (res) {
