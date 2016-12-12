@@ -95,12 +95,13 @@ public class MeetingManagementServiceTest {
         // Setup fixture
         Meeting meeting = new Meeting();
         meeting.setName("C1/D1 Induction");
+        long userId = 12;
 
         // Expectations
         when(meetingDataService.retrieveAll()).thenReturn(Collections.singletonList(meeting));
 
         // Exercise SUT
-        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings();
+        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
 
         assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(Collections.singletonList(meeting))));
     }
@@ -110,12 +111,13 @@ public class MeetingManagementServiceTest {
         // Setup fixture
         Meeting meeting = new Meeting();
         meeting.setName("C1/D1 Induction");
+        long userId = 12;
 
         // Expectations
         when(meetingDataService.retrieveAll()).thenReturn(Collections.singletonList(meeting));
 
         // Exercise SUT
-        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings();
+        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
 
         assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(Collections.singletonList(meeting))));
     }

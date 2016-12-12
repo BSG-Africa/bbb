@@ -36,7 +36,8 @@ angular.module('BigBlueButton')
         };
 
         function getAvailableMeetings () {
-            $http.get('api/availableMeetings').success(function (res) {
+            var userId = $scope.user.principal.id;
+            $http.get('api/availableMeetings/' + userId).success(function (res) {
                 $scope.meeting = res;
                 $scope.message = '';
 
