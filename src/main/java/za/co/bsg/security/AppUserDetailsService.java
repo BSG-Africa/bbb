@@ -11,10 +11,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import za.co.bsg.config.AppPropertiesConfiguration;
 import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.model.User;
 import za.co.bsg.repository.UserRepository;
-import za.co.bsg.util.UtilServiceImp;
+import za.co.bsg.util.UtilService;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -23,30 +24,23 @@ import javax.naming.directory.*;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 
 @Service
 public class AppUserDetailsService implements UserDetailsService, AuthenticationProvider {
 
-    private static final Logger logger = Logger.getLogger(AppUserDetailsService.class.getName());
-    private String ldapUrl = "ldap://ldap.bsg.co.za:389";
-    private String displayNameAttribute = "displayName";
-    private String emailAttribute = "mail";
-    private String phoneAttribute = "telephoneNumber";
-    private String userSearchBase = "DC=bsg,DC=local";
-    private String principalPrefix = "BSG\\";
-
     @Autowired
     UserRepository userRepository;
 
     @Autowired
-    UtilServiceImp utilServiceImp;
+    UtilService utilService;
+
+    @Autowired
+    private AppPropertiesConfiguration appPropertiesConfiguration;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User appUser = userRepository.findUserByUsername(username);
-        return appUser;
+        return userRepository.findUserByUsername(username);
     }
 
     @Override
@@ -57,11 +51,11 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
 
         DirContext context = null;
         try {
-            if (utilServiceImp.usernameContainsCompanyEmail(username)) {
-                String sidUsername = utilServiceImp.getUsernameFromEmail(username);
-                context = this.getDirContext(principalPrefix + sidUsername, password);
+            if (utilService.usernameContainsCompanyEmail(username)) {
+                String sidUsername = utilService.getUsernameFromEmail(username);
+                context = this.getActiveDirectoryContext(getPrincipalPrefix() + sidUsername, password);
                 if (context != null) {
-                    System.out.println("Successfully logged  " + username + " on " + ldapUrl);
+                    System.out.println("Successfully logged  " + username + " on " + getLdapUrl());
                     if (userRepository.findUserByUsername(username) == null) {
                         this.createUser(context, sidUsername, username, password);
                     }
@@ -69,11 +63,11 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
                     System.out.println("Loaded " + details.getName());
                 }
             } else {
-                details = this.additionalAuthentication(username, password);
+                details = this.authenticateUser(username, password);
             }
             return new UsernamePasswordAuthenticationToken(details, password, details.getAuthorities());
         } catch (NamingException ex) {
-            System.out.println("Could not login into '" + ldapUrl + ": " + ex);
+            System.out.println("Could not login into '" + getLdapUrl() + ": " + ex);
             throw new BadCredentialsException(ex.getMessage());
         } finally {
             if (context != null) {
@@ -87,7 +81,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     }
 
     private void createUser(DirContext context, String sidUsername, String username, String password) {
-        String passwordHashed = utilServiceImp.hashPassword(password);
+        String passwordHashed = utilService.hashPassword(password);
         User details = this.loadUserByUsername(context, sidUsername, username, passwordHashed);
         userRepository.save(details);
     }
@@ -98,31 +92,31 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
             controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
             // search for username
-            NamingEnumeration<SearchResult> renum = context.search(userSearchBase, "(&(objectClass=user)(sAMAccountName={0}))",
+            NamingEnumeration<SearchResult> renum = context.search(getSearchBase(), "(&(objectClass=user)(sAMAccountName={0}))",
                     new Object[]{sidUsername}, controls);
             if (!renum.hasMoreElements()) {
-                throw new UsernameNotFoundException("User '" + sidUsername + "' is not exist");
+                throw new UsernameNotFoundException("User '" + sidUsername + "' not found");
             }
             SearchResult result = renum.next();
             final Attributes attributes = result.getAttributes();
 
             // User's display name
             String displayName = null;
-            Attribute attr = attributes.get(displayNameAttribute);
+            Attribute attr = attributes.get(getDisplayNameAttribute());
             if (attr != null) {
                 displayName = attr.get().toString();
             }
             if (!StringUtils.hasText(displayName)) displayName = sidUsername;
 
             // Is user blocked
-            boolean blocked = false;
+            boolean blocked;
+            blocked = false;
             attr = attributes.get("userAccountControl");
             if (attr != null) {
                 blocked = (Long.parseLong(attr.get().toString()) & 2) != 0;
             }
 
-            User appUser = getAppUser(username, password, displayName, blocked);
-            return appUser;
+            return getAppUser(username, password, displayName, blocked);
         } catch (NamingException ex) {
             System.out.println("Could not find user '" + sidUsername + ": " + ex);
             throw new UsernameNotFoundException(ex.getMessage());
@@ -139,11 +133,11 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         return appUser;
     }
 
-    private DirContext getDirContext(String username, String password) throws NamingException {
+    private DirContext getActiveDirectoryContext(String username, String password) throws NamingException {
         final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         props.put(Context.SECURITY_AUTHENTICATION, "simple");
-        props.put(Context.PROVIDER_URL, ldapUrl);
+        props.put(Context.PROVIDER_URL, getLdapUrl());
         props.put(Context.SECURITY_PRINCIPAL, username);
         props.put(Context.SECURITY_CREDENTIALS, password);
 
@@ -160,11 +154,11 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         return context;
     }
 
-    private User additionalAuthentication(String username, String password) {
+    private User authenticateUser(String username, String password) {
         User user = userRepository.findUserByUsername(username);
-        String passwordHash = utilServiceImp.hashPassword(password == null ? "" : password);
+        String passwordHash = utilService.hashPassword(password == null ? "" : password);
         if (user != null && passwordHash.equals(user.getPassword())) {
-                return user;
+            return user;
         }
         return new User();
     }
@@ -197,35 +191,19 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
-    public String getLdapUrl() {
-        return ldapUrl;
-    }
-
-    public void setLdapUrl(String ldapUrl) {
-        this.ldapUrl = ldapUrl;
+    private String getLdapUrl() {
+        return appPropertiesConfiguration.getLdapUrl();
     }
 
     public String getDisplayNameAttribute() {
-        return displayNameAttribute;
+        return appPropertiesConfiguration.getDisplayNameAttribute();
     }
 
-    public void setDisplayNameAttribute(String displayNameAttribute) {
-        this.displayNameAttribute = displayNameAttribute;
+    public String getPrincipalPrefix() {
+        return appPropertiesConfiguration.getLdapDomain();
     }
 
-    public String getEmailAttribute() {
-        return emailAttribute;
-    }
-
-    public void setEmailAttribute(String emailAttribute) {
-        this.emailAttribute = emailAttribute;
-    }
-
-    public String getPhoneAttribute() {
-        return phoneAttribute;
-    }
-
-    public void setPhoneAttribute(String phoneAttribute) {
-        this.phoneAttribute = phoneAttribute;
+    public String getSearchBase() {
+        return appPropertiesConfiguration.getLdapSearchBase();
     }
 }

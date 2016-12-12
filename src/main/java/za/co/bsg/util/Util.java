@@ -31,7 +31,7 @@ public class Util {
         boolean hasLetter = false;
         boolean hasNumber = false;
         boolean hasRandom = false;
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 16; i++) {
             char c = all.charAt((int) (Math.random() * all.length()));
             if (!hasLetter && (letters.contains("" + c))) {
                 hasLetter = true;
