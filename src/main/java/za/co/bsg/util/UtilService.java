@@ -1,6 +1,9 @@
 package za.co.bsg.util;
 
 
+import org.springframework.stereotype.Service;
+
+@Service
 public interface UtilService {
 
     String hashPassword(String password);
@@ -9,4 +12,5 @@ public interface UtilService {
 
     boolean usernameContainsCompanyEmail(String username);
 
+    String generateMeetingId();
 }

@@ -25,7 +25,7 @@ public class Meeting implements Serializable {
     private String attendeePassword;
 
     @Column
-    private int createdBy;
+    private long createdBy;
 
     @Column
     private Date createdDate;
@@ -60,6 +60,12 @@ public class Meeting implements Serializable {
     @Column
     private String status;
 
+    @Column
+    private String moderatorURL;
+
+    @Column
+    private String inviteURL;
+
 
     public Long getId() {
         return id;
@@ -67,6 +73,22 @@ public class Meeting implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getModeratorURL() {
+        return moderatorURL;
+    }
+
+    public void setModeratorURL(String moderatorURL) {
+        this.moderatorURL = moderatorURL;
+    }
+
+    public String getInviteURL() {
+        return inviteURL;
+    }
+
+    public void setInviteURL(String inviteURL) {
+        this.inviteURL = inviteURL;
     }
 
     public String getMeetingId() {
@@ -101,11 +123,15 @@ public class Meeting implements Serializable {
         this.attendeePassword = attendeePassword;
     }
 
-    public int getCreatedBy() {
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(int createdBy) {
+    public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
     }
 

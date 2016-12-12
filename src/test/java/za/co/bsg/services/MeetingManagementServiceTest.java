@@ -11,6 +11,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import za.co.bsg.model.Meeting;
+import za.co.bsg.model.User;
+import za.co.bsg.services.api.BigBlueButtonAPI;
+import za.co.bsg.util.UtilService;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,12 +29,18 @@ public class MeetingManagementServiceTest {
     private MeetingManagementService meetingManagementService;
     @Mock
     private MeetingDataService meetingDataService;
+    @Mock
+    private UserDataService userDataService;
+    @Mock
+    private BigBlueButtonAPI bigBlueButtonAPI;
+    @Mock
+    private UtilService utilService;
 
     @Before
     public void init() {
-        meetingManagementService = new MeetingManagementService(meetingDataService);
+        meetingManagementService = new MeetingManagementService(meetingDataService, userDataService, bigBlueButtonAPI, utilService);
     }
-    
+
     @Test
     public void findAllUserMeetings_ShouldReturnMeetingsOfCurrentLoggedOnModerator(){
 
@@ -57,10 +66,19 @@ public class MeetingManagementServiceTest {
     public void CreateMeetingShouldPersistMeetingAndReturnResult() throws Exception {
         // Setup fixture
         Meeting meeting = new Meeting();
+        meeting.setCreatedBy(1l);
         meeting.setName("C1/D1 Induction");
+
+        User user = new User();
+        user.setUsername("KapeshiKongolo");
+        user.setPassword("123444");
 
         // Expectations
         when(meetingDataService.save(meeting)).thenReturn(meeting);
+        when(utilService.generateMeetingId()).thenReturn("123434");
+        when(userDataService.findUserById(meeting.getCreatedBy())).thenReturn(user);
+        when(bigBlueButtonAPI.getJoinURL(meeting, user, "", null, null)).thenReturn("http://localhost/bigbluebutton/");
+        when(bigBlueButtonAPI.getUrl()).thenReturn("http://localhost/bigbluebutton/");
 
         // Exercise SUT
         Meeting actualMeeting = meetingManagementService.createMeeting(meeting);

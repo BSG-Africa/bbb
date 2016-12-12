@@ -1,7 +1,7 @@
 angular.module('BigBlueButton')
     .controller('CreateMeetingController', function ($http, $scope, AuthService, $state) {
         $scope.createMeeting = function () {
-            $scope.additionalInfo = '1';
+            $scope.additionalInfo = '';
             for (var i = 0; i < $scope.additionalInformationElemnt.length; i++) {
                 $scope.additionalInfo = $scope.additionalInfo + $scope.additionalInformationElemnt[i].additionalInformation + ': ' + $scope.additionalInformationElemnt[i].answer + ',';
             }
@@ -37,7 +37,7 @@ angular.module('BigBlueButton')
             $scope.additionalInformationElemnt.push({
                 id: counter,
                 additionalInformation: 'Item name (click to change)',
-                answer: '',
+                answer: 'l',
                 inline: true
             });
             $event.preventDefault();

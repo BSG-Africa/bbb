@@ -13,7 +13,7 @@ public class MeetingDataService {
     @Autowired
     MeetingRepository meetingRepository;
 
-    public List<Meeting> retrieveAllByUserId(int userId){
+    public List<Meeting> retrieveAllByUserId(long userId){
         return meetingRepository.findByCreatedBy(userId);
     }
 
