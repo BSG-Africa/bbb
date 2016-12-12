@@ -34,7 +34,13 @@ gulp.task('copy-lib-files', function () {
             'node_modules/ng-dialog/js/ngDialog-theme-plain.css',
             'node_modules/ng-dialog/js/ngDialog-theme-plain.min.css',
             'node_modules/jquery/dist/jquery.js',
-            'node_modules/jquery/dist/jquery.min.js'
+            'node_modules/jquery/dist/jquery.min.js',
+            'node_modules/angular-strap/dist/angular-strap.js',
+            'node_modules/angular-strap/dist/angular-strap.min.js',
+            'node_modules/angular-strap/dist/angular-strap.tpl.js',
+            'node_modules/angular-strap/dist/angular-strap.tpl.min.js',
+            'node_modules/underscore/underscore.js',
+            'node_modules/underscore/underscore-min.js'
         ])
         .pipe(gulp.dest('src/main/resources/static/app/lib/'));
 

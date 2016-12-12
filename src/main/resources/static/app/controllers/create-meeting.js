@@ -22,6 +22,7 @@ angular.module('BigBlueButton')
         };
 
 
+
         var counter = 0;
         $scope.additionalInformationElemnt = [{
             id: counter,
@@ -32,14 +33,6 @@ angular.module('BigBlueButton')
 
 
         $scope.newItem = function ($event) {
-
-            /*            $scope.additionalInfo = '1';
-             for (var i = 0; i < $scope.additionalInformationElemnt.length; i++) {
-             $scope.additionalInfo = $scope.additionalInfo + $scope.additionalInformationElemnt[i].additionalInformation + ': ' +$scope.additionalInformationElemnt[i].answer + ',';
-             }
-             console.log($scope.additionalInfo);*/
-
-
             counter++;
             $scope.additionalInformationElemnt.push({
                 id: counter,
@@ -49,18 +42,31 @@ angular.module('BigBlueButton')
             });
             $event.preventDefault();
         }
-        /*        $scope.inlinef= function($event,inlinecontrol){
-         var checkbox = $event.target;
-         if(checkbox.checked){
-         $('#'+ inlinecontrol).css('display','inline');
-         }else{
-         $('#'+ inlinecontrol).css('display','');
-         }
 
-         }
-         $scope.showitems = function($event){
-         $('#displayitems').css('visibility','none');
-         }*/
+        $scope.getUsersBySearchTerm = function (searchTerm) {
+            if (searchTerm !== '' && typeof searchTerm === 'string') {
+                var query = searchTerm.toLowerCase(),
+                    emp = $scope.allUsers,
+                    employees = $.parseJSON(JSON.stringify(emp));
 
+                var result = _.filter(employees, function (i) {
+                    return ~i.name.toLowerCase().indexOf(query);
+                });
+
+                return result;
+            }
+
+            return null;
+        };
+
+
+        function getAllUsers() {
+            $http.get('api/users').success(function (res) {
+                $scope.allUsers = res;
+            }).error(function (error) {
+                $scope.message = error.message;
+            });
+        };
+        getAllUsers();
 
     });
