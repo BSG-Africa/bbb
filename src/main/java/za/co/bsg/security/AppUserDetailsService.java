@@ -195,15 +195,15 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         return appPropertiesConfiguration.getLdapUrl();
     }
 
-    public String getDisplayNameAttribute() {
+    private String getDisplayNameAttribute() {
         return appPropertiesConfiguration.getDisplayNameAttribute();
     }
 
-    public String getPrincipalPrefix() {
+    private String getPrincipalPrefix() {
         return appPropertiesConfiguration.getLdapDomain();
     }
 
-    public String getSearchBase() {
+    private String getSearchBase() {
         return appPropertiesConfiguration.getLdapSearchBase();
     }
 }
