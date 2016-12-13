@@ -15,8 +15,8 @@ angular.module('BigBlueButton')
         };
 
         $scope.deleteMeeting = function () {
-            var a = $scope.meeting[$scope.myMeetingsSelectedRow].id;
-            $http.delete('api/meeting/delete/' + $scope.meeting[$scope.myMeetingsSelectedRow].id).success(function (res) {
+            var a = $scope.myMeeting[$scope.myMeetingsSelectedRow].id;
+            $http.delete('api/meeting/delete/' + $scope.myMeeting[$scope.myMeetingsSelectedRow].id).success(function (res) {
                 $scope.deleteMessage = "Success!";
                 var current = $state.current;
                 var params = angular.copy($stateParams);
@@ -28,9 +28,11 @@ angular.module('BigBlueButton')
         };
 
         $scope.goToMeetingAsModerator = function () {
-            $http.post('api/meeting/start', $scope.meeting[$scope.myMeetingsSelectedRow]).success(function (res) {
+            var meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
+            var newTab = $window.open('', '_blank');
+            $http.post('api/meeting/start', meeting).success(function (res) {
                 $scope.message = "Meeting start successfull !";
-                $window.location.href = $scope.meeting[$scope.myMeetingsSelectedRow].moderatorURL;
+                newTab.location.href = meeting.moderatorURL;
             }).error(function (error) {
                 $scope.message = error.message;
             });
@@ -38,13 +40,13 @@ angular.module('BigBlueButton')
 
         $scope.goToMeetingAsAttendee = function () {
 
-            $window.location.href = $scope.meeting[$scope.myMeetingsSelectedRow].inviteURL;
+            $window.location.href = $scope.myMeeting[$scope.myMeetingsSelectedRow].inviteURL;
         };
 
         $scope.shareLink = function () {
             var link = "mailto:"+ ''
                 + "?subject=Shared%20Link: " + escape('Big Blue Button Session')
-                + "&body=" + escape($scope.meeting[$scope.myMeetingsSelectedRow].inviteURL);
+                + "&body=" + escape($scope.myMeeting[$scope.myMeetingsSelectedRow].inviteURL);
 
             window.location.href = link;
         };
