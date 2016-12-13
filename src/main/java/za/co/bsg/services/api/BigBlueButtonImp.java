@@ -230,6 +230,21 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         }
     }
 
+    public boolean endMeeting(String meetingID, String moderatorPassword) {
+        Document doc = null;
+        try {
+            String xml = getURL(getEndMeetingURL(meetingID, moderatorPassword));
+            doc = parseXml(xml);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (doc.getElementsByTagName("returncode").item(0).getTextContent()
+                .trim().equals("SUCCESS")) {
+            return true;
+        }
+        return false;
+    }
+
     public String getEndMeetingURL(String meetingID, String moderatorPassword) {
         String end_parameters = "meetingID=" + urlEncode(meetingID) + "&password="
                 + urlEncode(moderatorPassword);
