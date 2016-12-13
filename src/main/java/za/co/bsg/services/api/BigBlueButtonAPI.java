@@ -21,5 +21,5 @@ public interface BigBlueButtonAPI {
 
     public String getPublicJoinURL(String username, String meetingID);
 
-    public String isMeetingRunning(Meeting meeting);
+    public boolean isMeetingRunning(Meeting meeting);
 }
