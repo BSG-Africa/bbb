@@ -58,8 +58,7 @@ public class MeetingManagementService {
         User user = userDataService.findUserById(userId);
         List<Meeting> creatorMeetings = meetingDataService.retrieveAllByUserId(user);
         List<Meeting> moderatorMeetings = meetingDataService.retrieveAllByModerator(user);
-        List<Meeting> meetings = meetingDataService.union(creatorMeetings, moderatorMeetings);
-        return meetings;
+        return meetingDataService.union(creatorMeetings, moderatorMeetings);
     }
 
     public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {
@@ -75,8 +74,8 @@ public class MeetingManagementService {
     }
 
     public Meeting startMeeting(Meeting meeting) {
-        boolean isMeeetingValid = bigBlueButtonAPI.isMeetingRunning(meeting);
-        if (isMeeetingValid) {
+        boolean isMeetingValid = bigBlueButtonAPI.isMeetingRunning(meeting);
+        if (isMeetingValid) {
             meeting.setStatus("Started");
             meetingDataService.save(meeting);
         }

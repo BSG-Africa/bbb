@@ -4,24 +4,22 @@ import org.springframework.stereotype.Service;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 
-import java.util.Map;
-
 @Service
 public interface BigBlueButtonAPI {
 
-    public String getUrl();
+    String getUrl();
 
-    public String getSalt();
+    String getSalt();
 
-    public String getPublicAttendeePW();
+    String getPublicAttendeePW();
 
-    public String getPublicModeratorPW();
+    String getPublicModeratorPW();
 
-    public String createPublicMeeting(Meeting meeting, User user);
+    String createPublicMeeting(Meeting meeting, User user);
 
-    public String getPublicJoinURL(String username, String meetingID);
+    String getPublicJoinURL(String username, String meetingID);
 
-    public boolean isMeetingRunning(Meeting meeting);
+    boolean isMeetingRunning(Meeting meeting);
 
-    public boolean endMeeting(String meetingID, String moderatorPassword);
+    boolean endMeeting(String meetingID, String moderatorPassword);
 }

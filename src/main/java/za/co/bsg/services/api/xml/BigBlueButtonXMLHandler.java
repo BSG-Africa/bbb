@@ -46,7 +46,7 @@ public class BigBlueButtonXMLHandler extends ObjectMapper{
             throw new BigBlueButtonException(BigBlueButtonException.MESSAGEKEY_UNREACHABLE, e.getMessage(), e);
         }
 
-        Node firstNode = dom.getElementsByTagName("response").item(0);
+        Node firstNode = dom != null ? dom.getElementsByTagName("response").item(0) : null;
 
         //Create Map from Node and map to pojo
         Map<String, Object> map  = processNode(firstNode);
@@ -65,7 +65,7 @@ public class BigBlueButtonXMLHandler extends ObjectMapper{
             if (node.getChildNodes().getLength() == 1
                     && ( node.getChildNodes().item(0).getNodeType() == org.w3c.dom.Node.TEXT_NODE || node.getChildNodes().item(0).getNodeType() == org.w3c.dom.Node.CDATA_SECTION_NODE) ) {
                 String nodeValue = node.getTextContent();
-                if (nodeName == "image" && node.getAttributes() != null){
+                if ("image".equals(nodeName) && node.getAttributes() != null){
                     Map<String, String> imageMap = new HashMap<String, String>();
                     Node heightAttr = node.getAttributes().getNamedItem("height");
                     Node widthAttr = node.getAttributes().getNamedItem("width");
@@ -94,7 +94,7 @@ public class BigBlueButtonXMLHandler extends ObjectMapper{
                     Node n = node.getChildNodes().item(c);
                     list.add(processNode(n));
                 }
-                if (nodeName == "preview"){
+                if ("preview".equals(nodeName)){
                     Node n = node.getChildNodes().item(0);
                     map.put(nodeName, processNode(n));
                 }else{
