@@ -75,7 +75,11 @@ public class MeetingManagementService {
     }
 
     public Meeting startMeeting(Meeting meeting) {
-        boolean isValid = bigBlueButtonAPI.isMeetingRunning(meeting);
+        boolean isMeeetingValid = bigBlueButtonAPI.isMeetingRunning(meeting);
+        if (isMeeetingValid) {
+            meeting.setStatus("Started");
+            meetingDataService.save(meeting);
+        }
         return meeting;
     }
 }
