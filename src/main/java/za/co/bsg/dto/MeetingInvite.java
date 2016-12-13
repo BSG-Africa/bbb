@@ -1,6 +1,8 @@
 package za.co.bsg.dto;
 
-public class MeetingInvite {
+import java.io.Serializable;
+
+public class MeetingInvite implements Serializable {
     public String fullName;
     public String inviteURL;
 
