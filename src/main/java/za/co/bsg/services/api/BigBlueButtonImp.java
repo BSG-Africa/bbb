@@ -4,17 +4,19 @@ package za.co.bsg.services.api;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import za.co.bsg.config.AppPropertiesConfiguration;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
+import za.co.bsg.services.api.exception.BigBlueButtonException;
+import za.co.bsg.services.api.response.BigBlueButtonResponse;
+import za.co.bsg.services.api.response.CreateMeeting;
+import za.co.bsg.services.api.response.MeetingRunning;
+import za.co.bsg.services.api.xml.BigBlueButtonXMLHandler;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -25,12 +27,15 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
 
     @Autowired
     AppPropertiesConfiguration appPropertiesConfiguration;
+    @Autowired
+    BigBlueButtonXMLHandler bigBlueButtonXMLHandler;
     // BBB API Keys
     protected final static String API_SERVER_PATH = "api/";
     protected final static String API_CREATE = "create";
     protected final static String API_JOIN = "join";
     protected final static String API_SUCCESS = "SUCCESS";
-    protected final static String API_RETURNED = "returncode";
+    protected final static String API_MEETING_RUNNING = "isMeetingRunning";
+    protected final static String API_FAILED = "FAILED";
 
     @Override
     public String getUrl() {
@@ -53,18 +58,8 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
     }
 
     @Override
-    public String createPublicMeeting(Meeting meeting, User user, String welcome, Map<String, String> metadata, String xml) {
-        String base_url_create = getBaseURL(API_SERVER_PATH, API_CREATE);
+    public String createPublicMeeting(Meeting meeting, User user) {
         String base_url_join = getBaseURL(API_SERVER_PATH, API_JOIN);
-
-        String welcome_param = "";
-        if ((welcome != null) && !welcome.equals("")) {
-            welcome_param = "&welcome=" + urlEncode(welcome);
-        }
-        String xml_param = "";
-        if ((xml != null) && !xml.equals("")) {
-            xml_param = xml;
-        }
 
         // build query
         StringBuilder query = new StringBuilder();
@@ -72,7 +67,8 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         query.append(urlEncode(meeting.getName()));
         query.append("&meetingID=");
         query.append(urlEncode(meeting.getMeetingId()));
-        query.append(welcome_param);
+        query.append("&welcome=");
+        query.append(urlEncode("<br>" + meeting.getWelcomeMessage() + "<br>"));
         query.append("&voiceBridge=");
         query.append(meeting.getVoiceBridge() == 0 ? urlEncode("011 215 6666") : urlEncode(String.valueOf(meeting.getVoiceBridge())));
         query.append("&attendeePW=");
@@ -82,20 +78,19 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         query.append("&isBreakoutRoom=false");
         query.append("&record=");
         query.append("false");
-        query.append(getMetaData( metadata ));
+        query.append(getMetaData( meeting.getMeta() ));
+        query.append(getCheckSumParameter(API_CREATE, query.toString()));
 
         //Make API call
-        Document doc = null;
+        CreateMeeting response = null;
         try {
-            String url = base_url_create + query.toString()
-                    + "&checksum="
-                    + checksum(API_CREATE + query.toString() + getSalt());
-            doc = parseXml( postURL( url, xml_param ) );
-        } catch (Exception e) {
+            response = makeAPICall(API_CREATE, query.toString(), CreateMeeting.class);
+        } catch (BigBlueButtonException e) {
             e.printStackTrace();
         }
-        if (doc.getElementsByTagName(API_RETURNED).item(0).getTextContent()
-                .trim().equals(API_SUCCESS)) {
+       String returnCode = response.getReturncode();
+
+        if (API_SUCCESS.equals(returnCode)) {
             // Looks good, now return a URL to join that meeting
             String join_parameters = "meetingID=" + urlEncode(meeting.getMeetingId())
                     + "&fullName=" + urlEncode(user.getName()) + "&password="+getPublicModeratorPW();
@@ -103,16 +98,22 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
                     + checksum(API_JOIN + join_parameters + getSalt());
         }
 
-        return doc.getElementsByTagName("messageKey").item(0).getTextContent()
-                .trim()
-                + ": "
-                + doc.getElementsByTagName("message").item(0).getTextContent()
-                .trim();
+        return ""+response;
     }
 
     @Override
     public boolean isMeetingRunning(Meeting meeting) {
-        return isMeetingRunning(meeting.getMeetingId());
+        try {
+            return isMeetingRunning(meeting.getMeetingId());
+        } catch (BigBlueButtonException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean endMeeting(String meetingID, String moderatorPassword) {
+        return false;
     }
 
     private String getBaseURL(String path, String api_call) {
@@ -143,15 +144,6 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return "";
     }
 
-    private Document parseXml(String xml)
-            throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory
-                .newInstance();
-        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-        Document doc = docBuilder.parse(new InputSource(new StringReader(xml)));
-        return doc;
-    }
-
     public String getMetaData( Map<String, String> metadata ) {
         String metadata_params = "";
 
@@ -174,143 +166,116 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return checksum;
     }
 
-    public static String postURL(String targetURL, String urlParameters)
-    {
-        return postURL(targetURL, urlParameters, "text/xml");
-    }
-
-    public static String postURL(String targetURL, String urlParameters, String contentType)
-    {
-        URL url;
-        HttpURLConnection connection = null;
+    public boolean isMeetingRunning(String meetingID)
+            throws BigBlueButtonException {
         try {
-            //Create connection
-            url = new URL(targetURL);
-            connection = (HttpURLConnection)url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", contentType);
+            StringBuilder query = new StringBuilder();
+            query.append("meetingID=");
+            query.append(meetingID);
+            query.append(getCheckSumParameter(API_MEETING_RUNNING, query.toString()));
 
-            connection.setRequestProperty("Content-Length", "" +
-                    Integer.toString(urlParameters.getBytes().length));
-            connection.setRequestProperty("Content-Language", "en-US");
-
-            connection.setUseCaches (false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-
-            //Send request
-            DataOutputStream wr = new DataOutputStream (
-                    connection.getOutputStream ());
-            wr.writeBytes (urlParameters);
-            wr.flush ();
-            wr.close ();
-
-            //Get Response
-            InputStream is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            StringBuffer response = new StringBuffer();
-            while((line = rd.readLine()) != null) {
-                response.append(line);
-                response.append('\r');
-            }
-            rd.close();
-            return response.toString();
-
+            MeetingRunning bigBlueButtonResponse = makeAPICall(API_MEETING_RUNNING, query.toString(), MeetingRunning.class);
+            return Boolean.parseBoolean(bigBlueButtonResponse.getRunning());
         } catch (Exception e) {
-
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if(connection != null) {
-                connection.disconnect();
-            }
+            throw new BigBlueButtonException(BigBlueButtonException.MESSAGEKEY_INTERNALERROR, e.getMessage(), e);
         }
     }
 
-    public boolean endMeeting(String meetingID, String moderatorPassword) {
-        Document doc = null;
-        try {
-            String xml = getURL(getEndMeetingURL(meetingID, moderatorPassword));
-            doc = parseXml(xml);
-        } catch (Exception e) {
-            e.printStackTrace();
+    protected String getCheckSumParameter(String apiCall, String queryString) {
+        if (getSalt() != null){
+            return "&checksum=" + DigestUtils.sha1Hex(apiCall + queryString + getSalt());
+        } else{
+            return "";
         }
-        if (doc.getElementsByTagName("returncode").item(0).getTextContent()
-                .trim().equals("SUCCESS")) {
-            return true;
-        }
-        return false;
+
     }
 
-    public String getEndMeetingURL(String meetingID, String moderatorPassword) {
-        String end_parameters = "meetingID=" + urlEncode(meetingID) + "&password="
-                + urlEncode(moderatorPassword);
-        return getUrl() + "api/end?" + end_parameters + "&checksum="
-                + checksum("end" + end_parameters + getSalt());
+    protected <T extends BigBlueButtonResponse> T makeAPICall(String apiCall, String query, Class<T> responseType)
+            throws BigBlueButtonException {
+        return makeAPICall(apiCall, query, "", responseType);
     }
 
-    public boolean isMeetingRunning(String meetingID) {
-        Document doc = null;
-        try {
-            doc = parseXml( getURL( getURLisMeetingRunning(meetingID) ));
-        } catch (Exception e) {
-            e.printStackTrace();
+    protected <T extends BigBlueButtonResponse> T makeAPICall(String apiCall, String query, String presentation, Class<T> responseType)
+            throws BigBlueButtonException {
+        StringBuilder urlStr = new StringBuilder(getBaseURL(API_SERVER_PATH, apiCall));
+        if (query != null) {
+            urlStr.append(query);
         }
-        if (doc.getElementsByTagName("returncode").item(0).getTextContent()
-                .trim().equals("SUCCESS")) {
-            return true;
-        }
-        return false;
-    }
-
-    public String getURLisMeetingRunning(String meetingID) {
-        String meetingParameters = "meetingID=" + urlEncode(meetingID);
-        return getUrl() + "api/isMeetingRunning?" + meetingParameters
-                + "&checksum="
-                + checksum("isMeetingRunning" + meetingParameters + getSalt());
-    }
-
-    public static String getURL(String url) {
-        StringBuffer response = null;
 
         try {
-            URL u = new URL(url);
-            HttpURLConnection httpConnection = (HttpURLConnection) u.openConnection();
-
+            // open connection
+            URL url = new URL(urlStr.toString());
+            HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
             httpConnection.setUseCaches(false);
             httpConnection.setDoOutput(true);
-            httpConnection.setRequestMethod("GET");
+            if(presentation != ""){
+                httpConnection.setRequestMethod("POST");
+                httpConnection.setRequestProperty("Content-Type", "text/xml");
+                httpConnection.setRequestProperty("Content-Length", "" + Integer.toString(presentation.getBytes().length));
+                httpConnection.setRequestProperty("Content-Language", "en-US");
+                httpConnection.setDoInput(true);
 
+                DataOutputStream wr = new DataOutputStream( httpConnection.getOutputStream() );
+                wr.writeBytes (presentation);
+                wr.flush();
+                wr.close();
+            } else {
+                httpConnection.setRequestMethod("GET");
+            }
             httpConnection.connect();
+
             int responseCode = httpConnection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                InputStream input = httpConnection.getInputStream();
+                // read response
+                InputStreamReader isr = null;
+                BufferedReader reader = null;
+                StringBuilder xml = new StringBuilder();
+                try {
+                    isr = new InputStreamReader(httpConnection.getInputStream(), "UTF-8");
+                    reader = new BufferedReader(isr);
+                    String line = reader.readLine();
+                    while (line != null) {
+                        if( !line.startsWith("<?xml version=\"1.0\"?>"))
+                            xml.append(line.trim());
+                        line = reader.readLine();
+                    }
+                } finally {
+                    if (reader != null)
+                        reader.close();
+                    if (isr != null)
+                        isr.close();
+                }
+                httpConnection.disconnect();
 
-                // Read server's response.
-                response = new StringBuffer();
-                Reader reader = new InputStreamReader(input, "UTF-8");
-                reader = new BufferedReader(reader);
-                char[] buffer = new char[1024];
-                for (int n = 0; n >= 0;) {
-                    n = reader.read(buffer, 0, buffer.length);
-                    if (n > 0)
-                        response.append(buffer, 0, n);
+                String stringXml = xml.toString();
+
+                BigBlueButtonResponse bigBlueButtonResponse = bigBlueButtonXMLHandler.processXMLResponse(responseType, stringXml);
+                String returnCode = bigBlueButtonResponse.getReturncode();
+                if (API_FAILED.equals(returnCode)) {
+                    throw new BigBlueButtonException(bigBlueButtonResponse.getMessageKey(), bigBlueButtonResponse.getMessage());
                 }
 
-                input.close();
-                httpConnection.disconnect();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                return responseType.cast(bigBlueButtonResponse);
 
-        if (response != null) {
-            return response.toString();
-        } else {
-            return "";
+            } else {
+                throw new BigBlueButtonException(BigBlueButtonException.MESSAGEKEY_HTTPERROR, "BBB server responded with HTTP status code " + responseCode);
+            }
+
+        } catch(BigBlueButtonException e) {
+            if( !e.getMessageKey().equals("notFound") )
+                System.out.println("BBBException: MessageKey=" + e.getMessageKey() + ", Message=" + e.getMessage());
+            throw new BigBlueButtonException( e.getMessageKey(), e.getMessage(), e);
+        } catch(IOException e) {
+            System.out.println("BBB IOException: Message=" + e.getMessage());
+            throw new BigBlueButtonException(BigBlueButtonException.MESSAGEKEY_UNREACHABLE, e.getMessage(), e);
+
+        } catch(IllegalArgumentException e) {
+            System.out.printf("BBB IllegalArgumentException: Message=" + e.getMessage());
+            throw new BigBlueButtonException(BigBlueButtonException.MESSAGEKEY_INVALIDRESPONSE, e.getMessage(), e);
+
+        } catch(Exception e) {
+            System.out.println("BBB Exception: Message=" + e.getMessage());
+            throw new BigBlueButtonException(BigBlueButtonException.MESSAGEKEY_UNREACHABLE, e.getMessage(), e);
         }
     }
 }

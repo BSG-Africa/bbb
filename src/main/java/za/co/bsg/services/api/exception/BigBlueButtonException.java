@@ -1,20 +1,12 @@
-package za.co.bsg.services.api;
+package za.co.bsg.services.api.exception;
 
-/**
- * Created by Kapeshi.Kongolo on 2016/12/08.
- */
 public class BigBlueButtonException extends Exception {
 
     public static final String  MESSAGEKEY_HTTPERROR            = "httpError";
     public static final String  MESSAGEKEY_NOTFOUND             = "notFound";
-    public static final String  MESSAGEKEY_NOACTION             = "noActionSpecified";
-    public static final String  MESSAGEKEY_IDNOTUNIQUE          = "idNotUnique";
-    public static final String  MESSAGEKEY_NOTSTARTED           = "notStarted";
-    public static final String  MESSAGEKEY_ALREADYENDED         = "alreadyEnded";
     public static final String  MESSAGEKEY_INTERNALERROR        = "internalError";
     public static final String  MESSAGEKEY_UNREACHABLE          = "unreachableServerError";
     public static final String  MESSAGEKEY_INVALIDRESPONSE      = "invalidResponseError";
-    public static final String  MESSAGEKEY_GENERALERROR         = "generalError";
 
     private String messageKey;
 

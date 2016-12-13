@@ -17,7 +17,7 @@ public interface BigBlueButtonAPI {
 
     public String getPublicModeratorPW();
 
-    public String createPublicMeeting(Meeting meeting, User user, String welcome, Map<String, String> metadata, String xml);
+    public String createPublicMeeting(Meeting meeting, User user);
 
     public String getPublicJoinURL(String username, String meetingID);
 

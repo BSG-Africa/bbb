@@ -10,6 +10,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import za.co.bsg.config.AppPropertiesConfiguration;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
+import za.co.bsg.services.api.xml.BigBlueButtonXMLHandler;
 
 import java.net.URLEncoder;
 
@@ -18,7 +19,7 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {BigBlueButtonImp.class, AppPropertiesConfiguration.class},
+@ContextConfiguration(classes = {BigBlueButtonImp.class, AppPropertiesConfiguration.class, BigBlueButtonXMLHandler.class},
         loader = AnnotationConfigContextLoader.class)
 public class BigBlueButtonImpTest {
 
@@ -28,9 +29,42 @@ public class BigBlueButtonImpTest {
     @Autowired
     AppPropertiesConfiguration appPropertiesConfiguration;
 
+    @Autowired
+    BigBlueButtonXMLHandler bigBlueButtonXMLHandler;
+
 
     @Test
     public void testCreateMeeting() throws Exception {
+
+
+
+        User user = new User();
+        user.setUsername("kapeshi");
+        user.setPassword("23456666");
+        user.setName("Kapeshi Kongolo");
+        String meetingID = "kapeshi12345";
+        Meeting meeting = new Meeting();
+        meeting.setMeetingId(meetingID);
+        meeting.setName("Testing Meeting");
+        meeting.setWelcomeMessage("Welcome to Quibety Home");
+
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "bbbURL", "http://test-install.blindsidenetworks.com/bigbluebutton/", String.class);
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "bbbSalt", "8cd8ef52e8e101574e400365b55e11a6", String.class);
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "moderatorPW", "mp", String.class);
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "attendeePW", "ap", String.class);
+        String joinURL  = bigBlueButtonAPI.createPublicMeeting(meeting, user);
+        System.out.println(joinURL);
+        String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "demo/");
+        System.out.println(url);
+        String inviteURL = url + "invite.html?action=invite&meetingID=" + URLEncoder.encode(meetingID, "UTF-8");
+        System.out.println(inviteURL);
+        boolean response = true;
+        // Will reach here if create works
+        assertThat(true, sameBeanAs(response));
+    }
+
+    @Test
+    public void testIsMeeting() throws Exception {
 
 
 
@@ -47,13 +81,36 @@ public class BigBlueButtonImpTest {
         ReflectionTestUtils.setField(appPropertiesConfiguration, "bbbSalt", "8cd8ef52e8e101574e400365b55e11a6", String.class);
         ReflectionTestUtils.setField(appPropertiesConfiguration, "moderatorPW", "mp", String.class);
         ReflectionTestUtils.setField(appPropertiesConfiguration, "attendeePW", "ap", String.class);
-        String joinURL  = bigBlueButtonAPI.createPublicMeeting(meeting, user, "<br>Welcome to Quibety Home.<br>", null, null);
-        System.out.println(joinURL);
-        String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "demo/");
-        System.out.println(url);
-        String inviteURL = url + "invite.html?action=invite&meetingID=" + URLEncoder.encode(meetingID, "UTF-8");
-        System.out.println(inviteURL);
+        boolean res = bigBlueButtonAPI.isMeetingRunning(meeting);
+        System.out.println("Meeting running: " + res);
         boolean response = true;
+        // Will reach here if create works
+        assertThat(true, sameBeanAs(response));
+    }
+
+    @Test
+    public void testEndMeeting() throws Exception {
+
+
+
+        User user = new User();
+        user.setUsername("kapeshi");
+        user.setPassword("23456666");
+        user.setName("Kapeshi Kongolo");
+        String meetingID = "kapeshi12345";
+        Meeting meeting = new Meeting();
+        meeting.setMeetingId(meetingID);
+        meeting.setName("Testing Meeting");
+
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "bbbURL", "http://test-install.blindsidenetworks.com/bigbluebutton/", String.class);
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "bbbSalt", "8cd8ef52e8e101574e400365b55e11a6", String.class);
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "moderatorPW", "mp", String.class);
+        ReflectionTestUtils.setField(appPropertiesConfiguration, "attendeePW", "ap", String.class);
+        boolean res = bigBlueButtonAPI.endMeeting(meeting.getMeetingId(), "mp");
+        System.out.println("------------------------------------------");
+        System.out.println(res);
+        System.out.println("------------------------------------------");
+        boolean response = res;
         // Will reach here if create works
         assertThat(true, sameBeanAs(response));
     }

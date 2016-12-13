@@ -34,7 +34,7 @@ public class MeetingManagementService {
     public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
         User user = userDataService.findUserById(meeting.getCreatedBy().getId());
         meeting.setMeetingId(utilService.generateMeetingId());
-        String moderatorURL  = bigBlueButtonAPI.createPublicMeeting(meeting, user, "<br>" + meeting.getWelcomeMessage() + "<br>", null, null);
+        String moderatorURL  = bigBlueButtonAPI.createPublicMeeting(meeting, user);
         String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "bbb-ui/");
         String inviteURL = url + "#/invite?meetingID=" + URLEncoder.encode(meeting.getMeetingId(), "UTF-8");
         meeting.setModeratorURL(moderatorURL);
