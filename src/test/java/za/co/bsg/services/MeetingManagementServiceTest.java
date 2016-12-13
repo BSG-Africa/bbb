@@ -2,7 +2,6 @@ package za.co.bsg.services;
 
 
 import com.shazam.shazamcrest.matcher.Matchers;
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +20,7 @@ import java.util.List;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -64,10 +64,25 @@ public class MeetingManagementServiceTest {
         assertThat(actualMeeting, Matchers.sameBeanAs(expectedMeeting));
     }
 
-/*    @Test
-    public void startMeetingWhenMeetingIsValid_ShouldUpdateDatabaseWithStatusOfMeeting{
+    @Test
+    public void startMeetingWhenMeetingIsValid_ShouldUpdateDatabaseWithStatusOfMeeting() {
+        // Setup fixture
+        User user = new User();
+        user.setId(11);
+        Meeting meeting = buildMeeting(12L, "C1/D1 Induction", user);
+        Meeting expectedMeeting = buildMeeting(12L, "C1/D1 Induction", user);
+        expectedMeeting.setStatus("Started");
 
-    }*/
+        // Expectations
+        when(bigBlueButtonAPI.isMeetingRunning(meeting)).thenReturn(true);
+        when(meetingDataService.retrieve(meeting.getId())).thenReturn(meeting);
+//        when(meetingDataService.save(meeting)).thenReturn(meetingUpdated)
+
+        // Exercise SUT
+        Meeting actualMeeting = meetingManagementService.startMeeting(meeting);
+        // Verify Behaviour
+        assertThat(actualMeeting, is(sameBeanAs(expectedMeeting)));
+    }
 
     @Test
     public void CreateMeetingShouldPersistMeetingAndReturnResult() throws Exception {
@@ -91,7 +106,7 @@ public class MeetingManagementServiceTest {
         // Exercise SUT
         Meeting actualMeeting = meetingManagementService.createMeeting(meeting);
 
-        assertThat(actualMeeting, CoreMatchers.is(sameBeanAs(meeting)));
+        assertThat(actualMeeting, is(sameBeanAs(meeting)));
 
     }
 
@@ -108,7 +123,7 @@ public class MeetingManagementServiceTest {
         // Exercise SUT
         List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
 
-        assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(Collections.singletonList(meeting))));
+        assertThat(actualMeetings, is(sameBeanAs(Collections.singletonList(meeting))));
     }
 
     @Test
@@ -124,7 +139,7 @@ public class MeetingManagementServiceTest {
         // Exercise SUT
         List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
 
-        assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(Collections.singletonList(meeting))));
+        assertThat(actualMeetings, is(sameBeanAs(Collections.singletonList(meeting))));
     }
 
     @Test
@@ -140,7 +155,7 @@ public class MeetingManagementServiceTest {
         // Exercise SUT
         ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting((long) meetingId);
 
-        assertThat(actualMeetings, CoreMatchers.is(sameBeanAs(expectedMeeting)));
+        assertThat(actualMeetings, is(sameBeanAs(expectedMeeting)));
     }
 
 
