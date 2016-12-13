@@ -230,7 +230,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         }
     }
 
-    public String endMeeting(String meetingID, String moderatorPassword) {
+    public boolean endMeeting(String meetingID, String moderatorPassword) {
         Document doc = null;
         try {
             String xml = getURL(getEndMeetingURL(meetingID, moderatorPassword));
@@ -240,14 +240,9 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         }
         if (doc.getElementsByTagName("returncode").item(0).getTextContent()
                 .trim().equals("SUCCESS")) {
-            return "true";
+            return true;
         }
-        return "Error "
-                + doc.getElementsByTagName("messageKey").item(0)
-                .getTextContent().trim()
-                + ": "
-                + doc.getElementsByTagName("message").item(0).getTextContent()
-                .trim();
+        return false;
     }
 
     public String getEndMeetingURL(String meetingID, String moderatorPassword) {
