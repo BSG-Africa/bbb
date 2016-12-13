@@ -98,7 +98,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
             String join_parameters = "meetingID=" + urlEncode(meeting.getMeetingId())
                     + "&fullName=" + urlEncode(user.getName()) + "&password="+getPublicModeratorPW();
             return base_url_join + join_parameters + "&checksum="
-                    + checksum(API_JOIN + join_parameters + getSalt());
+                    + getCheckSumParameter(API_JOIN + join_parameters + getSalt());
         }
 
         return ""+response;
@@ -139,6 +139,15 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return true;
     }
 
+    @Override
+    public String getPublicJoinURL(String name, String meetingID) {
+        String base_url_join = getUrl() + "api/join?";
+        String join_parameters = "meetingID=" + urlEncode(meetingID)
+                + "&fullName=" + urlEncode(name) + "&password="+getPublicAttendeePW();
+        return base_url_join + join_parameters + "&checksum="
+                + getCheckSumParameter(API_JOIN + join_parameters + getSalt());
+    }
+
     private String getBaseURL(String path, String api_call) {
         StringBuilder url = new StringBuilder(getUrl());
         if (url.toString().endsWith("/bigbluebutton")){
@@ -150,14 +159,6 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return url.toString();
     }
 
-    public String getPublicJoinURL(String name, String meetingID) {
-        String base_url_join = getUrl() + "api/join?";
-        String join_parameters = "meetingID=" + urlEncode(meetingID)
-                + "&fullName=" + urlEncode(name) + "&password="+getPublicAttendeePW();
-        return base_url_join + join_parameters + "&checksum="
-                + checksum(API_JOIN + join_parameters + getSalt());
-    }
-
     private String urlEncode(String s) {
         try {
             return URLEncoder.encode(s, "UTF-8");
@@ -167,7 +168,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return "";
     }
 
-    public String getMetaData( Map<String, String> metadata ) {
+    private String getMetaData( Map<String, String> metadata ) {
         String metadata_params = "";
 
         if ( metadata!=null ){
@@ -179,17 +180,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return metadata_params;
     }
 
-    public static String checksum(String s) {
-        String checksum = "";
-        try {
-            checksum = DigestUtils.sha1Hex(s);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return checksum;
-    }
-
-    public boolean isMeetingRunning(String meetingID)
+    protected boolean isMeetingRunning(String meetingID)
             throws BigBlueButtonException {
         try {
             StringBuilder query = new StringBuilder();
@@ -211,6 +202,16 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
             return "";
         }
 
+    }
+
+    protected String getCheckSumParameter(String s) {
+        String checksum = "";
+        try {
+            checksum = DigestUtils.sha1Hex(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return checksum;
     }
 
     protected <T extends BigBlueButtonResponse> T makeAPICall(String apiCall, String query, Class<T> responseType)
