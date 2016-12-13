@@ -36,6 +36,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
     protected final static String API_SUCCESS = "SUCCESS";
     protected final static String API_MEETING_RUNNING = "isMeetingRunning";
     protected final static String API_FAILED = "FAILED";
+    protected final static String API_END_MEETING = "end";
 
     @Override
     public String getUrl() {
@@ -83,14 +84,16 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
 
         //Make API call
         CreateMeeting response = null;
+        String responseCode = "";
         try {
             response = makeAPICall(API_CREATE, query.toString(), CreateMeeting.class);
+            responseCode = response.getReturncode();
         } catch (BigBlueButtonException e) {
             e.printStackTrace();
         }
-       String returnCode = response.getReturncode();
 
-        if (API_SUCCESS.equals(returnCode)) {
+
+        if (API_SUCCESS.equals(responseCode)) {
             // Looks good, now return a URL to join that meeting
             String join_parameters = "meetingID=" + urlEncode(meeting.getMeetingId())
                     + "&fullName=" + urlEncode(user.getName()) + "&password="+getPublicModeratorPW();
@@ -113,7 +116,27 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
 
     @Override
     public boolean endMeeting(String meetingID, String moderatorPassword) {
-        return false;
+
+        StringBuilder query = new StringBuilder();
+        query.append("meetingID=");
+        query.append(meetingID);
+        query.append("&password=");
+        query.append(moderatorPassword);
+        query.append(getCheckSumParameter(API_END_MEETING, query.toString()));
+
+        try {
+            makeAPICall(API_END_MEETING, query.toString(), BigBlueButtonResponse.class);
+
+        } catch (BigBlueButtonException e) {
+            if(BigBlueButtonException.MESSAGEKEY_NOTFOUND.equals(e.getMessageKey())) {
+                // we can safely ignore this one: the meeting is not running
+                return true;
+            }else{
+                System.out.println("Error: "+e);
+            }
+        }
+
+        return true;
     }
 
     private String getBaseURL(String path, String api_call) {
@@ -208,7 +231,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
             HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
             httpConnection.setUseCaches(false);
             httpConnection.setDoOutput(true);
-            if(presentation != ""){
+            if(!presentation.equals("")){
                 httpConnection.setRequestMethod("POST");
                 httpConnection.setRequestProperty("Content-Type", "text/xml");
                 httpConnection.setRequestProperty("Content-Length", "" + Integer.toString(presentation.getBytes().length));
