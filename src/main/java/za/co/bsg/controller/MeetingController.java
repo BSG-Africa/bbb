@@ -22,9 +22,11 @@ public class MeetingController {
         this.meetingManagementService = meetingManagementService;
     }
 
-    @RequestMapping(value = "/availableMeetings", method = RequestMethod.GET)
-    public @ResponseBody List<Meeting> availableMeetings(){
-        return meetingManagementService.getAllMeetings();
+    @RequestMapping(value = "/availableMeetings/{userId}", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<Meeting> availableMeetings(@PathVariable("userId") long userId) {
+        return meetingManagementService.getAllMeetings(userId);
     }
 
     @RequestMapping(value = "/myMeetings/{userId}", method = RequestMethod.GET)
@@ -47,5 +49,12 @@ public class MeetingController {
     @RequestMapping(value = "/meeting/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Meeting> deleteMeeting(@PathVariable Long id) {
         return meetingManagementService.deleteMeeting(id);
+    }
+
+    @RequestMapping(value = "/meeting/start", method = RequestMethod.POST)
+    public ResponseEntity<Meeting> startMeeting(@RequestBody Meeting meeting) {
+        Meeting updatedMeeting = null;
+        meetingManagementService.startMeeting(meeting);
+        return new ResponseEntity<Meeting>(updatedMeeting, HttpStatus.OK);
     }
 }

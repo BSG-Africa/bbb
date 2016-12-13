@@ -111,8 +111,8 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
     }
 
     @Override
-    public String isMeetingRunning(Meeting meeting) {
-        return null;
+    public boolean isMeetingRunning(Meeting meeting) {
+        return isMeetingRunning(meeting.getMeetingId());
     }
 
     private String getBaseURL(String path, String api_call) {
@@ -230,7 +230,34 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         }
     }
 
-    public String isMeetingRunning(String meetingID) {
+    public String endMeeting(String meetingID, String moderatorPassword) {
+        Document doc = null;
+        try {
+            String xml = getURL(getEndMeetingURL(meetingID, moderatorPassword));
+            doc = parseXml(xml);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (doc.getElementsByTagName("returncode").item(0).getTextContent()
+                .trim().equals("SUCCESS")) {
+            return "true";
+        }
+        return "Error "
+                + doc.getElementsByTagName("messageKey").item(0)
+                .getTextContent().trim()
+                + ": "
+                + doc.getElementsByTagName("message").item(0).getTextContent()
+                .trim();
+    }
+
+    public String getEndMeetingURL(String meetingID, String moderatorPassword) {
+        String end_parameters = "meetingID=" + urlEncode(meetingID) + "&password="
+                + urlEncode(moderatorPassword);
+        return getUrl() + "api/end?" + end_parameters + "&checksum="
+                + checksum("end" + end_parameters + getSalt());
+    }
+
+    public boolean isMeetingRunning(String meetingID) {
         Document doc = null;
         try {
             doc = parseXml( getURL( getURLisMeetingRunning(meetingID) ));
@@ -239,15 +266,9 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         }
         if (doc.getElementsByTagName("returncode").item(0).getTextContent()
                 .trim().equals("SUCCESS")) {
-            return doc.getElementsByTagName("running").item(0).getTextContent()
-                    .trim();
+            return true;
         }
-        return "Error "
-                + doc.getElementsByTagName("messageKey").item(0)
-                .getTextContent().trim()
-                + ": "
-                + doc.getElementsByTagName("message").item(0).getTextContent()
-                .trim();
+        return false;
     }
 
     public String getURLisMeetingRunning(String meetingID) {

@@ -6,7 +6,7 @@
                     ng-repeat="meetup in meeting"
                     ng-class="{active:$index==selectedRow}"
                     data-ng-click="rowHighilited($index)">
-                <span class="pull-left">{{meetup.name}}: {{meetup.createdBy}}</span>
+                <span class="pull-left">{{meetup.name}}: {{meetup.createdBy.name}}</span>
                 <span class="glyphicon glyphicon-circle-arrow-right pull-right" aria-hidden="true"></span>
                 <span class="pull-right">{{meetup.status}}</span>
             </button>

@@ -32,8 +32,7 @@ public class MeetingManagementService {
     }
 
     public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
-        // Communicate to BB and DB - persist
-        User user = userDataService.findUserById(meeting.getCreatedBy());
+        User user = userDataService.findUserById(meeting.getCreatedBy().getId());
         meeting.setMeetingId(utilService.generateMeetingId());
         String moderatorURL  = bigBlueButtonAPI.createPublicMeeting(meeting, user, "<br>" + meeting.getWelcomeMessage() + "<br>", null, null);
         String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "bbb-ui/");
@@ -48,12 +47,19 @@ public class MeetingManagementService {
         return bigBlueButtonAPI.getPublicJoinURL(name, meetingId);
     }
 
-    public List<Meeting> getAllMeetings() {
-        return meetingDataService.retrieveAll();
+    public List<Meeting> getAllMeetings(long userId) {
+        List<Meeting> allMeetings = meetingDataService.retrieveAll();
+        List<Meeting> myMeetings = this.getMeetingsByUser(userId);
+        allMeetings.removeAll(myMeetings);
+        return allMeetings;
     }
 
     public List<Meeting> getMeetingsByUser(long userId) {
-        return meetingDataService.retrieveAllByUserId(userId);
+        User user = userDataService.findUserById(userId);
+        List<Meeting> creatorMeetings = meetingDataService.retrieveAllByUserId(user);
+        List<Meeting> moderatorMeetings = meetingDataService.retrieveAllByModerator(user);
+        List<Meeting> meetings = meetingDataService.union(creatorMeetings, moderatorMeetings);
+        return meetings;
     }
 
     public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {
@@ -66,5 +72,10 @@ public class MeetingManagementService {
         } else {
             return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.OK);
         }
+    }
+
+    public Meeting startMeeting(Meeting meeting) {
+        boolean isValid = bigBlueButtonAPI.isMeetingRunning(meeting);
+        return meeting;
     }
 }
