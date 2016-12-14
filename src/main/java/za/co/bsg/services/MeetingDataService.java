@@ -38,6 +38,11 @@ public class MeetingDataService {
         return meetingRepository.save(meeting);
     }
 
+
+    public List<Meeting> save(List<Meeting> meetings) {
+        return meetingRepository.save(meetings);
+    }
+
     public List<Meeting> retrieveAll() {
         return meetingRepository.findAll();
     }
@@ -48,5 +53,9 @@ public class MeetingDataService {
 
     public Meeting retrieve(Long meetingId) {
         return meetingRepository.findOne(meetingId);
+    }
+
+    public List<Meeting> retrieveAllByStatus(String status) {
+        return meetingRepository.findByStatus(status);
     }
 }
