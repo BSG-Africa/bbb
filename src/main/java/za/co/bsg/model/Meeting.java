@@ -13,67 +13,46 @@ public class Meeting implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
     @Column
     private String meetingId;
-
     @Column
     private String name;
-
     @Column
     private String moderatorPassword;
-
     @Column
     private String attendeePassword;
-
     @ManyToOne
     private User createdBy;
-
     @ManyToOne
     private User moderator;
-
     @Column
     private Date createdDate;
-
     @Column
     private int modifiedBy;
-
     @Column
     private Date modifiedDate;
-
     @Column
     private Date startDate;
-
     @Column
     private Date endDate;
-
     @Column
     private String welcomeMessage;
-
     @Column
     private String agenda;
-
     @Column
     private String defaultPresentationURL;
-
     @Column
     private String logoutURL;
-
     @Column
     private int voiceBridge;
-
     @Column
     private String status;
-
     @Column
     private String moderatorURL;
-
     @Column
     private String inviteURL;
-
     @Transient
     private Map<String, String> meta = new HashMap<String, String>();
-
 
     public Long getId() {
         return id;
