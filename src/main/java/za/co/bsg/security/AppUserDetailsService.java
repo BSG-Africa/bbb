@@ -45,25 +45,34 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        User details = new User();
+        User details;
         final String username = authentication.getName();
         final String password = authentication.getCredentials().toString();
 
         DirContext context = null;
         try {
-            if (utilService.usernameContainsCompanyEmail(username)) {
+            details = this.authenticateUser(username, password);
+            if(details != null){
+                //Logged in successfully on our local db
+                System.out.println("Successfully logged " + username + " on BBB server");
+                return new UsernamePasswordAuthenticationToken(details, password, details.getAuthorities());
+            } else if (utilService.usernameContainsCompanyEmail(username)) {
                 String sidUsername = utilService.getUsernameFromEmail(username);
                 context = this.getActiveDirectoryContext(getPrincipalPrefix() + sidUsername, password);
                 if (context != null) {
-                    System.out.println("Successfully logged  " + username + " on " + getLdapUrl());
-                    if (userRepository.findUserByUsername(username) == null) {
-                        this.createUser(context, sidUsername, username, password);
-                    }
                     details = userRepository.findUserByUsername(username);
-                    System.out.println("Loaded " + details.getName());
+                    if (details == null) {
+                        //First time login
+                        System.out.println("Successfully logged  " + username + " on " + getLdapUrl());
+                        details = this.createUser(context, sidUsername, username, password);
+                    } else{
+                        //Password has changed, update in our db
+                        System.out.println("Password updated on BBB server for "+username);
+                        details.setPassword(utilService.hashPassword(password));
+                        details = userRepository.save(details);
+                    }
+                    return new UsernamePasswordAuthenticationToken(details, password, details.getAuthorities());
                 }
-            } else {
-                details = this.authenticateUser(username, password);
             }
             return new UsernamePasswordAuthenticationToken(details, password, details.getAuthorities());
         } catch (NamingException ex) {
@@ -80,10 +89,10 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         }
     }
 
-    private void createUser(DirContext context, String sidUsername, String username, String password) {
+    private User createUser(DirContext context, String sidUsername, String username, String password) {
         String passwordHashed = utilService.hashPassword(password);
         User details = this.loadUserByUsername(context, sidUsername, username, passwordHashed);
-        userRepository.save(details);
+        return userRepository.save(details);
     }
 
     private User loadUserByUsername(DirContext context, String sidUsername, String username, String password) throws UsernameNotFoundException {
@@ -160,7 +169,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         if (user != null && passwordHash.equals(user.getPassword())) {
             return user;
         }
-        return new User();
+        return null;
     }
 
     private static final Control[] CONTROLS = new Control[]{new FastBindConnectionControl()};

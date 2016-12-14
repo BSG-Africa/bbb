@@ -30,16 +30,14 @@ angular.module('BigBlueButton')
         $scope.goToMeetingAsModerator = function () {
             var meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
 
+            var newTab = $window.open('', '_blank');
             // Create BBB meeting whenever user starts meeting
             $http.post('api/meeting/create', meeting).success(function (res) {
                 //$scope.message = "BBB meeting creation successfull !";
+                newTab.location.href = meeting.moderatorURL;
             }).error(function (error) {
                 $scope.message = error.message;
             });
-
-            // Open new tab for the meeting
-            var newTab = $window.open('', '_blank');
-            newTab.location.href = meeting.moderatorURL;
 
             // Wait 10 seconds then check if meeting is running
             setTimeout(function () {
@@ -51,9 +49,19 @@ angular.module('BigBlueButton')
             }, 10000);
         };
 
-        $scope.goToMeetingAsAttendee = function () {
+        $scope.goToMeetingAsAttendee = function (data) {
+            var meetingId = $scope.meeting[data].meetingId;
+            var name = $scope.user.name;
+            $http.get('invite', {params:{"fullName": name, "meetingId": meetingId}}).success(function (res) {
+                $scope.message = '';
+                $window.location.href = res.inviteURL;
+            }).error(function (error) {
+                $scope.message = error.message;
+            });
+        };
 
-            $window.location.href = $scope.myMeeting[$scope.myMeetingsSelectedRow].inviteURL;
+        var navigateToURL = function (url) {
+            $window.open(url, '_blank');
         };
 
         function getAvailableMeetings () {
