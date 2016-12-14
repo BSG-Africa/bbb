@@ -1,6 +1,5 @@
 package za.co.bsg.config;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -32,15 +31,9 @@ public class SchedulingConfigurationTest {
     @Mock
     private BigBlueButtonAPI bigBlueButtonAPI;
 
-    @Before
-    public void init() {
-        //schedulingConfigService = new SchedulingConfiguration();
-    }
-
     @Test
     public void schedulerWhenMeetingIsNotRunning_ShouldUpdateDatabaseStatus() throws Exception {
         // Set up fixture
-
         Meeting endedMeeting = buildMeeting(121L, "Communications Toolkit", null);
         ArrayList<Meeting> meetings = new ArrayList<Meeting>();
         endedMeeting.setStatus(MeetingStatusEnum.Started.toString());
