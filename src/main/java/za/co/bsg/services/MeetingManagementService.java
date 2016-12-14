@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import za.co.bsg.enums.MeetingStatusEnum;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 import za.co.bsg.services.api.BigBlueButtonAPI;
@@ -83,7 +84,7 @@ public class MeetingManagementService {
     public Meeting startMeeting(Meeting meeting) {
         boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
         if (meetingRunning) {
-            meeting.setStatus("Started");
+            meeting.setStatus(MeetingStatusEnum.Started.toString());
             meetingDataService.save(meeting);
         }
         return meeting;
