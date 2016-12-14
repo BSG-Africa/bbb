@@ -1,6 +1,6 @@
 angular.module('BigBlueButton')
 // Creating the Angular Controller
-    .controller('LoginController', function ($http, $scope, $state, AuthService, $rootScope) {
+    .controller('LoginController', function ($http, $scope, $state, AuthService, $rootScope, $sessionStorage) {
 
         // method for login
         $scope.login = function () {
@@ -18,16 +18,18 @@ angular.module('BigBlueButton')
                 if (res.authenticated) {
                     $scope.message = '';
                     // setting the same header value for all request calling from
-                    // this application
+                    // this application and adding user to session storage for refresh
                     $http.defaults.headers.common['Authorization'] = 'Basic ' + base64Credential;
                     AuthService.user = res;
+                    $sessionStorage.loggedUser = res;
+                    $sessionStorage.loggedAuth = 'Basic ' + base64Credential;
                     $rootScope.$broadcast('LoginSuccessful');
                     $state.go('meeting');
                 } else {
-                    $scope.message = 'Authetication Failed !';
+                    $scope.message = 'Authentication Failed !';
                 }
             }).error(function (error) {
-                $scope.message = 'Authetication Failed !';
+                $scope.message = 'Authentication Failed !';
             });
         };
     });
