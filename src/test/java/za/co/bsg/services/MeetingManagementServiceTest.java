@@ -85,7 +85,7 @@ public class MeetingManagementServiceTest {
     }
 
     @Test
-    public void CreateMeetingShouldPersistMeetingAndReturnResult() throws Exception {
+    public void CreateMeetingWhenMeetingHasNeverBeenAssignedBBBDetails_ShouldPersistMeetingAndReturnResult() throws Exception {
         // Setup fixture
         Meeting meeting = new Meeting();
         User user = new User();
@@ -94,6 +94,33 @@ public class MeetingManagementServiceTest {
         meeting.setName("C1/D1 Induction");
         meeting.setWelcomeMessage("");
 
+        user.setUsername("KapeshiKongolo");
+        user.setPassword("123444");
+
+        // Expectations
+        when(meetingDataService.save(meeting)).thenReturn(meeting);
+        when(utilService.generateMeetingId()).thenReturn("123434");
+        when(userDataService.findUserById(meeting.getCreatedBy().getId())).thenReturn(user);
+        when(bigBlueButtonAPI.createPublicMeeting(meeting, user)).thenReturn("http://localhost/bigbluebutton/");
+        when(bigBlueButtonAPI.getUrl()).thenReturn("http://localhost/bigbluebutton/");
+
+        // Exercise SUT
+        Meeting actualMeeting = meetingManagementService.createMeeting(meeting);
+
+        assertThat(actualMeeting, is(sameBeanAs(meeting)));
+
+    }
+
+    @Test
+    public void CreateMeetingWhenHasAlreadyBeenAssignedBBBDetails_ShouldReturnMeeting() throws Exception {
+        // Setup fixture
+        Meeting meeting = new Meeting();
+        User user = new User();
+        user.setId(11);
+        meeting.setCreatedBy(user);
+        meeting.setName("C1/D1 Induction");
+        meeting.setWelcomeMessage("");
+        meeting.setMeetingId("meetingId12358");
         user.setUsername("KapeshiKongolo");
         user.setPassword("123444");
 
