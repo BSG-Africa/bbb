@@ -33,14 +33,21 @@ public class MeetingManagementService {
 
     public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
         User user = userDataService.findUserById(meeting.getCreatedBy().getId());
-        meeting.setMeetingId(utilService.generateMeetingId());
-        String moderatorURL  = bigBlueButtonAPI.createPublicMeeting(meeting, user);
-        String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "bbb-ui/");
-        String inviteURL = url + "#/invite?meetingID=" + URLEncoder.encode(meeting.getMeetingId(), "UTF-8");
-        meeting.setModeratorURL(moderatorURL);
-        meeting.setInviteURL(inviteURL);
+        if (meeting.getMeetingId() == null) {
+            // Meeting has never been created
+            meeting.setMeetingId(utilService.generateMeetingId());
+            String moderatorURL = bigBlueButtonAPI.createPublicMeeting(meeting, user);
+            String url = bigBlueButtonAPI.getUrl().replace("bigbluebutton/", "bbb-ui/");
+            String inviteURL = url + "#/invite?meetingID=" + URLEncoder.encode(meeting.getMeetingId(), "UTF-8");
+            meeting.setModeratorURL(moderatorURL);
+            meeting.setInviteURL(inviteURL);
 
-        return meetingDataService.save(meeting);
+            return meetingDataService.save(meeting);
+        } else {
+            // Meeting has been created but expired in bbb
+            bigBlueButtonAPI.createPublicMeeting(meeting, user);
+            return meeting;
+        }
     }
 
     public String getInviteURL(String name, String meetingId)  {
@@ -74,8 +81,8 @@ public class MeetingManagementService {
     }
 
     public Meeting startMeeting(Meeting meeting) {
-        boolean isMeetingValid = bigBlueButtonAPI.isMeetingRunning(meeting);
-        if (isMeetingValid) {
+        boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
+        if (meetingRunning) {
             meeting.setStatus("Started");
             meetingDataService.save(meeting);
         }
