@@ -42,7 +42,13 @@ gulp.task('copy-lib-files', function () {
             'node_modules/underscore/underscore.js',
             'node_modules/underscore/underscore.min.js',
             'node_modules/ngstorage/ngStorage.js',
-            'node_modules/ngstorage/ngStorage.min.js'
+            'node_modules/ngstorage/ngStorage.min.js',
+            'node_modules/clipboard/dist/clipboard.js',
+            'node_modules/clipboard/dist/clipboard.min.js',
+            'node_modules/ngclipboard/dist/ngclipboard.js',
+            'node_modules/ngclipboard/dist/ngclipboard.min.js',
+            'node_modules/angular-socialshare/dist/angular-socialshare.js',
+            'node_modules/angular-socialshare/dist/angular-socialshare.min.js'
         ])
         .pipe(gulp.dest('src/main/resources/static/app/lib/'));
 
