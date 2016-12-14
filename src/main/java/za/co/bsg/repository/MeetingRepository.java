@@ -13,4 +13,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     <S extends Meeting> List<S> findByCreatedBy(User user);
 
     <S extends Meeting> List<S> findByModerator(User moderator);
+
+    <S extends Meeting> List<S> findByStatus(String status);
 }
