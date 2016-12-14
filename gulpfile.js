@@ -40,7 +40,9 @@ gulp.task('copy-lib-files', function () {
             'node_modules/angular-strap/dist/angular-strap.tpl.js',
             'node_modules/angular-strap/dist/angular-strap.tpl.min.js',
             'node_modules/underscore/underscore.js',
-            'node_modules/underscore/underscore-min.js'
+            'node_modules/underscore/underscore.min.js',
+            'node_modules/ngstorage/ngStorage.js',
+            'node_modules/ngstorage/ngStorage.min.js'
         ])
         .pipe(gulp.dest('src/main/resources/static/app/lib/'));
 

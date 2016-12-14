@@ -1,5 +1,5 @@
 // Creating angular Application with module name "BigBlueButton"
-angular.module('BigBlueButton', ['ui.router', 'mgcrea.ngStrap'])
+angular.module('BigBlueButton', ['ui.router', 'mgcrea.ngStrap', 'ngStorage'])
 
 // If we implement the basic security in spring boot then the response will
 // contains the header 'WWW-Authenticate: Basic'. So the browser will popup a

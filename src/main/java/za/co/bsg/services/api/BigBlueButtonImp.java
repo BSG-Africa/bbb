@@ -180,7 +180,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return metadata_params;
     }
 
-    protected boolean isMeetingRunning(String meetingID)
+    private boolean isMeetingRunning(String meetingID)
             throws BigBlueButtonException {
         try {
             StringBuilder query = new StringBuilder();
@@ -195,7 +195,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         }
     }
 
-    protected String getCheckSumParameter(String apiCall, String queryString) {
+    private String getCheckSumParameter(String apiCall, String queryString) {
         if (getSalt() != null){
             return "&checksum=" + DigestUtils.sha1Hex(apiCall + queryString + getSalt());
         } else{
@@ -204,7 +204,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
 
     }
 
-    protected String getCheckSumParameter(String s) {
+    private String getCheckSumParameter(String s) {
         String checksum = "";
         try {
             checksum = DigestUtils.sha1Hex(s);
