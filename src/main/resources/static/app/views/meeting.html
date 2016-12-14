@@ -40,12 +40,31 @@
             <button type="button" class="btn btn-default btn-info start pull-right" ng-click="goToMeetingAsModerator()">
                 Start <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
             </button>
-            <button type="button" class="btn btn-default start pull-right" ng-click="shareLink()">
+            <button type="button" class="btn btn-default start pull-right" data-animation="am-flip-x" bs-dropdown aria-haspopup="true" aria-expanded="false">
                 Share <span class="glyphicon glyphicon glyphicon-share"></span>
             </button>
-            <button class="btn" ngclipboard data-clipboard-text={{myMeetingsSelectedRow}}>
-                Copy to clipboard
-            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <a ngclipboard data-clipboard-text={{myMeeting[myMeetingsSelectedRow].inviteURL}}>
+                        <i class="fa fa-files-o"></i> Copy
+                    </a>
+                </li>
+                <li>
+                    <a socialshare socialshare-provider="email" socialshare-trigger="click" socialshare-subject="BSG - Big Blue Button shared link" socialshare-body={{myMeeting[myMeetingsSelectedRow].inviteURL}} socialshare-to="" >
+                        <i class="fa fa-envelope-o"></i> Email
+                    </a>
+                </li>
+                <li>
+                    <a socialshare socialshare socialshare-provider="twitter" socialshare-text="Unlocking Potential > Accelerating Performance @bsgafrica - online meeting link " socialshare-url={{myMeeting[myMeetingsSelectedRow].inviteURL}} socialshare-hashtags="BSG" >
+                        <i class="fa fa-twitter"></i> Twitter
+                    </a>
+                </li>
+                <li>
+                    <a socialshare socialshare-provider="facebook" socialshare-url={{myMeeting[myMeetingsSelectedRow].inviteURL}} >
+                        <i class="fa fa-facebook"></i> Facebook
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

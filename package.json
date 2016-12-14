@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "angular": "1.5.3",
+    "angular-socialshare": "^2.3.3",
     "angular-strap": "2.3.10",
     "angular-ui-router": "0.2.18",
     "bootstrap": "3.3.6",
