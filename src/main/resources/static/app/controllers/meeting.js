@@ -2,6 +2,7 @@ angular.module('BigBlueButton')
     .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window) {
         $scope.user = AuthService.user;
 
+
         $scope.rowHighilited = function (row) {
             $scope.selectedRow = row;
         }
@@ -87,6 +88,18 @@ angular.module('BigBlueButton')
             });
         };
 
+        function getAuthority() {
+            $scope.isAdmin = false;
+
+            for (var i = 0; i < $scope.user.authorities.length; i++) {
+                var auth = $scope.user.authorities[i];
+                if (auth.authority === 'ADMIN') {
+                    $scope.isAdmin = true;
+                }
+            }
+        };
+
        getAvailableMeetings();
         getMyMeetings ();
+        getAuthority();
     });
