@@ -30,12 +30,15 @@ angular.module('BigBlueButton')
         $scope.goToMeetingAsModerator = function () {
             var meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
             var newTab = $window.open('', '_blank');
-            $http.post('api/meeting/start', meeting).success(function (res) {
-                $scope.message = "Meeting start successfull !";
-                newTab.location.href = meeting.moderatorURL;
-            }).error(function (error) {
-                $scope.message = error.message;
-            });
+            newTab.location.href = meeting.moderatorURL;
+
+            setTimeout(function () {
+                $http.post('api/meeting/start', meeting).success(function (res) {
+                    $scope.message = "Meeting start successfull !";
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
+            }, 10000);
         };
 
         $scope.goToMeetingAsAttendee = function () {
