@@ -4,6 +4,7 @@
         <div class="btn-group-vertical btn-group-md">
             <button class="btn btn-default btn-info"
                     ng-repeat="meetup in meeting"
+                    ng-click="goToMeetingAsAttendee($index)"
                     ng-class="{active:$index==selectedRow}"
                     data-ng-click="rowHighilited($index)">
                 <span class="pull-left">{{meetup.name}}: {{meetup.createdBy.name}}</span>

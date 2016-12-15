@@ -14,6 +14,7 @@ import za.co.bsg.model.User;
 import za.co.bsg.services.api.BigBlueButtonAPI;
 import za.co.bsg.util.UtilService;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,9 +53,13 @@ public class MeetingManagementServiceTest {
         // TODO: Tiyani : Integration Test
         //Meeting nonCurrentModeratorMeeting = buildMeeting(2L, "A&D Meeting", "ModeratorName");
         int moderator = 12;
+        List emptyList = new ArrayList<Meeting>();
 
         // Set Expectations
+        when(userDataService.findUserById(user.getId())).thenReturn(user);
         when(meetingDataService.retrieveAllByUserId(user)).thenReturn(singletonList(moderatorMeeting));
+        when(meetingDataService.retrieveAllByModerator(user)).thenReturn(new ArrayList<Meeting>());
+        when(meetingDataService.union(singletonList(moderatorMeeting), emptyList)).thenReturn(singletonList(moderatorMeeting));
         List<Meeting> expectedMeeting = singletonList(moderatorMeeting);
 
         // Exercise SUT
