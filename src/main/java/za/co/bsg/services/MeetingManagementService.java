@@ -51,6 +51,10 @@ public class MeetingManagementService {
         }
     }
 
+    public Meeting editMeeting(Meeting meeting) {
+        return meetingDataService.save(meeting);
+    }
+
     public String getInviteURL(String name, String meetingId)  {
         return bigBlueButtonAPI.getPublicJoinURL(name, meetingId);
     }
