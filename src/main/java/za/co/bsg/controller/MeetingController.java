@@ -57,10 +57,4 @@ public class MeetingController {
     public ResponseEntity<Meeting> deleteMeeting(@PathVariable Long id) {
         return meetingManagementService.deleteMeeting(id);
     }
-
-    @RequestMapping(value = "/meeting/start", method = RequestMethod.POST)
-    public ResponseEntity<Meeting> startMeeting(@RequestBody Meeting meeting) {
-        Meeting updatedMeeting = meetingManagementService.startMeeting(meeting);
-        return new ResponseEntity<Meeting>(updatedMeeting, HttpStatus.OK);
-    }
 }

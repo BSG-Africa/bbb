@@ -41,25 +41,16 @@ angular.module('BigBlueButton')
         $scope.goToMeetingAsModerator = function () {
             var meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
 
+            // Open new tab for the meeting
+            var newTab = $window.open('', '_blank');
+
             // Create BBB meeting whenever user starts meeting
             $http.post('api/meeting/create', meeting).success(function (res) {
-                //$scope.message = "BBB meeting creation successfull !";
+                newTab.location.href = meeting.moderatorURL;
             }).error(function (error) {
                 $scope.message = error.message;
             });
 
-            // Open new tab for the meeting
-            var newTab = $window.open('', '_blank');
-
-            // Wait 2 seconds then check if meeting is running
-            setTimeout(function () {
-                $http.post('api/meeting/start', meeting).success(function (res) {
-                    $scope.message = "Meeting start successfull !";
-                    newTab.location.href = meeting.moderatorURL;
-                }).error(function (error) {
-                    $scope.message = error.message;
-                });
-            }, 2000);
         };
 
         $scope.goToMeetingAsAttendee = function () {
