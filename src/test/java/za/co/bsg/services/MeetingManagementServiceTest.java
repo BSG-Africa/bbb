@@ -65,26 +65,6 @@ public class MeetingManagementServiceTest {
     }
 
     @Test
-    public void startMeetingWhenMeetingIsValid_ShouldUpdateDatabaseWithStatusOfMeeting() {
-        // Setup fixture
-        User user = new User();
-        user.setId(11);
-        Meeting meeting = buildMeeting(12L, "C1/D1 Induction", user);
-        Meeting expectedMeeting = buildMeeting(12L, "C1/D1 Induction", user);
-        expectedMeeting.setStatus("Started");
-
-        // Expectations
-        when(bigBlueButtonAPI.isMeetingRunning(meeting)).thenReturn(true);
-        when(meetingDataService.retrieve(meeting.getId())).thenReturn(meeting);
-//        when(meetingDataService.save(meeting)).thenReturn(meetingUpdated)
-
-        // Exercise SUT
-        Meeting actualMeeting = meetingManagementService.startMeeting(meeting);
-        // Verify Behaviour
-        assertThat(actualMeeting, is(sameBeanAs(expectedMeeting)));
-    }
-
-    @Test
     public void CreateMeetingWhenMeetingHasNeverBeenAssignedBBBDetails_ShouldPersistMeetingAndReturnResult() throws Exception {
         // Setup fixture
         Meeting meeting = new Meeting();
