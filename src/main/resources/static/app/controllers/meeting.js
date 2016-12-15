@@ -72,9 +72,19 @@ angular.module('BigBlueButton')
             }
         };
 
-        $scope.goToMeetingAsAttendee = function () {
+        $scope.goToMeetingAsAttendee = function (data) {
+            var meetingId = $scope.meeting[data].meetingId;
+            var name = $scope.user.name;
+            $http.get('invite', {params:{"fullName": name, "meetingId": meetingId}}).success(function (res) {
+                $scope.message = '';
+                $window.location.href = res.inviteURL;
+            }).error(function (error) {
+                $scope.message = error.message;
+            });
+        };
 
-            $window.location.href = $scope.myMeeting[$scope.myMeetingsSelectedRow].inviteURL;
+        var navigateToURL = function (url) {
+            $window.open(url, '_blank');
         };
 
         function getAvailableMeetings () {
