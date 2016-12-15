@@ -32,7 +32,7 @@ public class SchedulingConfigurationTest {
     private BigBlueButtonAPI bigBlueButtonAPI;
 
     @Test
-    public void schedulerWhenMeetingIsNotRunning_ShouldUpdateDatabaseStatus() throws Exception {
+    public void schedulerForAlreadyStartedMeetingWhenMeetingIsNotRunning_ShouldUpdateDatabaseStatus() throws Exception {
         // Set up fixture
         Meeting endedMeeting = buildMeeting(121L, "Communications Toolkit", null);
         ArrayList<Meeting> meetings = new ArrayList<Meeting>();
@@ -52,6 +52,80 @@ public class SchedulingConfigurationTest {
         // Verify
         verify(meetingDataService).save(expectedMeetings);
         assertEquals(MeetingStatusEnum.Ended.toString(), endedMeeting.getStatus());
+    }
+
+
+    @Test
+    public void schedulerForAlreadyStartedMeetingWhenMeetingIsRunning_ShouldNotUpdateDatabaseStatus() throws Exception {
+        // Set up fixture
+        Meeting endedMeeting = buildMeeting(121L, "Communications Toolkit", null);
+        ArrayList<Meeting> meetings = new ArrayList<Meeting>();
+        endedMeeting.setStatus(MeetingStatusEnum.Started.toString());
+        meetings.add(endedMeeting);
+        ArrayList<Meeting> expectedMeetings = new ArrayList<Meeting>();
+        expectedMeetings.add(endedMeeting);
+
+        // Expectations
+        ArgumentCaptor<Meeting> argument = ArgumentCaptor.forClass(Meeting.class);
+        when(meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Started.toString())).thenReturn(meetings);
+        when(bigBlueButtonAPI.isMeetingRunning(endedMeeting)).thenReturn(true);
+
+        // Exercise SUT
+        schedulingConfigService.scheduler();
+
+        // Verify
+        verify(meetingDataService).save(expectedMeetings);
+        assertEquals(MeetingStatusEnum.Started.toString(), endedMeeting.getStatus());
+    }
+
+
+    @Test
+    public void schedulerForNotStartedMeetingWhenMeetingIsRunning_ShouldUpdateDatabaseStatusToStarted() throws Exception {
+        // Set up fixture
+        Meeting notStartedMeeting = buildMeeting(121L, "Communications Toolkit", null);
+        ArrayList<Meeting> meetings = new ArrayList<Meeting>();
+        notStartedMeeting.setStatus(MeetingStatusEnum.NotStarted.toString());
+        meetings.add(notStartedMeeting);
+        ArrayList<Meeting> expectedMeetings = new ArrayList<Meeting>();
+        expectedMeetings.add(notStartedMeeting);
+
+        // Expectations
+        ArgumentCaptor<Meeting> argument = ArgumentCaptor.forClass(Meeting.class);
+        when(meetingDataService.retrieveAllByStatus(MeetingStatusEnum.NotStarted.toString())).thenReturn(meetings);
+        when(meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Ended.toString())).thenReturn(new ArrayList<Meeting>());
+        when(bigBlueButtonAPI.isMeetingRunning(notStartedMeeting)).thenReturn(true);
+
+        // Exercise SUT
+        schedulingConfigService.scheduler();
+
+        // Verify
+        verify(meetingDataService).save(expectedMeetings);
+        assertEquals(MeetingStatusEnum.Started.toString(), notStartedMeeting.getStatus());
+    }
+
+
+    @Test
+    public void schedulerForEndedMeetingWhenMeetingIsRunning_ShouldUpdateDatabaseStatusToStarted() throws Exception {
+        // Set up fixture
+        Meeting notStartedMeeting = buildMeeting(121L, "Communications Toolkit", null);
+        ArrayList<Meeting> meetings = new ArrayList<Meeting>();
+        notStartedMeeting.setStatus(MeetingStatusEnum.Ended.toString());
+        meetings.add(notStartedMeeting);
+        ArrayList<Meeting> expectedMeetings = new ArrayList<Meeting>();
+        expectedMeetings.add(notStartedMeeting);
+
+        // Expectations
+        ArgumentCaptor<Meeting> argument = ArgumentCaptor.forClass(Meeting.class);
+        when(meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Ended.toString())).thenReturn(meetings);
+        when(meetingDataService.retrieveAllByStatus(MeetingStatusEnum.NotStarted.toString())).thenReturn(new ArrayList<Meeting>());
+        when(bigBlueButtonAPI.isMeetingRunning(notStartedMeeting)).thenReturn(true);
+
+        // Exercise SUT
+        schedulingConfigService.scheduler();
+
+        // Verify
+        verify(meetingDataService).save(expectedMeetings);
+        assertEquals(MeetingStatusEnum.Started.toString(), notStartedMeeting.getStatus());
     }
 
     public Meeting buildMeeting(Long id, String name, User createdBy) {

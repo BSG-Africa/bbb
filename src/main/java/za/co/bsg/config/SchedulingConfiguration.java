@@ -28,6 +28,12 @@ public class SchedulingConfiguration {
     }
 
     private void CheckMeetingStatus() {
+        UpdatedStartedMeetings();
+        UpdatedEndedMeetings();
+
+    }
+
+    private void UpdatedEndedMeetings() {
         List<Meeting> meetings = meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Started.toString());
 
         for (Meeting meeting : meetings) {
@@ -38,6 +44,18 @@ public class SchedulingConfiguration {
         }
 
         List<Meeting> savedMeetings = meetingDataService.save(meetings);
+    }
 
+    private void UpdatedStartedMeetings() {
+        List<Meeting> meetings = meetingDataService.retrieveAllByStatus(MeetingStatusEnum.NotStarted.toString());
+        meetings.addAll(meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Ended.toString()));
+        for (Meeting meeting : meetings) {
+            boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
+            if (meetingRunning) {
+                meeting.setStatus(MeetingStatusEnum.Started.toString());
+            }
+        }
+
+        List<Meeting> savedMeetings = meetingDataService.save(meetings);
     }
 }
