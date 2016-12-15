@@ -4,7 +4,7 @@
     <form ng-submit="createMeeting()">
         <div class="form-group">
             <input type="txt" class="form-control input-lg" ng-model="meeting.name" id="meetingName"
-                   placeholder="Please provide a meeting name">
+                   placeholder="Please provide a meeting name" required>
         </div>
         <div class="form-group">
             <input type="txt" class="form-control input-lg" ng-model="meeting.welcomeMessage" id="meetingWelcomeMessage"
@@ -25,7 +25,8 @@
                bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
                placeholder="Moderator"
                bs-typeahead
-               ng-model-options="{ debounce: 100 }">
+               ng-model-options="{ debounce: 100 }"
+               required>
 
 
         <!--<div>

@@ -1,5 +1,5 @@
 angular.module('BigBlueButton')
-    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope) {
+    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout) {
         $scope.user = AuthService.user;
 
 
@@ -17,40 +17,59 @@ angular.module('BigBlueButton')
 
 
         $scope.editMeeting = function () {
-            $rootScope.$broadcast('EditMeeting');
-            $state.go('edit-meeting/:id', {
-                id: $scope.myMeeting[$scope.myMeetingsSelectedRow].id,
-                allUsers: $scope.allUsers,
-                meeting: $scope.myMeeting[$scope.myMeetingsSelectedRow]
-            });
+            if ($scope.myMeetingsSelectedRow === undefined) {
+                $scope.message = 'Please select a row';
+                $timeout(function () {
+                    $scope.message = undefined;
+                }, 4000);
+            } else {
+                $state.go('edit-meeting/:id', {
+                    id: $scope.myMeeting[$scope.myMeetingsSelectedRow].id,
+                    allUsers: $scope.allUsers,
+                    meeting: $scope.myMeeting[$scope.myMeetingsSelectedRow]
+                });
+            }
         };
 
         $scope.deleteMeeting = function () {
-            var a = $scope.myMeeting[$scope.myMeetingsSelectedRow].id;
-            $http.delete('api/meeting/delete/' + $scope.myMeeting[$scope.myMeetingsSelectedRow].id).success(function (res) {
-                $scope.deleteMessage = "Success!";
-                var current = $state.current;
-                var params = angular.copy($stateParams);
-                $state.transitionTo(current, params, {reload: true, inherit: true, notify: true});
 
-            }).error(function (error) {
-                $scope.deleteMessage = error.message;
-            });
+            if ($scope.myMeetingsSelectedRow === undefined) {
+                $scope.message = 'Please select a row';
+                $timeout(function () {
+                    $scope.message = undefined;
+                }, 4000);
+            } else {
+                $http.delete('api/meeting/delete/' + $scope.myMeeting[$scope.myMeetingsSelectedRow].id).success(function (res) {
+                    $scope.message = "Success!";
+                    var current = $state.current;
+                    var params = angular.copy($stateParams);
+                    $state.transitionTo(current, params, {reload: true, inherit: true, notify: true});
+
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
+            }
         };
 
         $scope.goToMeetingAsModerator = function () {
-            var meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
+            if ($scope.myMeetingsSelectedRow === undefined) {
+                $scope.message = 'Please select a row';
+                $timeout(function () {
+                    $scope.message = undefined;
+                }, 4000);
+            } else {
+                var meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
 
-            // Open new tab for the meeting
-            var newTab = $window.open('', '_blank');
+                // Open new tab for the meeting
+                var newTab = $window.open('', '_blank');
 
-            // Create BBB meeting whenever user starts meeting
-            $http.post('api/meeting/create', meeting).success(function (res) {
-                newTab.location.href = meeting.moderatorURL;
-            }).error(function (error) {
-                $scope.message = error.message;
-            });
-
+                // Create BBB meeting whenever user starts meeting
+                $http.post('api/meeting/create', meeting).success(function (res) {
+                    newTab.location.href = meeting.moderatorURL;
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
+            }
         };
 
         $scope.goToMeetingAsAttendee = function () {
