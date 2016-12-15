@@ -1,5 +1,5 @@
 angular.module('BigBlueButton')
-    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window) {
+    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope) {
         $scope.user = AuthService.user;
 
 
@@ -13,6 +13,16 @@ angular.module('BigBlueButton')
 
         $scope.createMeeting = function () {
             $state.go('create-meeting');
+        };
+
+
+        $scope.editMeeting = function () {
+            $rootScope.$broadcast('EditMeeting');
+            $state.go('edit-meeting/:id', {
+                id: $scope.myMeeting[$scope.myMeetingsSelectedRow].id,
+                allUsers: $scope.allUsers,
+                meeting: $scope.myMeeting[$scope.myMeetingsSelectedRow]
+            });
         };
 
         $scope.deleteMeeting = function () {
@@ -40,16 +50,16 @@ angular.module('BigBlueButton')
 
             // Open new tab for the meeting
             var newTab = $window.open('', '_blank');
-            newTab.location.href = meeting.moderatorURL;
 
-            // Wait 10 seconds then check if meeting is running
+            // Wait 2 seconds then check if meeting is running
             setTimeout(function () {
                 $http.post('api/meeting/start', meeting).success(function (res) {
                     $scope.message = "Meeting start successfull !";
+                    newTab.location.href = meeting.moderatorURL;
                 }).error(function (error) {
                     $scope.message = error.message;
                 });
-            }, 10000);
+            }, 2000);
         };
 
         $scope.goToMeetingAsAttendee = function () {
@@ -91,6 +101,14 @@ angular.module('BigBlueButton')
             }
         };
 
+        function getAllUsers() {
+            $http.get('api/users').success(function (res) {
+                $scope.allUsers = res;
+            }).error(function (error) {
+                $scope.message = error.message;
+            });
+        };
+        getAllUsers();
        getAvailableMeetings();
         getMyMeetings ();
         getAuthority();

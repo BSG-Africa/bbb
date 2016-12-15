@@ -46,6 +46,13 @@ public class MeetingController {
         return new ResponseEntity<Meeting>(persistedMeeting, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/meeting/edit", method = RequestMethod.POST)
+    public ResponseEntity<Meeting> editMeeting(@RequestBody Meeting meeting) {
+        Meeting persistedMeeting = meetingManagementService.editMeeting(meeting);
+        return new ResponseEntity<Meeting>(persistedMeeting, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/meeting/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Meeting> deleteMeeting(@PathVariable Long id) {
         return meetingManagementService.deleteMeeting(id);

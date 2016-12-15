@@ -1,22 +1,35 @@
 angular.module('BigBlueButton')
-    .controller('CreateMeetingController', function ($http, $scope, AuthService, $state) {
-        $scope.createMeeting = function () {
-            $scope.additionalInfo = '';
-            for (var i = 0; i < $scope.additionalInformationElemnt.length; i++) {
-                $scope.additionalInfo = $scope.additionalInfo + $scope.additionalInformationElemnt[i].additionalInformation + ': ' + $scope.additionalInformationElemnt[i].answer + ',';
-            }
-            $scope.user = AuthService.user;
-            $scope.meeting.agenda = $scope.additionalInfo;
-            $scope.meeting.createdBy = $scope.user.principal;
-            //$scope.meeting.moderator = $scope.user.principal;
-            $scope.meeting.status = "Not started";
-            $http.post('api/meeting/create', $scope.meeting).success(function (res) {
+    .controller('CreateMeetingController', function ($http, $scope, AuthService, $state, $stateParams, $rootScope) {
+        if ($stateParams.meeting !== undefined) {
+            $scope.meeting = $stateParams.meeting;
+            $scope.allUsers = $stateParams.allUsers;
+        }
 
-                $scope.message = "Meeting creation successfull !";
-                $state.go('meeting');
-            }).error(function (error) {
-                $scope.message = error.message;
-            });
+        $scope.createMeeting = function () {
+            if ($scope.meeting.id > 0) {
+                $http.post('api/meeting/edit', $scope.meeting).success(function (res) {
+                    $scope.message = "Meeting update successfull !";
+                    $state.go('meeting');
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
+            } else {
+                $scope.additionalInfo = '';
+                for (var i = 0; i < $scope.additionalInformationElemnt.length; i++) {
+                    $scope.additionalInfo = $scope.additionalInfo + $scope.additionalInformationElemnt[i].additionalInformation + ': ' + $scope.additionalInformationElemnt[i].answer + ',';
+                }
+                $scope.user = AuthService.user;
+                $scope.meeting.agenda = $scope.additionalInfo;
+                $scope.meeting.createdBy = $scope.user.principal;
+                $scope.meeting.status = "Not started";
+                $http.post('api/meeting/create', $scope.meeting).success(function (res) {
+
+                    $scope.message = "Meeting creation successfull !";
+                    $state.go('meeting');
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
+            }
         };
 
 
