@@ -32,7 +32,7 @@ public class MeetingManagementService {
     }
 
     public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
-        User user = userDataService.findUserById(meeting.getCreatedBy().getId());
+        User user = userDataService.findUserById(meeting.getModerator().getId());
         if (meeting.getMeetingId() == null) {
             // Meeting has never been created
             meeting.setMeetingId(utilService.generateMeetingId());
