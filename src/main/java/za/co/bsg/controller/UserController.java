@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.model.User;
 import za.co.bsg.repository.UserRepository;
 import za.co.bsg.util.UtilService;
@@ -46,8 +47,16 @@ public class UserController {
             return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
         } else if (appUser.getUsername().equalsIgnoreCase(loggedUsername)) {
             throw new RuntimeException("You cannot delete your account");
-        } else {
-            userRepository.delete(appUser);
+        } else if(appUser.getRole().equalsIgnoreCase(UserRoleEnum.ADMIN.toString())){
+            throw new RuntimeException("You cannot delete an admin account");
+        }
+        else {
+            try {
+                userRepository.delete(appUser);
+            }
+            catch (RuntimeException e){
+                throw new RuntimeException("Delete unsuccessful!");
+            }
             return new ResponseEntity<User>(appUser, HttpStatus.OK);
         }
     }
@@ -69,6 +78,10 @@ public class UserController {
         if (userRepository.findUserByUsername(appUser.getUsername()) != null
                 && userRepository.findUserByUsername(appUser.getUsername()).getId() != appUser.getId()) {
             throw new RuntimeException("Username already exist");
+        }
+        else if (userRepository.findUserByUsername(appUser.getUsername()) != null
+                && userRepository.findUserByUsername(appUser.getUsername()).getId() == appUser.getId()) {
+            appUser.setPassword(userRepository.findUserByUsername(appUser.getUsername()).getPassword());
         }
         return userRepository.save(appUser);
     }
