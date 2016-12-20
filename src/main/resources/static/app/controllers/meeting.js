@@ -2,11 +2,6 @@ angular.module('BigBlueButton')
     .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout) {
         $scope.user = AuthService.user;
 
-
-        $scope.rowHighilited = function (row) {
-            $scope.selectedRow = row;
-        }
-
         $scope.rowHighlighted = function (row) {
             $scope.myMeetingsSelectedRow = row;
         }
@@ -73,14 +68,41 @@ angular.module('BigBlueButton')
         };
 
         $scope.goToMeetingAsAttendee = function (data) {
-            var meetingId = $scope.meeting[data].meetingId;
-            var name = $scope.user.name;
-            $http.get('invite', {params:{"fullName": name, "meetingId": meetingId}}).success(function (res) {
-                $scope.message = '';
-                $window.location.href = res.inviteURL;
-            }).error(function (error) {
-                $scope.message = error.message;
-            });
+            $scope.selectedRow = data;
+            var selectedMeeting = $scope.meeting[data];
+
+            var url = $state.href('loading', {user: $scope.user});
+            var newTab = window.open(url, '_blank');
+
+            $scope.redirectToMeeting(selectedMeeting, newTab);
+        };
+
+
+        $scope.redirectToMeeting = function (selectedMeeting, newTab) {
+            if (selectedMeeting.status === 'Started') {
+                var meetingId = selectedMeeting.meetingId;
+                var name = $scope.user.name;
+                $http.get('invite', {params: {"fullName": name, "meetingId": meetingId}}).success(function (res) {
+                    $scope.message = '';
+                    newTab.location.href = res.inviteURL;
+
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
+            }
+            else {
+                $http.get('api/meeting/retrieve/' + selectedMeeting.id).success(function (res) {
+                    if (selectedMeeting.status !== 'Started') {
+                        $timeout(function () {
+                            $scope.redirectToMeeting(res, newTab);
+                        }, 2000);
+                    }
+
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
+            }
+
         };
 
         var navigateToURL = function (url) {
