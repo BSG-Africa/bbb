@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> userById(@PathVariable Long id) {
         User appUser = userRepository.findOne(id);
         if (appUser == null) {
@@ -37,7 +37,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<User> deleteUser(@PathVariable Long id) {
         User appUser = userRepository.findOne(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -50,11 +50,10 @@ public class UserController {
             userRepository.delete(appUser);
             return new ResponseEntity<User>(appUser, HttpStatus.OK);
         }
-
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    @RequestMapping(value = "/user", method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestBody User appUser) {
         if (userRepository.findUserByUsername(appUser.getUsername()) != null) {
             throw new RuntimeException("Username already exist");
@@ -65,13 +64,12 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/users", method = RequestMethod.PUT)
-    public User updateUser(@RequestBody User appUser) {
+    @RequestMapping(value = "/user", method = RequestMethod.PUT)
+    public User editUser(@RequestBody User appUser) {
         if (userRepository.findUserByUsername(appUser.getUsername()) != null
                 && userRepository.findUserByUsername(appUser.getUsername()).getId() != appUser.getId()) {
             throw new RuntimeException("Username already exist");
         }
         return userRepository.save(appUser);
     }
-
 }
