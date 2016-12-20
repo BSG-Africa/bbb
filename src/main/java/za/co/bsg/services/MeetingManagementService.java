@@ -107,7 +107,7 @@ public class MeetingManagementService {
 
     /**
      * Returns ResponseEntity of Meeting object.
-     * This method attempts to delete a meeting from the data base if it exists,
+     * This method attempts to delete a meeting from the database if it exists,
      * And if the meeting does not exist in the database, it returns an
      * HttpStatus of no content
      *
@@ -124,5 +124,16 @@ public class MeetingManagementService {
         } else {
             return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.OK);
         }
+    }
+
+    /**
+     * Returns a Meeting object.
+     * This method retrieves a meeting from the database,
+     *
+     * @param meetingId a long data type - Which is the Id of the meeting
+     *                  to be retrieved
+     */
+    public Meeting getMeeting(Long meetingId) {
+        return meetingDataService.retrieve(meetingId);
     }
 }
