@@ -38,8 +38,6 @@ public class Meeting implements Serializable {
     @Column
     private String welcomeMessage;
     @Column
-    private String agenda;
-    @Column
     private String defaultPresentationURL;
     @Column
     private String logoutURL;
@@ -168,14 +166,6 @@ public class Meeting implements Serializable {
 
     public void setWelcomeMessage(String welcomeMessage) {
         this.welcomeMessage = welcomeMessage;
-    }
-
-    public String getAgenda() {
-        return agenda;
-    }
-
-    public void setAgenda(String agenda) {
-        this.agenda = agenda;
     }
 
     public String getDefaultPresentationURL() {
