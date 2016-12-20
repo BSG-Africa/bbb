@@ -31,8 +31,19 @@ public class MeetingManagementService {
         this.utilService = utilService;
     }
 
+    /**
+     * Returns a Meeting object that was created.
+     * This method always checks if meeting has been created before
+     * by checking if a meetingId has been assigned to the meeting,
+     * If the meeting hasnt been created before, create a bbb meeting
+     * and then persist to the database. Alternatively it will just
+     * create a bbb meeting again and return the same meeting - This
+     * ensures that all meetings exist on bbb server.
+     *
+     * @param meeting a meeting object created as the front end form is submitted
+     */
     public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
-        User user = userDataService.findUserById(meeting.getCreatedBy().getId());
+        User user = userDataService.findUserById(meeting.getModerator().getId());
         if (meeting.getMeetingId() == null) {
             // Meeting has never been created
             meeting.setMeetingId(utilService.generateMeetingId());
@@ -50,6 +61,13 @@ public class MeetingManagementService {
         }
     }
 
+    /**
+     * Returns a Meeting object that was saved(Updated).
+     * This method takes a meeiting object and updates the database
+     * with the updated
+     *
+     * @param meeting a meeting object to be updated in the database
+     */
     public Meeting editMeeting(Meeting meeting) {
         return meetingDataService.save(meeting);
     }
@@ -58,6 +76,14 @@ public class MeetingManagementService {
         return bigBlueButtonAPI.getPublicJoinURL(name, meetingId);
     }
 
+    /**
+     * Returns a list of Meeting objects.
+     * This method retrieve all meetings in the meeting table and
+     * removes all meetings that are either created by or being
+     * moderated by the supplied in user
+     *
+     * @param userId a long data type - Expected to be current logged in user
+     */
     public List<Meeting> getAllMeetings(long userId) {
         List<Meeting> allMeetings = meetingDataService.retrieveAll();
         List<Meeting> myMeetings = this.getMeetingsByUser(userId);
@@ -65,6 +91,13 @@ public class MeetingManagementService {
         return allMeetings;
     }
 
+    /**
+     * Returns a list of Meeting objects.
+     * This method retrieve all meetings in the meeting table that
+     * are either created by or being moderated by the supplied in user
+     *
+     * @param userId a long data type - Expected to be current logged in user
+     */
     public List<Meeting> getMeetingsByUser(long userId) {
         User user = userDataService.findUserById(userId);
         List<Meeting> creatorMeetings = meetingDataService.retrieveAllByUserId(user);
@@ -72,6 +105,15 @@ public class MeetingManagementService {
         return meetingDataService.union(creatorMeetings, moderatorMeetings);
     }
 
+    /**
+     * Returns ResponseEntity of Meeting object.
+     * This method attempts to delete a meeting from the data base if it exists,
+     * And if the meeting does not exist in the database, it returns an
+     * HttpStatus of no content
+     *
+     * @param meetingId a long data type - Which is the Id of the meeting
+     *                  to be deleted
+     */
     public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {
         Meeting meetingToDelete = meetingDataService.retrieve(meetingId);
         meetingDataService.delete(meetingId);
