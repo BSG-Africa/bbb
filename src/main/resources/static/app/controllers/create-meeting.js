@@ -30,7 +30,9 @@ angular.module('BigBlueButton')
         $scope.getUsersBySearchTerm = function (searchTerm) {
             if (searchTerm !== '' && typeof searchTerm === 'string') {
                 var query = searchTerm.toLowerCase(),
-                    emp = $scope.allUsers,
+                    emp = $scope.allUsers.filter(function(user){
+                        return (user.role == 'ADMIN')
+                    }),
                     employees = $.parseJSON(JSON.stringify(emp));
 
                 var result = _.filter(employees, function (i) {
