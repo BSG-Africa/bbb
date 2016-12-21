@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.model.User;
 import za.co.bsg.repository.UserRepository;
 import za.co.bsg.util.UtilService;
@@ -27,7 +28,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> userById(@PathVariable Long id) {
         User appUser = userRepository.findOne(id);
         if (appUser == null) {
@@ -37,7 +38,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<User> deleteUser(@PathVariable Long id) {
         User appUser = userRepository.findOne(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -46,15 +47,22 @@ public class UserController {
             return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
         } else if (appUser.getUsername().equalsIgnoreCase(loggedUsername)) {
             throw new RuntimeException("You cannot delete your account");
-        } else {
-            userRepository.delete(appUser);
+        } else if(appUser.getRole().equalsIgnoreCase(UserRoleEnum.ADMIN.toString())){
+            throw new RuntimeException("You cannot delete an admin account");
+        }
+        else {
+            try {
+                userRepository.delete(appUser);
+            }
+            catch (RuntimeException e){
+                throw new RuntimeException("Delete unsuccessful!");
+            }
             return new ResponseEntity<User>(appUser, HttpStatus.OK);
         }
-
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    @RequestMapping(value = "/user", method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestBody User appUser) {
         if (userRepository.findUserByUsername(appUser.getUsername()) != null) {
             throw new RuntimeException("Username already exist");
@@ -65,13 +73,16 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/users", method = RequestMethod.PUT)
-    public User updateUser(@RequestBody User appUser) {
+    @RequestMapping(value = "/user", method = RequestMethod.PUT)
+    public User editUser(@RequestBody User appUser) {
         if (userRepository.findUserByUsername(appUser.getUsername()) != null
                 && userRepository.findUserByUsername(appUser.getUsername()).getId() != appUser.getId()) {
             throw new RuntimeException("Username already exist");
         }
+        else if (userRepository.findUserByUsername(appUser.getUsername()) != null
+                && userRepository.findUserByUsername(appUser.getUsername()).getId() == appUser.getId()) {
+            appUser.setPassword(userRepository.findUserByUsername(appUser.getUsername()).getPassword());
+        }
         return userRepository.save(appUser);
     }
-
 }

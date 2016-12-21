@@ -24,20 +24,10 @@
 
                         <div class="form-group"
                              ng-class="{ 'has-error': userForm.username.$invalid && userForm.username.$dirty }">
-                            <label for="role">Role:</label> <select required
-                                                                    class="form-control" ng-model="appUser.role"
-                                                                    id="role"
-                                                                    name="role">
-                            <option value="ADMIN">Administrator</option>
-                            <option value="USER">User</option>
-                        </select>
-                        </div>
-
-                        <div class="form-group"
-                             ng-class="{ 'has-error': userForm.password.$invalid && userForm.password.$dirty }">
-                            <label for="pwd">Password:</label> <input type="password"
-                                                                      required class="form-control" id="pwd"
-                                                                      ng-model="appUser.password" name="password">
+                            <label for="role">Role:</label> <input type="text"
+                                                                   required class="form-control"
+                                                                   ng-model="appUser.role"
+                                                                   id="role" name="role" disabled>
                         </div>
                         <button type="submit" class="btn btn-default"
                                 ng-disabled="userForm.$invalid">{{buttonText}}
@@ -53,10 +43,6 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 Users
-                <button type="button" class="btn btn-default btn-sm"
-                        ng-click="initAddUser()">
-                    <span class="glyphicon glyphicon-plus"></span> New User
-                </button>
             </div>
             <div class="panel-body">
 
@@ -68,8 +54,8 @@
                         <th>Name</th>
                         <th>Username</th>
                         <th>Role</th>
-                        <th></th>
-                        <th></th>
+                        <th>Edit</th>
+                        <th>Delete</th>
                     </tr>
                     </thead>
                     <tbody>

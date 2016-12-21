@@ -111,7 +111,7 @@ angular.module('BigBlueButton')
 
         function getAvailableMeetings () {
             var userId = $scope.user.principal.id;
-            $http.get('api/availableMeetings/' + userId).success(function (res) {
+            $http.get('api/meeting/available/' + userId).success(function (res) {
                 $scope.meeting = res;
                 $scope.message = '';
 
@@ -123,7 +123,7 @@ angular.module('BigBlueButton')
         function getMyMeetings () {
             var userId = $scope.user.principal.id;
 
-            $http.get('api/myMeetings/' + userId).success(function (res) {
+            $http.get('api/meeting/' + userId).success(function (res) {
                 $scope.myMeeting = res;
                 $scope.message = '';
 
@@ -150,8 +150,9 @@ angular.module('BigBlueButton')
                 $scope.message = error.message;
             });
         };
+
         getAllUsers();
-       getAvailableMeetings();
+        getAvailableMeetings();
         getMyMeetings ();
         getAuthority();
     });

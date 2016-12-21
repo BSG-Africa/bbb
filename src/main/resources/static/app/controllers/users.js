@@ -3,6 +3,7 @@ angular.module('BigBlueButton')
     .controller('UsersController', function ($http, $scope, AuthService) {
         var edit = false;
         $scope.buttonText = 'Create';
+
         var init = function () {
             $http.get('api/users').success(function (res) {
                 $scope.users = res;
@@ -29,8 +30,9 @@ angular.module('BigBlueButton')
             $scope.message = '';
             $scope.buttonText = 'Create';
         };
+
         $scope.deleteUser = function (appUser) {
-            $http.delete('api/users/' + appUser.id).success(function (res) {
+            $http.delete('api/user/' + appUser.id).success(function (res) {
                 $scope.deleteMessage = "Success!";
                 init();
             }).error(function (error) {
@@ -38,18 +40,18 @@ angular.module('BigBlueButton')
             });
         };
         var editUser = function () {
-            $http.put('api/users', $scope.appUser).success(function (res) {
+            $http.put('api/user', $scope.appUser).success(function (res) {
                 $scope.appUser = null;
                 $scope.confirmPassword = null;
                 $scope.userForm.$setPristine();
-                $scope.message = "Editting Success";
+                $scope.message = "Editing Success";
                 init();
             }).error(function (error) {
                 $scope.message = error.message;
             });
         };
-        var addUser = function () {
-            $http.post('api/users', $scope.appUser).success(function (res) {
+        var createUser = function () {
+            $http.post('api/user', $scope.appUser).success(function (res) {
                 $scope.appUser = null;
                 $scope.confirmPassword = null;
                 $scope.userForm.$setPristine();
@@ -63,9 +65,8 @@ angular.module('BigBlueButton')
             if (edit) {
                 editUser();
             } else {
-                addUser();
+                createUser();
             }
         };
         init();
-
     });
