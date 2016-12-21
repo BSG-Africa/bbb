@@ -36,6 +36,15 @@ angular.module('BigBlueButton').config(function ($stateProvider, $urlRouterProvi
                 controller: 'MeetingController'
             }
         }
+    }).state('loadingForNonUser', {
+        parent: 'nav',
+        url: '/loading-meeting-non-user',
+        views: {
+            'content@': {
+                templateUrl: 'app/views/loading.html',
+                controller: 'InviteController'
+            }
+        }
     }).state('create-meeting', {
         parent: 'meeting',
         url: '/meeting/create',

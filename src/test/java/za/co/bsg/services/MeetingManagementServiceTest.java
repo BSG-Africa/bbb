@@ -22,6 +22,8 @@ import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -169,6 +171,24 @@ public class MeetingManagementServiceTest {
         ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting((long) meetingId);
 
         assertThat(actualMeetings, is(sameBeanAs(expectedMeeting)));
+    }
+
+
+
+    @Test
+    public void getMeetingStatusShouldReturnMeetingStatusFromBBBApi() throws Exception {
+        // Setup fixture
+        String meetingId = "dfe32fgdf";
+
+        // Expectations
+        when(bigBlueButtonAPI.isMeetingRunning(meetingId)).thenReturn(true);
+
+        // Exercise SUT
+        boolean actualMeetingStatus = meetingManagementService.isBBBMeetingRunning(meetingId);
+
+        verify(bigBlueButtonAPI, times(1)).isMeetingRunning(meetingId);
+        assertThat(actualMeetingStatus, is(sameBeanAs(true)));
+
     }
 
 

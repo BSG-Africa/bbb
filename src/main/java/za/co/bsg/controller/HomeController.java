@@ -5,11 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import za.co.bsg.dto.MeetingInvite;
+import za.co.bsg.enums.MeetingStatusEnum;
 import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.repository.UserRepository;
 import za.co.bsg.model.User;
 import za.co.bsg.services.MeetingManagementService;
+import za.co.bsg.services.api.exception.BigBlueButtonException;
 import za.co.bsg.util.UtilService;
 import za.co.bsg.util.UtilServiceImp;
 
@@ -42,10 +44,18 @@ public class HomeController {
     @RequestMapping(value = "/invite", method = RequestMethod.GET)
     public @ResponseBody MeetingInvite joinInvite(@RequestParam String fullName, @RequestParam String meetingId) {
         String url = meetingManagementService.getInviteURL(fullName, meetingId);
+        String meetingStatus = meetingManagementService.getMeetingByMeetingId(meetingId).getStatus();
         MeetingInvite invite = new MeetingInvite();
         invite.setInviteURL(url);
         invite.setFullName(fullName);
+        invite.setMeetingStatus(meetingStatus);
+
         return invite;
+    }
+
+    @RequestMapping(value = "/invite/isBBBMeetingRunning", method = RequestMethod.GET)
+    public @ResponseBody boolean getMeetingStatus(@RequestParam String meetingId) throws BigBlueButtonException {
+        return meetingManagementService.isBBBMeetingRunning(meetingId);
     }
 
     @RequestMapping("/user")

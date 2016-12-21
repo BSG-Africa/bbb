@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 import za.co.bsg.services.api.BigBlueButtonAPI;
+import za.co.bsg.services.api.exception.BigBlueButtonException;
 import za.co.bsg.util.UtilService;
 
 import java.io.UnsupportedEncodingException;
@@ -135,5 +136,27 @@ public class MeetingManagementService {
      */
     public Meeting getMeeting(Long meetingId) {
         return meetingDataService.retrieve(meetingId);
+    }
+
+    /**
+     * Returns a Meeting object.
+     * This method retrieves a meeting from the database,
+     *
+     * @param meetingId a String object- Which is the bbb meetingId of the meeting
+     *                  to be retrieved
+     */
+    public Meeting getMeetingByMeetingId(String meetingId) {
+        return meetingDataService.retrieveByMeetingId(meetingId);
+    }
+
+    /**
+     * Returns a boolean.
+     * This method retrieves the meeting status through the bbb api ,
+     *
+     * @param meetingId a String object- Which is the bbb meetingId of the meeting
+     *                  to be retrieved
+     */
+    public boolean isBBBMeetingRunning(String meetingId) throws BigBlueButtonException {
+        return bigBlueButtonAPI.isMeetingRunning(meetingId);
     }
 }
