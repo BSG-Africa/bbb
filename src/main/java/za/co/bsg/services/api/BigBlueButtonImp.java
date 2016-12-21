@@ -180,7 +180,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return metadata_params;
     }
 
-    private boolean isMeetingRunning(String meetingID)
+    public boolean isMeetingRunning(String meetingID)
             throws BigBlueButtonException {
         try {
             StringBuilder query = new StringBuilder();
