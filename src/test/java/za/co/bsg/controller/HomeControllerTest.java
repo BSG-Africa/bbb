@@ -30,30 +30,4 @@ public class HomeControllerTest extends TestCase {
     private MeetingManagementService meetingManagementService;
     private MockMvc mvc;
 
-    @Test
-    public void getMeetingStatus() throws Exception {
-        // Setup Fixtures
-        String meetingId = "efgv34efgv";
-        this.mvc = MockMvcBuilders.standaloneSetup(new HomeController()).build();
-
-        // Setup Expectation
-        when(this.meetingManagementService.isBBBMeetingRunning(meetingId)).thenReturn(true);
-
-        // Exercise SUT
-        this.mvc.perform(get("/invite/retrieveMeetingStatus/"+meetingId))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$", is("true")));
-
-        // Verify
-        verify(meetingManagementService, times(1)).isBBBMeetingRunning(meetingId);
-        verifyNoMoreInteractions(meetingManagementService);
-    }
-
-
-
-    public void testGetMeetingStatus() throws Exception {
-
-    }
 }

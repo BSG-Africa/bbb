@@ -53,11 +53,6 @@ public class HomeController {
         return invite;
     }
 
-    @RequestMapping(value = "/invite/isBBBMeetingRunning", method = RequestMethod.GET)
-    public @ResponseBody boolean getMeetingStatus(@RequestParam String meetingId) throws BigBlueButtonException {
-        return meetingManagementService.isBBBMeetingRunning(meetingId);
-    }
-
     @RequestMapping("/user")
     public Principal user(Principal principal) {
         return principal;
