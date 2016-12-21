@@ -7,7 +7,6 @@ import za.co.bsg.model.User;
 
 import java.util.List;
 
-@Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
     <S extends Meeting> List<S> findByCreatedBy(User user);
