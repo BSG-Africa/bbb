@@ -11,14 +11,9 @@
                    placeholder="Please provide a welcome Message">
         </div>
         <div class="form-group hidden">
-            <input type="txt" class="form-control input-lg" ng-model="meeting.agenda" id="meetingAgenda"
-                   placeholder="Please provide a name">
-        </div>
-        <div class="form-group hidden">
             <input type="txt" class="form-control input-lg" ng-model="meeting.voiceBridge" id="voiceBridge"
                    placeholder="Please provide a name">
         </div>
-
         <input type="text"
                class="form-control"
                ng-model="meeting.moderator"
@@ -27,40 +22,6 @@
                bs-typeahead
                ng-model-options="{ debounce: 100 }"
                required>
-
-
-        <!--<div>
-            <div>Additional Information</div>
-            <ul>
-                <li ng-repeat="elemnt in additionalInformationElemnt">
-                    <div>
-                        <div id={{elemnt.id}} style="display:inline">
-                                            <span ng-model="elemnt.additionalInformation" ng-hide="editorEnabled"
-                                                  ng-click="editorEnabled=true">
-                                                {{elemnt.additionalInformation}}
-                                            </span>
-
-                            <div>
-                                <input ng-model="elemnt.additionalInformation" ng-show="editorEnabled">
-                            </div>
-                            <div style="display:inline">
-                                            <span>
-                                                <input type="text" ng-model="elemnt.answer" placeholder="Answer"
-                                                       required/>
-                                            </span>
-                            </div>
-                                        <span ng-hide="elemnt.length == 1">
-                                            <a href ng-click="additionalInformationElemnt.splice($index, 1)">Remove</a>
-                                        </span>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <a href ng-click="newItem($event)">New Additional Information</a>
-                </li>
-            </ul>
-        </div>-->
-
         <button type="submit" class="btn btn-default btn-info btn-lg">Submit</button>
         <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
     </form>
