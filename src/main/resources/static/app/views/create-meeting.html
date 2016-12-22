@@ -1,7 +1,7 @@
 <h3>Meeting Details</h3>
 
 <div class="bsg-form register">
-    <form ng-submit="createMeeting()">
+    <form name="createForm" ng-submit="createMeeting()">
         <div class="form-group">
             <input type="txt" class="form-control input-lg" ng-model="meeting.name" id="meetingName"
                    placeholder="Please provide a meeting name" required>
@@ -10,19 +10,17 @@
             <input type="txt" class="form-control input-lg" ng-model="meeting.welcomeMessage" id="meetingWelcomeMessage"
                    placeholder="Please provide a welcome Message">
         </div>
-        <div class="form-group hidden">
-            <input type="txt" class="form-control input-lg" ng-model="meeting.voiceBridge" id="voiceBridge"
-                   placeholder="Please provide a name">
+        <div class="form-group">
+            <input type="text"
+                   class="form-control input-lg"
+                   ng-model="meeting.moderator"
+                   bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
+                   placeholder="Moderator name"
+                   bs-typeahead
+                   ng-model-options="{ debounce: 100 }"
+                   required>
         </div>
-        <input type="text"
-               class="form-control"
-               ng-model="meeting.moderator"
-               bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
-               placeholder="Moderator"
-               bs-typeahead
-               ng-model-options="{ debounce: 100 }"
-               required>
-        <button type="submit" class="btn btn-default btn-info btn-lg">Submit</button>
-        <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
+        <button type="submit" class="btn btn-default btn-info btn-lg" ng-disabled="createForm.$invalid">Submit</button>
+        <div class="alert alert-danger margin-top-5" ng-show="message">{{message}}</div>
     </form>
 </div>
