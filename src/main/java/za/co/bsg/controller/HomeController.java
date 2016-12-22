@@ -6,12 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import za.co.bsg.dto.MeetingInvite;
 import za.co.bsg.enums.UserRoleEnum;
-import za.co.bsg.model.Meeting;
 import za.co.bsg.repository.UserRepository;
 import za.co.bsg.model.User;
 import za.co.bsg.services.MeetingManagementService;
 import za.co.bsg.util.UtilService;
-import za.co.bsg.util.UtilServiceImp;
 
 import java.security.Principal;
 
