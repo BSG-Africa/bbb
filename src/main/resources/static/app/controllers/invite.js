@@ -1,8 +1,7 @@
 angular.module('BigBlueButton')
     .controller('InviteController', function ($http, $scope, AuthService, $state, $stateParams, $location, $window, $timeout) {
         $scope.user = AuthService.user;
-
-        $scope.name = '';
+        $scope.name = $stateParams.fullName;
         $scope.meetingParam = $location.search().meetingID;
 
         $scope.submit = function () {
@@ -11,10 +10,7 @@ angular.module('BigBlueButton')
                 if (res.meetingStatus === 'Started') {
                     navigateToURL(res.inviteURL);
                 }else{
-                    var tempUser = {principal : {name : res.fullName}};
-                    console.log(tempUser);
-                    $state.go('loading-invite', {user: tempUser});
-                    $scope.user = tempUser;
+                    $state.go('loading-invite', {fullName: $scope.name});
                     $scope.redirectToMeeting(res, res.inviteURL);
                 }
             }).error(function (error) {
