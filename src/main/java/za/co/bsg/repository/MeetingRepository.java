@@ -17,4 +17,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     <S extends Meeting> List<S> findByStatus(String status);
 
     <S extends Meeting> List<S> findByMeetingId(String meetingId);
+
+    <S extends Meeting> List<S> findByStatusNot(String status);
 }

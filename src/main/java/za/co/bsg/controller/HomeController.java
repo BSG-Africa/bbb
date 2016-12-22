@@ -44,11 +44,12 @@ public class HomeController {
     @RequestMapping(value = "/invite", method = RequestMethod.GET)
     public @ResponseBody MeetingInvite joinInvite(@RequestParam String fullName, @RequestParam String meetingId) {
         String url = meetingManagementService.getInviteURL(fullName, meetingId);
-        String meetingStatus = meetingManagementService.getMeetingByMeetingId(meetingId).getStatus();
+        Meeting meeting = meetingManagementService.getMeetingByMeetingId(meetingId);
         MeetingInvite invite = new MeetingInvite();
         invite.setInviteURL(url);
         invite.setFullName(fullName);
-        invite.setMeetingStatus(meetingStatus);
+        invite.setMeetingStatus(meeting.getStatus());
+        invite.setMeetingName(meeting.getName());
 
         return invite;
     }

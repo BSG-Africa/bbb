@@ -1,7 +1,9 @@
 angular.module('BigBlueButton')
-    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout) {
+    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout, $location) {
         $scope.user = AuthService.user;
         $scope.name = $scope.user.principal.name;
+        $scope.meetingName = $stateParams.meetingName;
+
 
         $scope.rowHighlighted = function (row) {
             $scope.myMeetingsSelectedRow = row;
@@ -71,8 +73,9 @@ angular.module('BigBlueButton')
         $scope.goToMeetingAsAttendee = function (data) {
             $scope.selectedRow = data;
             var selectedMeeting = $scope.meeting[data];
+            $scope.meetingName = selectedMeeting.name;
 
-            var url = $state.href('loading-meeting');
+            var url = $state.href('loading-meeting', {meetingName: $scope.meetingName});
             var newTab = window.open(url, '_blank');
 
             $scope.redirectToMeeting(selectedMeeting, newTab);
@@ -95,7 +98,7 @@ angular.module('BigBlueButton')
                     if (selectedMeeting.status !== 'Started') {
                         $timeout(function () {
                             $scope.redirectToMeeting(res, newTab);
-                        }, 2000);
+                        }, 4000);
                     }
 
                 }).error(function (error) {

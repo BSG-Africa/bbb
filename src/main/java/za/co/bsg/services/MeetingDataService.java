@@ -62,4 +62,8 @@ public class MeetingDataService {
     public List<Meeting> retrieveAllByStatus(String status) {
         return meetingRepository.findByStatus(status);
     }
+
+    public List<Meeting> retrieveAllExcludeStatus(String status) {
+        return meetingRepository.findByStatusNot(status);
+    }
 }
