@@ -3,7 +3,7 @@
 <div class="bsg-form invite">
     <form ng-submit="submit()" name="invite" novalidate>
         <div class="form-group">
-            <input type="txt" class="form-control input-lg" ng-model="name" id="meetingName" placeholder="Please provide your name">
+            <input type="txt" maxlength="25" class="form-control input-lg" ng-model="name" id="meetingName" placeholder="Please provide your name">
         </div>
         <button type="submit" class="btn btn-default btn-info btn-lg">Join</button>
         <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>

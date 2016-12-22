@@ -3,12 +3,12 @@
 <div class="bsg-form register">
     <form name="createForm" ng-submit="createMeeting()">
         <div class="form-group">
-            <input type="txt" class="form-control input-lg" ng-model="meeting.name" id="meetingName"
-                   placeholder="Please provide a meeting name" required>
+            <input type="txt" maxlength="30" class="form-control input-lg" ng-model="meeting.name" id="meetingName"
+                   placeholder="Please provide a Meeting name" required>
         </div>
         <div class="form-group">
-            <input type="txt" class="form-control input-lg" ng-model="meeting.welcomeMessage" id="meetingWelcomeMessage"
-                   placeholder="Please provide a welcome Message">
+            <input type="txt"  maxlength="60" class="form-control input-lg" ng-model="meeting.welcomeMessage" id="meetingWelcomeMessage"
+                   placeholder="Please provide a Welcome Message">
         </div>
         <div class="form-group">
             <input type="text"

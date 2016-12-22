@@ -21,7 +21,7 @@ public class SchedulingConfiguration {
     @Autowired
     BigBlueButtonAPI bigBlueButtonAPI;
 
-    @Scheduled(cron = "0/30 * * * * ?") // Run every 30 seconds
+    @Scheduled(cron = "0/20 * * * * ?") // Run every 20 seconds
     public void scheduler() {
         System.out.print("Big Blue Button Health Scheduling at " + new Date() + ": ");
         CheckMeetingStatus();
