@@ -11,11 +11,10 @@ angular.module('BigBlueButton')
                 if (res.meetingStatus === 'Started') {
                     navigateToURL(res.inviteURL);
                 }else{
-                    console.log(res);
                     var tempUser = {principal : {name : res.fullName}};
-                    $state.go('loadingForNonUser', {user: tempUser});
+                    console.log(tempUser);
+                    $state.go('loading-invite', {user: tempUser});
                     $scope.user = tempUser;
-                    console.log($scope.user.principal.name);
                     $scope.redirectToMeeting(res, res.inviteURL);
                 }
             }).error(function (error) {
@@ -23,16 +22,10 @@ angular.module('BigBlueButton')
             });
         };
 
-        var navigateToURL = function (joinURL) {
-            $window.location.href = joinURL;
-        };
-
-        $scope.redirectToMeeting = function (meetingInvite, newTab, joinURL) {
+        $scope.redirectToMeeting = function (meetingInvite, joinURL) {
             if (meetingInvite.meetingStatus === 'Started') {
                 navigateToURL(meetingInvite.inviteURL);
             }else{
-                console.log(meetingInvite);
-                console.log(meetingInvite);
                 $http.get('invite', {params:{"fullName": $scope.name, "meetingId": $scope.meetingParam}}).success(function (res) {
                     $scope.message = '';
                     $timeout(function () {
@@ -44,6 +37,10 @@ angular.module('BigBlueButton')
 
             }
 
+        };
+
+        var navigateToURL = function (joinURL) {
+            $window.location.href = joinURL;
         };
 
     });

@@ -19,7 +19,7 @@ angular.module('BigBlueButton', ['ui.router', 'mgcrea.ngStrap', 'ngStorage', 'ng
             if (!AuthService.user) {
                 // To avoiding the infinite looping of state change we have to add a
                 // if condition.
-                if (toState.name != 'login' && toState.name != 'register' && toState.name != 'invite' && toState.name != 'loadingForNonUser') {
+                if (toState.name != 'login' && toState.name != 'register' && toState.name != 'invite' && toState.name != 'loading-invite') {
                     event.preventDefault();
                     $state.go('login');
                 }

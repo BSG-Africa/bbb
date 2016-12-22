@@ -27,7 +27,7 @@ angular.module('BigBlueButton').config(function ($stateProvider, $urlRouterProvi
                 controller: 'MeetingController'
             }
         }
-    }).state('loading', {
+    }).state('loading-meeting', {
         parent: 'nav',
         url: '/loading-meeting',
         views: {
@@ -36,9 +36,9 @@ angular.module('BigBlueButton').config(function ($stateProvider, $urlRouterProvi
                 controller: 'MeetingController'
             }
         }
-    }).state('loadingForNonUser', {
+    }).state('loading-invite', {
         parent: 'nav',
-        url: '/loading-meeting-non-user',
+        url: '/loading-invite',
         views: {
             'content@': {
                 templateUrl: 'app/views/loading.html',
