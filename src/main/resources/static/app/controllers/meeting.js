@@ -112,6 +112,10 @@ angular.module('BigBlueButton')
             var userId = $scope.user.principal.id;
             $http.get('api/meeting/available/' + userId).success(function (res) {
                 $scope.meeting = res;
+
+                if ($scope.meeting === undefined || $scope.meeting.length == 0) {
+                    $scope.isMeetingEmpty = true;
+                }
                 $scope.message = '';
 
             }).error(function (error) {

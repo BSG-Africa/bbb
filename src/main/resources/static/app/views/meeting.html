@@ -11,6 +11,9 @@
                 <span class="pull-right">{{meetup.status}}</span>
             </button>
         </div>
+        <div class="well well-sm" ng-if="isMeetingEmpty" align="center">
+            <i>No available meetings.</i>
+        </div>
     </div>
 
     <div class="col-md-8 col-md-offset-2 your-meetings" ng-if="isAdmin">
