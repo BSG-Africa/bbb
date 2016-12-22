@@ -71,7 +71,7 @@ angular.module('BigBlueButton')
             $scope.selectedRow = data;
             var selectedMeeting = $scope.meeting[data];
 
-            var url = $state.href('loading', {user: $scope.user});
+            var url = $state.href('loading-meeting', {user: $scope.user});
             var newTab = window.open(url, '_blank');
 
             $scope.redirectToMeeting(selectedMeeting, newTab);
@@ -103,10 +103,6 @@ angular.module('BigBlueButton')
                 });
             }
 
-        };
-
-        var navigateToURL = function (url) {
-            $window.open(url, '_blank');
         };
 
         function getAvailableMeetings () {
