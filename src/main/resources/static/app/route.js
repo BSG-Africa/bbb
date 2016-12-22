@@ -44,6 +44,9 @@ angular.module('BigBlueButton').config(function ($stateProvider, $urlRouterProvi
                 templateUrl: 'app/views/loading.html',
                 controller: 'InviteController'
             }
+        },
+        params:{
+            'fullName': ''
         }
     }).state('create-meeting', {
         parent: 'meeting',
