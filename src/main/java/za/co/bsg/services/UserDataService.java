@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import za.co.bsg.model.User;
 import za.co.bsg.repository.UserRepository;
 
-
 @Service
 public class UserDataService {
 

@@ -125,7 +125,7 @@ public class MeetingManagementServiceTest {
     }
 
     @Test
-    public void DeleteMeetingWhenMeetingIsNotDeletedShouldReturnNoContent() throws Exception {
+    public void DeleteMeetingWhenMeetingExists_ShouldReturnNoContent() throws Exception {
         // Setup fixture
         long meetingId = 101;
         Meeting meeting = new Meeting();
@@ -133,7 +133,22 @@ public class MeetingManagementServiceTest {
 
         // Expectations
         when(meetingDataService.retrieve(meetingId)).thenReturn(meeting);
-        ResponseEntity<Meeting> expectedMeeting = new ResponseEntity<Meeting>(meeting, HttpStatus.NO_CONTENT);
+        ResponseEntity<Meeting> expectedMeeting = new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
+
+        // Exercise SUT
+        ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting(meetingId);
+
+        assertThat(actualMeetings, is(sameBeanAs(expectedMeeting)));
+    }
+
+    @Test
+    public void DeleteMeetingWhenMeetingDoesNotShouldReturnNoContent() throws Exception {
+        // Setup fixture
+        long meetingId = 101;
+
+        // Expectations
+        when(meetingDataService.retrieve(meetingId)).thenReturn(null);
+        ResponseEntity<Meeting> expectedMeeting = new ResponseEntity<Meeting>(HttpStatus.NO_CONTENT);
         // Exercise SUT
         ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting(meetingId);
 
