@@ -21,9 +21,9 @@ public class SchedulingConfiguration {
     @Autowired
     BigBlueButtonAPI bigBlueButtonAPI;
 
-    @Scheduled(cron = "0/60 * * * * ?") // Run every 30 seconds
+    @Scheduled(cron = "0/30 * * * * ?") // Run every 30 seconds
     public void scheduler() {
-        System.out.println("Big Blue Button Health Scheduling  " + new Date());
+        System.out.print("Big Blue Button Health Scheduling at " + new Date() + ": ");
         CheckMeetingStatus();
     }
 
@@ -31,19 +31,6 @@ public class SchedulingConfiguration {
         UpdatedStartedMeetings();
         UpdatedEndedMeetings();
 
-    }
-
-    private void UpdatedEndedMeetings() {
-        List<Meeting> meetings = meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Started.toString());
-
-        for (Meeting meeting : meetings) {
-            boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
-            if (!meetingRunning) {
-                meeting.setStatus(MeetingStatusEnum.Ended.toString());
-            }
-        }
-
-        List<Meeting> savedMeetings = meetingDataService.save(meetings);
     }
 
     private void UpdatedStartedMeetings() {
@@ -56,6 +43,21 @@ public class SchedulingConfiguration {
             }
         }
 
-        List<Meeting> savedMeetings = meetingDataService.save(meetings);
+        meetingDataService.save(meetings);
+        System.out.print(meetings.size() + " started, ");
+    }
+
+    private void UpdatedEndedMeetings() {
+        List<Meeting> meetings = meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Started.toString());
+
+        for (Meeting meeting : meetings) {
+            boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
+            if (!meetingRunning) {
+                meeting.setStatus(MeetingStatusEnum.Ended.toString());
+            }
+        }
+
+        meetingDataService.save(meetings);
+        System.out.println(meetings.size() + " ended.");
     }
 }

@@ -6,6 +6,7 @@ public class MeetingInvite implements Serializable {
     public String fullName;
     public String meetingStatus;
     public String inviteURL;
+    public String meetingName;
 
 
     public String getMeetingStatus() {
@@ -29,5 +30,13 @@ public class MeetingInvite implements Serializable {
 
     public void setInviteURL(String inviteURL) {
         this.inviteURL = inviteURL;
+    }
+
+    public String getMeetingName() {
+        return meetingName;
+    }
+
+    public void setMeetingName(String meetingName) {
+        this.meetingName = meetingName;
     }
 }

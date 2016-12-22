@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import za.co.bsg.enums.MeetingStatusEnum;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 import za.co.bsg.services.api.BigBlueButtonAPI;
@@ -79,14 +80,14 @@ public class MeetingManagementService {
 
     /**
      * Returns a list of Meeting objects.
-     * This method retrieve all meetings in the meeting table and
+     * This method retrieve all meetings except the one with ended status in the meeting table and
      * removes all meetings that are either created by or being
      * moderated by the supplied in user
      *
      * @param userId a long data type - Expected to be current logged in user
      */
     public List<Meeting> getAllMeetings(long userId) {
-        List<Meeting> allMeetings = meetingDataService.retrieveAll();
+        List<Meeting> allMeetings = meetingDataService.retrieveAllExcludeStatus(MeetingStatusEnum.Ended.toString());
         List<Meeting> myMeetings = this.getMeetingsByUser(userId);
         allMeetings.removeAll(myMeetings);
         return allMeetings;
@@ -100,6 +101,7 @@ public class MeetingManagementService {
      * @param userId a long data type - Expected to be current logged in user
      */
     public List<Meeting> getMeetingsByUser(long userId) {
+        // TODO : This can be done in a single query.
         User user = userDataService.findUserById(userId);
         List<Meeting> creatorMeetings = meetingDataService.retrieveAllByUserId(user);
         List<Meeting> moderatorMeetings = meetingDataService.retrieveAllByModerator(user);
