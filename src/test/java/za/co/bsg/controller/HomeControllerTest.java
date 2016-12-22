@@ -1,3 +1,4 @@
+/*
 package za.co.bsg.controller;
 
 import junit.framework.TestCase;
@@ -23,11 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@RunWith(SpringRunner.class)
 public class HomeControllerTest extends TestCase {
 
     @Mock
     private MeetingManagementService meetingManagementService;
     private MockMvc mvc;
 
-}
+}*/

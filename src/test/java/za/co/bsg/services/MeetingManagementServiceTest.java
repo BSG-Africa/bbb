@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import za.co.bsg.enums.MeetingStatusEnum;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 import za.co.bsg.services.api.BigBlueButtonAPI;
@@ -95,30 +96,15 @@ public class MeetingManagementServiceTest {
     }
 
     @Test
-    public void GetAllMeetingsShouldReturnAllMeetingsInDatabase() throws Exception {
+    public void GetAllMeetingsShouldReturnAllNotEndedMeetingsInDatabase() throws Exception {
         // Setup fixture
         Meeting meeting = new Meeting();
         meeting.setName("C1/D1 Induction");
+        meeting.setStatus(MeetingStatusEnum.Ended.toString());
         long userId = 12;
 
         // Expectations
-        when(meetingDataService.retrieveAll()).thenReturn(Collections.singletonList(meeting));
-
-        // Exercise SUT
-        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
-
-        assertThat(actualMeetings, is(sameBeanAs(Collections.singletonList(meeting))));
-    }
-
-    @Test
-    public void GetMeetingsByUserShouldReturnAllMeetingsByUserId() throws Exception {
-        // Setup fixture
-        Meeting meeting = new Meeting();
-        meeting.setName("C1/D1 Induction");
-        long userId = 12;
-
-        // Expectations
-        when(meetingDataService.retrieveAll()).thenReturn(Collections.singletonList(meeting));
+        when(meetingDataService.retrieveAllExcludeStatus(MeetingStatusEnum.Ended.toString())).thenReturn(Collections.singletonList(meeting));
 
         // Exercise SUT
         List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
