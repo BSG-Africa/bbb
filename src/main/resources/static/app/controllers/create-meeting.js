@@ -6,9 +6,10 @@ angular.module('BigBlueButton')
         }
 
         $scope.createMeeting = function () {
-            if ($scope.meeting.id > 0) {
+            if(!(typeof $scope.meeting.moderator == "object")){
+                $scope.message = 'Please select a valid Moderator Name';
+            } else if ($scope.meeting.id > 0) {
                 $http.post('api/meeting/edit', $scope.meeting).success(function (res) {
-                    $scope.message = "Meeting update successfull !";
                     $state.go('meeting');
                 }).error(function (error) {
                     $scope.message = error.message;
@@ -18,8 +19,6 @@ angular.module('BigBlueButton')
                 $scope.meeting.createdBy = $scope.user.principal;
                 $scope.meeting.status = "Not started";
                 $http.post('api/meeting/create', $scope.meeting).success(function (res) {
-
-                    $scope.message = "Meeting creation successfull !";
                     $state.go('meeting');
                 }).error(function (error) {
                     $scope.message = error.message;

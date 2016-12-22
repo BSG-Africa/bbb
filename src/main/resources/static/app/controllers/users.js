@@ -11,7 +11,7 @@ angular.module('BigBlueButton')
                 $scope.userForm.$setPristine();
                 $scope.message = '';
                 $scope.appUser = null;
-                $scope.buttonText = 'Create';
+                $scope.buttonText = 'Update';
 
             }).error(function (error) {
                 $scope.message = error.message;

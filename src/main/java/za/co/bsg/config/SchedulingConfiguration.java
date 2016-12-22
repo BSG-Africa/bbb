@@ -34,30 +34,37 @@ public class SchedulingConfiguration {
     }
 
     private void UpdatedStartedMeetings() {
+        // TODO : Having a query to fetch all NOT started can simplify these two below request
+        // TODO : Some meetings are being saved for no reason, might cause lock if other are using them
         List<Meeting> meetings = meetingDataService.retrieveAllByStatus(MeetingStatusEnum.NotStarted.toString());
         meetings.addAll(meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Ended.toString()));
+        int started = 0;
         for (Meeting meeting : meetings) {
             boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
             if (meetingRunning) {
                 meeting.setStatus(MeetingStatusEnum.Started.toString());
+                started++;
             }
         }
 
         meetingDataService.save(meetings);
-        System.out.print(meetings.size() + " started, ");
+        System.out.print(started + " started, ");
     }
 
     private void UpdatedEndedMeetings() {
+        //TODO : Some meetings are being saved for no reason, might cause lock if other are using them
         List<Meeting> meetings = meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Started.toString());
 
+        int ended = 0;
         for (Meeting meeting : meetings) {
             boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
             if (!meetingRunning) {
                 meeting.setStatus(MeetingStatusEnum.Ended.toString());
+                ended++;
             }
         }
 
         meetingDataService.save(meetings);
-        System.out.println(meetings.size() + " ended.");
+        System.out.println(ended + " ended.");
     }
 }

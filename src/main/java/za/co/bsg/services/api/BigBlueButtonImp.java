@@ -59,6 +59,11 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
     }
 
     @Override
+    public String getLogoutURL() {
+        return appPropertiesConfiguration.getLogoutURL();
+    }
+
+    @Override
     public String createPublicMeeting(Meeting meeting, User user) {
         String base_url_join = getBaseURL(API_SERVER_PATH, API_JOIN);
 
@@ -79,6 +84,8 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         query.append("&isBreakoutRoom=false");
         query.append("&record=");
         query.append("false");
+        query.append("&logoutURL=");
+        query.append(getLogoutURL());
         query.append(getMetaData( meeting.getMeta() ));
         query.append(getCheckSumParameter(API_CREATE, query.toString()));
 
