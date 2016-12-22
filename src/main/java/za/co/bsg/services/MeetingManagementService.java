@@ -87,6 +87,7 @@ public class MeetingManagementService {
      * @param userId a long data type - Expected to be current logged in user
      */
     public List<Meeting> getAllMeetings(long userId) {
+        // TODO : This can be done in a single query.
         List<Meeting> allMeetings = meetingDataService.retrieveAllExcludeStatus(MeetingStatusEnum.Ended.toString());
         List<Meeting> myMeetings = this.getMeetingsByUser(userId);
         allMeetings.removeAll(myMeetings);
