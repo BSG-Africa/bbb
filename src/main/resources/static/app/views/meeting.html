@@ -6,7 +6,7 @@
                     ng-repeat="meetup in meeting"
                     ng-click="goToMeetingAsAttendee($index)"
                     ng-class="{active:$index==selectedRow}">
-                <span class="pull-left">{{meetup.name}}  |   By: {{meetup.moderator.name}}</span>
+                <span class="pull-left">{{meetup.name}}  |   Moderator: {{meetup.moderator.name}}</span>
                 <span class="glyphicon glyphicon-circle-arrow-right pull-right" aria-hidden="true"></span>
                 <span class="pull-right">{{meetup.status}}</span>
             </button>
