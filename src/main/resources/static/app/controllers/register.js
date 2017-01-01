@@ -2,7 +2,7 @@ angular.module('BigBlueButton')
 // Creating the Angular Controller
     .controller('RegisterController', function ($http, $scope, $state, $rootScope, LoginService) {
         if($state.current.name == 'register'){
-            $rootScope.$broadcast('NavigatedOnRegister');
+            $rootScope.$broadcast('RegisterAllowed');
         }
         $scope.submit = function () {
             $http.post('register', $scope.appUser).success(function (res) {
