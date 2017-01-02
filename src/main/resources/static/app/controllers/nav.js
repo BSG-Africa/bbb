@@ -13,8 +13,14 @@ angular.module('BigBlueButton')
         $scope.$on('LogoutSuccessful', function () {
             $scope.user = null;
         });
-        $scope.$on('RegisterAllowed', function () {
+        $scope.$on('RegisterNotAllowed', function () {
             $scope.registerLink = false;
+        });
+        $scope.$on('RegisterAllowed', function () {
+            $scope.registerLink = true;
+        });
+        $scope.$on('PageNotFound', function () {
+            $state.go('meeting');
         });
         $scope.logout = function () {
             AuthService.user = null;

@@ -2,29 +2,32 @@
     <div class="col-sm-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                Users
+                Users: <input type="text" ng-model="search.name" placeholder=" search by name">
             </div>
             <div class="panel-body">
 
-                <table class="table table-bordered" id="table">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Username</th>
-                        <th>Role</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="user in users" ng-class="{active:$index==userSelectedRow}"
-                        data-ng-click="rowHighlighted($index)">
-                        <td>{{$index+1}}</td>
-                        <td>{{user.name}}</td>
-                        <td>{{user.username}}</td>
-                        <td>{{user.role}}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div style="overflow: auto; max-height: 278px;">
+                    <table class="table table-bordered" id="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="user in users | filter:search" ng-class="{active:$index==userSelectedRow}"
+                            data-ng-click="rowHighlighted($index)">
+                            <td>{{$index+1}}</td>
+                            <td>{{user.name}}</td>
+                            <td>{{user.username}}</td>
+                            <td>{{user.role}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
                 <div class="btn-group pull-left">
                     <button type="button" class="btn btn-default" ng-click="initEdit(users[userSelectedRow])" ng-disabled="userSelectedRow==undefined">
                         Edit <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
@@ -72,7 +75,7 @@
                                 ng-disabled="userForm.$invalid">{{buttonText}}
                             </button>
                         </div>
-
+                        <br>
                         <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
                     </form>
                 </div>

@@ -1,7 +1,7 @@
 angular.module('BigBlueButton')
     .controller('InviteController', function ($rootScope, $http, $scope, AuthService, $state, $stateParams, $location, $window, $timeout) {
         if($state.current.name == 'invite' || $state.current.name == 'loading-invite'){
-            $rootScope.$broadcast('RegisterAllowed');
+            $rootScope.$broadcast('RegisterNotAllowed');
         }
 
         $scope.user = AuthService.user;
