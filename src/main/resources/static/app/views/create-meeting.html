@@ -23,7 +23,7 @@
 
         <div align="center" class="form-group">
             <input type="checkbox" class="form-control input-lg"
-                   ng-model="tooltip.checked">
+                   ng-model="tooltip.checked" ng-disabled="createForm.$invalid">
             <label data-placement="auto top-left" data-type="info" data-animation="am-fade-and-scale" bs-tooltip="tooltip" bs-enabled="tooltip.checked">
                 Preupload Slides (max-size 30MB)
             </label>

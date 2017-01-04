@@ -25,7 +25,9 @@ angular.module('BigBlueButton')
                 url: 'upload',
                 file: file
             }).then(function (resp) {
+                $scope.meeting.defaultPresentationURL = resp.data.url;
                 $scope.responseData = resp.data.response;
+                console.log($scope.meeting);
             }, function (resp) {
                 $scope.responseData = 'Error: Failed to upload the file';
                 console.log(resp);

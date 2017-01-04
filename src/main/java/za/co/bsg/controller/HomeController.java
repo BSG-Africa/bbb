@@ -93,7 +93,7 @@ public class HomeController {
 
         PresentationUpload response = new PresentationUpload();
         response.setResponse("File added successfully");
-        response.setPath(rootDirectory  + file.getOriginalFilename());
+        response.setUrl(rootDirectory  + file.getOriginalFilename());
 
         return response;
     }
