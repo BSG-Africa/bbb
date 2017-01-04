@@ -75,9 +75,7 @@ public class HomeController {
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
-    public PresentationUpload uploadFile( @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile file,HttpServletRequest request) {
-
-        System.out.println("Inside File upload");
+    public PresentationUpload uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
 
         String appDirectory = request.getSession().getServletContext().getRealPath("/");
         System.out.println("Path: "+appDirectory);
@@ -90,22 +88,6 @@ public class HomeController {
             e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        MultipartHttpServletRequest mRequest;
-        String filename = "upload.xlsx";
-        try {
-            mRequest = (MultipartHttpServletRequest) request;
-            mRequest.getParameterMap();
-            System.out.println("PRINT BELOW:");
-            Iterator<String> itr = mRequest.getFileNames();
-            while (itr.hasNext()) {
-                MultipartFile mFile = mRequest.getFile(itr.next());
-                String fileName = mFile.getOriginalFilename();
-                System.out.println(fileName);
-            }
-        } catch (Exception e) {
             e.printStackTrace();
         }
 
