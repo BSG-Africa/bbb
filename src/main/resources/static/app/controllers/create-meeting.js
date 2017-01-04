@@ -1,9 +1,43 @@
 angular.module('BigBlueButton')
-    .controller('CreateMeetingController', function ($http, $scope, AuthService, $state, $stateParams, $rootScope) {
+    .controller('CreateMeetingController', function ($http, $scope, AuthService, $state, $stateParams, Upload) {
         if ($stateParams.meeting !== undefined) {
             $scope.meeting = $stateParams.meeting;
             $scope.allUsers = $stateParams.allUsers;
         }
+
+        // Valid mimetypes
+        $scope.acceptTypes = 'image/*,application/pdf';
+        // App variable to show the uploaded response
+        $scope.responseData = undefined;
+        // Global handler for onSuccess that adds the uploaded files to the list
+        $scope.onGlobalSuccess = function (res) {
+            console.log(res);
+            $scope.responseData = res.data.response;
+        };
+
+        $scope.$watch('file', function () {
+            if ($scope.file != null) {
+                $scope.upload($scope.file);
+            }
+        });
+        $scope.log = '';
+        // upload on file select or drop
+        $scope.upload = function (file) {
+            Upload.upload({
+                url: 'upload',
+                file: file
+            }).then(function (resp) {
+                console.log('Success ' + resp.config.file.name + 'uploaded. Response: ' + resp.data);
+            }, function (resp) {
+                console.log('Error status: ' + resp.status);
+                console.log(resp);
+                console.log('$http-error:',arguments);
+                debugger;
+            }, function (evt) {
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+            });
+        };
 
         $scope.createMeeting = function () {
             if(!(typeof $scope.meeting.moderator == "object")){

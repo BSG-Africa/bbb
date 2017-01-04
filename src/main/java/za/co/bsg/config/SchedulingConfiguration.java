@@ -23,7 +23,7 @@ public class SchedulingConfiguration {
 
     @Scheduled(cron = "0/20 * * * * ?") // Run every 20 seconds
     public void scheduler() {
-        System.out.print("Big Blue Button Health Scheduling at " + new Date() + ": ");
+        //System.out.print("Big Blue Button Health Scheduling at " + new Date() + ": ");
         CheckMeetingStatus();
     }
 
@@ -48,7 +48,7 @@ public class SchedulingConfiguration {
         }
 
         meetingDataService.save(meetings);
-        System.out.print(started + " started, ");
+        //System.out.print(started + " started, ");
     }
 
     private void UpdatedEndedMeetings() {
@@ -65,6 +65,6 @@ public class SchedulingConfiguration {
         }
 
         meetingDataService.save(meetings);
-        System.out.println(ended + " ended.");
+        //System.out.println(ended + " ended.");
     }
 }
