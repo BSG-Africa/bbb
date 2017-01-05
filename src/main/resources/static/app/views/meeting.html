@@ -5,12 +5,14 @@
             <button class="btn btn-default btn-info"
                     ng-repeat="meetup in meeting"
                     ng-click="goToMeetingAsAttendee($index)"
-                    ng-class="{active:$index==selectedRow}"
-                    data-ng-click="rowHighilited($index)">
-                <span class="pull-left">{{meetup.name}}: {{meetup.createdBy.name}}</span>
+                    ng-class="{active:$index==selectedRow}">
+                <span class="pull-left">{{meetup.name}}  |   Moderator: {{meetup.moderator.name}}</span>
                 <span class="glyphicon glyphicon-circle-arrow-right pull-right" aria-hidden="true"></span>
                 <span class="pull-right">{{meetup.status}}</span>
             </button>
+        </div>
+        <div class="well well-sm" ng-if="isMeetingEmpty" align="center">
+            <i>No available meetings.</i>
         </div>
     </div>
 
@@ -36,13 +38,17 @@
         </table>
         <button type="button" class="btn btn-default" ng-click="createMeeting()">Create</button>
         <div class="btn-group pull-right">
-            <button type="button" class="btn btn-default" ng-click="editMeeting()">Edit</button>
-            <button type="button" class="btn btn-default" ng-click="deleteMeeting()">Delete</button>
-            <button type="button" class="btn btn-default btn-info start pull-right" ng-click="goToMeetingAsModerator()">
+            <button type="button" class="btn btn-default" ng-click="editMeeting()" ng-disabled="myMeetingsSelectedRow==undefined">
+                Edit <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default" ng-click="deleteMeeting()" ng-disabled="myMeetingsSelectedRow==undefined">
+                Delete <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-info start pull-right" ng-click="goToMeetingAsModerator()" ng-disabled="myMeetingsSelectedRow==undefined">
                 Start <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
             </button>
-            <button type="button" class="btn btn-default start pull-right" data-animation="am-flip-x" bs-dropdown aria-haspopup="true" aria-expanded="false">
-                Share <span class="glyphicon glyphicon glyphicon-share"></span>
+            <button type="button" class="btn btn-default start pull-right" data-animation="am-flip-x" bs-dropdown aria-haspopup="true" aria-expanded="false" ng-disabled="myMeetingsSelectedRow==undefined">
+                Share <span class="glyphicon glyphicon-share"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
                 <li>

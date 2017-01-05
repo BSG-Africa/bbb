@@ -1,11 +1,9 @@
 angular.module('BigBlueButton')
-    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout) {
+    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout, $location) {
         $scope.user = AuthService.user;
+        $scope.name = $scope.user.principal.name;
+        $scope.meetingName = $stateParams.meetingName;
 
-
-        $scope.rowHighilited = function (row) {
-            $scope.selectedRow = row;
-        }
 
         $scope.rowHighlighted = function (row) {
             $scope.myMeetingsSelectedRow = row;
@@ -73,24 +71,56 @@ angular.module('BigBlueButton')
         };
 
         $scope.goToMeetingAsAttendee = function (data) {
-            var meetingId = $scope.meeting[data].meetingId;
-            var name = $scope.user.name;
-            $http.get('invite', {params:{"fullName": name, "meetingId": meetingId}}).success(function (res) {
-                $scope.message = '';
-                $window.location.href = res.inviteURL;
-            }).error(function (error) {
-                $scope.message = error.message;
-            });
+            $scope.selectedRow = data;
+            var selectedMeeting = $scope.meeting[data];
+            $scope.meetingName = selectedMeeting.name;
+
+            var url = $state.href('loading-meeting', {meetingName: $scope.meetingName});
+            var newTab = window.open(url, '_blank');
+
+            $scope.redirectToMeeting(selectedMeeting, newTab);
         };
 
-        var navigateToURL = function (url) {
-            $window.open(url, '_blank');
+
+        $scope.redirectToMeeting = function (selectedMeeting, newTab) {
+            if (selectedMeeting.status === 'Started') {
+                var meetingId = selectedMeeting.meetingId;
+                $http.get('invite', {params: {"fullName": $scope.name, "meetingId": meetingId}}).success(function (res) {
+                    $scope.message = '';
+                    newTab.location.href = res.inviteURL;
+
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
+            }
+            else {
+                $http.get('api/meeting/retrieve/' + selectedMeeting.id).success(function (res) {
+                    if (selectedMeeting.status !== 'Started') {
+                        $timeout(function () {
+                            $scope.redirectToMeeting(res, newTab);
+                        }, 4000);
+                    }
+
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
+            }
+
         };
 
         function getAvailableMeetings () {
             var userId = $scope.user.principal.id;
+<<<<<<< HEAD
             $http.get('api/availableMeetings/' + userId).success(function (res) {
                 $scope.meeting = res;
+=======
+            $http.get('api/meeting/available/' + userId).success(function (res) {
+                $scope.meeting = res;
+
+                if ($scope.meeting === undefined || $scope.meeting.length == 0) {
+                    $scope.isMeetingEmpty = true;
+                }
+>>>>>>> 63165e223e0d0a2ea573616b944ea19f17d1300f
                 $scope.message = '';
 
             }).error(function (error) {
@@ -101,7 +131,11 @@ angular.module('BigBlueButton')
         function getMyMeetings () {
             var userId = $scope.user.principal.id;
 
+<<<<<<< HEAD
             $http.get('api/myMeetings/' + userId).success(function (res) {
+=======
+            $http.get('api/meeting/' + userId).success(function (res) {
+>>>>>>> 63165e223e0d0a2ea573616b944ea19f17d1300f
                 $scope.myMeeting = res;
                 $scope.message = '';
 
@@ -128,8 +162,9 @@ angular.module('BigBlueButton')
                 $scope.message = error.message;
             });
         };
+
         getAllUsers();
-       getAvailableMeetings();
+        getAvailableMeetings();
         getMyMeetings ();
         getAuthority();
     });

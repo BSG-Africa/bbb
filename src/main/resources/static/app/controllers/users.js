@@ -3,6 +3,11 @@ angular.module('BigBlueButton')
     .controller('UsersController', function ($http, $scope, AuthService) {
         var edit = false;
         $scope.buttonText = 'Create';
+
+        $scope.rowHighlighted = function (row) {
+            $scope.userSelectedRow = row;
+        }
+
         var init = function () {
             $http.get('api/users').success(function (res) {
                 $scope.users = res;
@@ -10,7 +15,7 @@ angular.module('BigBlueButton')
                 $scope.userForm.$setPristine();
                 $scope.message = '';
                 $scope.appUser = null;
-                $scope.buttonText = 'Create';
+                $scope.buttonText = 'Update';
 
             }).error(function (error) {
                 $scope.message = error.message;
@@ -29,27 +34,28 @@ angular.module('BigBlueButton')
             $scope.message = '';
             $scope.buttonText = 'Create';
         };
+
         $scope.deleteUser = function (appUser) {
-            $http.delete('api/users/' + appUser.id).success(function (res) {
-                $scope.deleteMessage = "Success!";
+            $http.delete('api/user/' + appUser.id).success(function (res) {
+                $scope.deleteMessage = "Deleted successfully.";
                 init();
             }).error(function (error) {
                 $scope.deleteMessage = error.message;
             });
         };
         var editUser = function () {
-            $http.put('api/users', $scope.appUser).success(function (res) {
+            $http.put('api/user', $scope.appUser).success(function (res) {
                 $scope.appUser = null;
                 $scope.confirmPassword = null;
                 $scope.userForm.$setPristine();
-                $scope.message = "Editting Success";
+                $scope.message = "Updated successfully";
                 init();
             }).error(function (error) {
                 $scope.message = error.message;
             });
         };
-        var addUser = function () {
-            $http.post('api/users', $scope.appUser).success(function (res) {
+        var createUser = function () {
+            $http.post('api/user', $scope.appUser).success(function (res) {
                 $scope.appUser = null;
                 $scope.confirmPassword = null;
                 $scope.userForm.$setPristine();
@@ -63,9 +69,8 @@ angular.module('BigBlueButton')
             if (edit) {
                 editUser();
             } else {
-                addUser();
+                createUser();
             }
         };
         init();
-
     });

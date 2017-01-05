@@ -23,8 +23,7 @@
                     <li class="logout" ng-show="user.principal.name">
                         <a><span ng-click="logout()" href="">Logout</span></a>
                     </li>
-                    <li ng-show="!user.principal.name"><a ui-sref="login">Login</a></li>
-                    <li ng-show="!user.principal.name"><a ui-sref="register">Register</a></li>
+                    <li ng-show="!user.principal.name && registerLink"><a ui-sref="register">Register</a></li>
                 </ul>
             </div>
         </div>

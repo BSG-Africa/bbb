@@ -1,7 +1,5 @@
 package za.co.bsg.services;
 
-
-import com.shazam.shazamcrest.matcher.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,19 +7,20 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import za.co.bsg.enums.MeetingStatusEnum;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 import za.co.bsg.services.api.BigBlueButtonAPI;
 import za.co.bsg.util.UtilService;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,39 +42,12 @@ public class MeetingManagementServiceTest {
     }
 
     @Test
-    public void findAllUserMeetings_ShouldReturnMeetingsOfCurrentLoggedOnModerator(){
-
-        User user = new User();
-        user.setId(12);
-        // Setup fixture
-        Meeting moderatorMeeting = buildMeeting(1L, "Technology Meeting", user);
-
-        // TODO: Tiyani : Integration Test
-        //Meeting nonCurrentModeratorMeeting = buildMeeting(2L, "A&D Meeting", "ModeratorName");
-        int moderator = 12;
-        List emptyList = new ArrayList<Meeting>();
-
-        // Set Expectations
-        when(userDataService.findUserById(user.getId())).thenReturn(user);
-        when(meetingDataService.retrieveAllByUserId(user)).thenReturn(singletonList(moderatorMeeting));
-        when(meetingDataService.retrieveAllByModerator(user)).thenReturn(new ArrayList<Meeting>());
-        when(meetingDataService.union(singletonList(moderatorMeeting), emptyList)).thenReturn(singletonList(moderatorMeeting));
-        List<Meeting> expectedMeeting = singletonList(moderatorMeeting);
-
-        // Exercise SUT
-        List<Meeting> actualMeeting = meetingManagementService.getMeetingsByUser(user.getId());
-
-        // Verify
-        assertThat(actualMeeting, Matchers.sameBeanAs(expectedMeeting));
-    }
-
-    @Test
     public void CreateMeetingWhenMeetingHasNeverBeenAssignedBBBDetails_ShouldPersistMeetingAndReturnResult() throws Exception {
         // Setup fixture
         Meeting meeting = new Meeting();
         User user = new User();
         user.setId(11);
-        meeting.setCreatedBy(user);
+        meeting.setModerator(user);
         meeting.setName("C1/D1 Induction");
         meeting.setWelcomeMessage("");
 
@@ -85,7 +57,7 @@ public class MeetingManagementServiceTest {
         // Expectations
         when(meetingDataService.save(meeting)).thenReturn(meeting);
         when(utilService.generateMeetingId()).thenReturn("123434");
-        when(userDataService.findUserById(meeting.getCreatedBy().getId())).thenReturn(user);
+        when(userDataService.findUserById(meeting.getModerator().getId())).thenReturn(user);
         when(bigBlueButtonAPI.createPublicMeeting(meeting, user)).thenReturn("http://localhost/bigbluebutton/");
         when(bigBlueButtonAPI.getUrl()).thenReturn("http://localhost/bigbluebutton/");
 
@@ -102,7 +74,7 @@ public class MeetingManagementServiceTest {
         Meeting meeting = new Meeting();
         User user = new User();
         user.setId(11);
-        meeting.setCreatedBy(user);
+        meeting.setModerator(user);
         meeting.setName("C1/D1 Induction");
         meeting.setWelcomeMessage("");
         meeting.setMeetingId("meetingId12358");
@@ -112,7 +84,7 @@ public class MeetingManagementServiceTest {
         // Expectations
         when(meetingDataService.save(meeting)).thenReturn(meeting);
         when(utilService.generateMeetingId()).thenReturn("123434");
-        when(userDataService.findUserById(meeting.getCreatedBy().getId())).thenReturn(user);
+        when(userDataService.findUserById(meeting.getModerator().getId())).thenReturn(user);
         when(bigBlueButtonAPI.createPublicMeeting(meeting, user)).thenReturn("http://localhost/bigbluebutton/");
         when(bigBlueButtonAPI.getUrl()).thenReturn("http://localhost/bigbluebutton/");
 
@@ -124,30 +96,15 @@ public class MeetingManagementServiceTest {
     }
 
     @Test
-    public void GetAllMeetingsShouldReturnAllMeetingsInDatabase() throws Exception {
+    public void GetAllMeetingsShouldReturnAllNotEndedMeetingsInDatabase() throws Exception {
         // Setup fixture
         Meeting meeting = new Meeting();
         meeting.setName("C1/D1 Induction");
+        meeting.setStatus(MeetingStatusEnum.Ended.toString());
         long userId = 12;
 
         // Expectations
-        when(meetingDataService.retrieveAll()).thenReturn(Collections.singletonList(meeting));
-
-        // Exercise SUT
-        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
-
-        assertThat(actualMeetings, is(sameBeanAs(Collections.singletonList(meeting))));
-    }
-
-    @Test
-    public void GetMeetingsByUserShouldReturnAllMeetingsByUserId() throws Exception {
-        // Setup fixture
-        Meeting meeting = new Meeting();
-        meeting.setName("C1/D1 Induction");
-        long userId = 12;
-
-        // Expectations
-        when(meetingDataService.retrieveAll()).thenReturn(Collections.singletonList(meeting));
+        when(meetingDataService.retrieveAllExcludeStatus(MeetingStatusEnum.Ended.toString())).thenReturn(Collections.singletonList(meeting));
 
         // Exercise SUT
         List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
@@ -166,11 +123,28 @@ public class MeetingManagementServiceTest {
         when(meetingDataService.retrieve(meetingId)).thenReturn(meeting);
         ResponseEntity<Meeting> expectedMeeting = new ResponseEntity<Meeting>(meeting, HttpStatus.NO_CONTENT);
         // Exercise SUT
-        ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting((long) meetingId);
+        ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting(meetingId);
 
         assertThat(actualMeetings, is(sameBeanAs(expectedMeeting)));
     }
 
+
+
+    @Test
+    public void getMeetingStatusShouldReturnMeetingStatusFromBBBApi() throws Exception {
+        // Setup fixture
+        String meetingId = "dfe32fgdf";
+
+        // Expectations
+        when(bigBlueButtonAPI.isMeetingRunning(meetingId)).thenReturn(true);
+
+        // Exercise SUT
+        boolean actualMeetingStatus = meetingManagementService.isBBBMeetingRunning(meetingId);
+
+        verify(bigBlueButtonAPI, times(1)).isMeetingRunning(meetingId);
+        assertThat(actualMeetingStatus, is(sameBeanAs(true)));
+
+    }
 
     public Meeting buildMeeting(Long id, String name, User createdBy) {
         Meeting meeting = new Meeting();

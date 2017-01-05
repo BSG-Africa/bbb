@@ -55,7 +55,15 @@ public class MeetingDataService {
         return meetingRepository.findOne(meetingId);
     }
 
+    public Meeting retrieveByMeetingId(String meetingId) {
+        return meetingRepository.findByMeetingId(meetingId).get(0);
+    }
+
     public List<Meeting> retrieveAllByStatus(String status) {
         return meetingRepository.findByStatus(status);
+    }
+
+    public List<Meeting> retrieveAllExcludeStatus(String status) {
+        return meetingRepository.findByStatusNot(status);
     }
 }

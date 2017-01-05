@@ -1,67 +1,26 @@
 <h3>Meeting Details</h3>
 
 <div class="bsg-form register">
-    <form ng-submit="createMeeting()">
+    <form name="createForm" ng-submit="createMeeting()">
         <div class="form-group">
-            <input type="txt" class="form-control input-lg" ng-model="meeting.name" id="meetingName"
-                   placeholder="Please provide a meeting name" required>
+            <input type="txt" maxlength="30" class="form-control input-lg" ng-model="meeting.name" id="meetingName"
+                   placeholder="Please provide a Meeting name" required>
         </div>
         <div class="form-group">
-            <input type="txt" class="form-control input-lg" ng-model="meeting.welcomeMessage" id="meetingWelcomeMessage"
-                   placeholder="Please provide a welcome Message">
+            <input type="txt"  maxlength="60" class="form-control input-lg" ng-model="meeting.welcomeMessage" id="meetingWelcomeMessage"
+                   placeholder="Please provide a Welcome Message">
         </div>
-        <div class="form-group hidden">
-            <input type="txt" class="form-control input-lg" ng-model="meeting.agenda" id="meetingAgenda"
-                   placeholder="Please provide a name">
+        <div class="form-group">
+            <input type="text"
+                   class="form-control input-lg"
+                   ng-model="meeting.moderator"
+                   bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
+                   placeholder="Moderator name"
+                   bs-typeahead
+                   ng-model-options="{ debounce: 100 }"
+                   required>
         </div>
-        <div class="form-group hidden">
-            <input type="txt" class="form-control input-lg" ng-model="meeting.voiceBridge" id="voiceBridge"
-                   placeholder="Please provide a name">
-        </div>
-
-        <input type="text"
-               class="form-control"
-               ng-model="meeting.moderator"
-               bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
-               placeholder="Moderator"
-               bs-typeahead
-               ng-model-options="{ debounce: 100 }"
-               required>
-
-
-        <!--<div>
-            <div>Additional Information</div>
-            <ul>
-                <li ng-repeat="elemnt in additionalInformationElemnt">
-                    <div>
-                        <div id={{elemnt.id}} style="display:inline">
-                                            <span ng-model="elemnt.additionalInformation" ng-hide="editorEnabled"
-                                                  ng-click="editorEnabled=true">
-                                                {{elemnt.additionalInformation}}
-                                            </span>
-
-                            <div>
-                                <input ng-model="elemnt.additionalInformation" ng-show="editorEnabled">
-                            </div>
-                            <div style="display:inline">
-                                            <span>
-                                                <input type="text" ng-model="elemnt.answer" placeholder="Answer"
-                                                       required/>
-                                            </span>
-                            </div>
-                                        <span ng-hide="elemnt.length == 1">
-                                            <a href ng-click="additionalInformationElemnt.splice($index, 1)">Remove</a>
-                                        </span>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <a href ng-click="newItem($event)">New Additional Information</a>
-                </li>
-            </ul>
-        </div>-->
-
-        <button type="submit" class="btn btn-default btn-info btn-lg">Submit</button>
-        <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
+        <button type="submit" class="btn btn-default btn-info btn-lg" ng-disabled="createForm.$invalid">Submit</button>
+        <div class="alert alert-danger margin-top-5" ng-show="message">{{message}}</div>
     </form>
 </div>

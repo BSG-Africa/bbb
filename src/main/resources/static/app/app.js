@@ -1,5 +1,5 @@
 // Creating angular Application with module name "BigBlueButton"
-angular.module('BigBlueButton', ['ui.router', 'mgcrea.ngStrap', 'ngStorage', 'ngclipboard', '720kb.socialshare'])
+angular.module('BigBlueButton', ['ui.router', 'mgcrea.ngStrap', 'ngStorage', 'ngclipboard', '720kb.socialshare', 'fixed.table.header'])
 
 // If we implement the basic security in spring boot then the response will
 // contains the header 'WWW-Authenticate: Basic'. So the browser will popup a
@@ -19,7 +19,7 @@ angular.module('BigBlueButton', ['ui.router', 'mgcrea.ngStrap', 'ngStorage', 'ng
             if (!AuthService.user) {
                 // To avoiding the infinite looping of state change we have to add a
                 // if condition.
-                if (toState.name != 'login' && toState.name != 'register' && toState.name != 'invite') {
+                if (toState.name != 'login' && toState.name != 'register' && toState.name != 'invite' && toState.name != 'loading-invite') {
                     event.preventDefault();
                     $state.go('login');
                 }

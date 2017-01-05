@@ -22,16 +22,16 @@ public class MeetingController {
         this.meetingManagementService = meetingManagementService;
     }
 
-    @RequestMapping(value = "/availableMeetings/{userId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/meeting/{userId}", method = RequestMethod.GET)
+    public List<Meeting> userMeetings(@PathVariable("userId") long userId){
+        return meetingManagementService.getMeetingsByUser(userId);
+    }
+
+    @RequestMapping(value = "/meeting/available/{userId}", method = RequestMethod.GET)
     public
     @ResponseBody
     List<Meeting> availableMeetings(@PathVariable("userId") long userId) {
         return meetingManagementService.getAllMeetings(userId);
-    }
-
-    @RequestMapping(value = "/myMeetings/{userId}", method = RequestMethod.GET)
-    public List<Meeting> userMeetings(@PathVariable("userId") long userId){
-        return meetingManagementService.getMeetingsByUser(userId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -56,5 +56,10 @@ public class MeetingController {
     @RequestMapping(value = "/meeting/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Meeting> deleteMeeting(@PathVariable Long id) {
         return meetingManagementService.deleteMeeting(id);
+    }
+
+    @RequestMapping(value = "/meeting/retrieve/{id}", method = RequestMethod.GET)
+    public Meeting getMeeting(@PathVariable Long id) {
+        return meetingManagementService.getMeeting(id);
     }
 }
