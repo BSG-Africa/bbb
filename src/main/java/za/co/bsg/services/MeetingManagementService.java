@@ -111,7 +111,11 @@ public class MeetingManagementService {
 
     /**
      * Returns ResponseEntity of Meeting object.
+<<<<<<< HEAD
+     * This method attempts to delete a meeting from the data base if it exists,
+=======
      * This method attempts to delete a meeting from the database if it exists,
+>>>>>>> 63165e223e0d0a2ea573616b944ea19f17d1300f
      * And if the meeting does not exist in the database, it returns an
      * HttpStatus of no content
      *
