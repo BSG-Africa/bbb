@@ -151,18 +151,7 @@ html {height:100%;}
         }
 
 /*-- User Update --*/
-.user-search {
-    width: 100%;
-    text-align: center;
-    border: none;
-    background: transparent;
-    margin-bottom: 20px;
-    font-size: 18px;
-    cursor: pointer;
-}
-.user-search:focus {
-    outline: none;
-}
+.user-filter { margin-bottom: 15px; }
 
 /*-- Register --*/
 .register .form-group{margin-bottom: 0;}
