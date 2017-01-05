@@ -33,6 +33,12 @@ public class AppPropertiesConfiguration {
     @Value("${bbb.logout.url}")
     private String logoutURL;
 
+    @Value("${bbb.upload.path}")
+    private String uploadPath;
+
+    @Value("${bbb.upload.url}")
+    private String uploadURL;
+
     public String getLdapUrl() {
         return ldapUrl;
     }
@@ -67,5 +73,13 @@ public class AppPropertiesConfiguration {
 
     public String getLogoutURL() {
         return logoutURL;
+    }
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public String getUploadURL() {
+        return uploadURL;
     }
 }
