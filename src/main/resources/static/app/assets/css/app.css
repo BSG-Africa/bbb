@@ -54,7 +54,9 @@ button {
         border-radius: 0;
         border: none;
         text-align: center;
-        padding: 27px 0;
+        /*padding: 27px 0;*/
+        padding: 4px 0;
+        box-sizing: content-box;
     }
 
         .bsg-form input::-webkit-input-placeholder {color: #cccccc;}
