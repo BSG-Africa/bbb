@@ -1,85 +1,85 @@
-<div class="row">
-    <div class="col-sm-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Users: <input type="text" ng-model="search.name" placeholder=" search by name">
-            </div>
-            <div class="panel-body">
+<div class="container">
+    <div class="col-md-8 col-md-offset-2 your-meetings">
+        <h3>Users</h3>
 
-                <div style="overflow: auto; max-height: 278px;">
-                    <table class="table table-bordered" id="table">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Username</th>
-                            <th>Role</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="user in users | filter:search" ng-class="{active:$index==userSelectedRow}"
-                            data-ng-click="rowHighlighted($index)">
-                            <td>{{$index+1}}</td>
-                            <td>{{user.name}}</td>
-                            <td>{{user.username}}</td>
-                            <td>{{user.role}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <br>
-                <div class="btn-group pull-left">
-                    <button type="button" class="btn btn-default" ng-click="initEdit(users[userSelectedRow])" ng-disabled="userSelectedRow==undefined">
-                        Edit <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                    </button>
-                    <button type="button" class="btn btn-default" ng-click="deleteUser(users[userSelectedRow])" ng-disabled="userSelectedRow==undefined">
-                        Delete <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-            <div class="alert alert-info margin-top-5" ng-show="deleteMessage">{{deleteMessage}}</div>
+        <input type="text" ng-model="search.name" class="user-search" placeholder="Click here to filter users by name">
+
+        <table class="table" id="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th class="checked"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="user in users | filter:search" ng-class="{active:$index==userSelectedRow}"
+                    data-ng-click="rowHighlighted($index)">
+                    <td>{{user.name}}</td>
+                    <td>{{user.username}}</td>
+                    <td>{{user.role}}</td>
+                    <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-default" ng-click="initEdit(users[userSelectedRow])"
+                    ng-disabled="userSelectedRow==undefined" data-toggle="modal" data-target="#myModal">Edit</button>
+            <button type="button" class="btn btn-default" ng-click="deleteUser(users[userSelectedRow])"
+                    ng-disabled="userSelectedRow==undefined">Delete</button>
         </div>
     </div>
-    <div class="col-sm-6 ">
-        <div class="panel panel-default">
-            <div class="panel-heading">Selected User</div>
-            <div class="panel-body">
-                <div class="col-md-12">
-                    <form ng-submit="submit()" name="userForm" novalidate>
 
-                        <div class="form-group"
-                             ng-class="{ 'has-error': userForm.name.$invalid && userForm.name.$dirty }">
-                            <label for="name">Name:</label> <input type="text" required
-                                                                   class="form-control" ng-model="appUser.name"
-                                                                   id="name"
-                                                                   name="name">
-                        </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <form ng-submit="submit()" name="userForm" novalidate>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Update User</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="">
 
-                        <div class="form-group"
-                             ng-class="{ 'has-error': userForm.username.$invalid && userForm.username.$dirty }">
-                            <label for="username">Username:</label> <input type="text"
-                                                                           required class="form-control"
-                                                                           ng-model="appUser.username"
-                                                                           id="username" name="username">
-                        </div>
 
-                        <div class="form-group"
-                             ng-class="{ 'has-error': userForm.username.$invalid && userForm.username.$dirty }">
-                            <label for="role">Role:</label> <input type="text"
-                                                                   required class="form-control"
-                                                                   ng-model="appUser.role"
-                                                                   id="role" name="role" disabled>
+                                <div class="form-group"
+                                     ng-class="{ 'has-error': userForm.name.$invalid && userForm.name.$dirty }">
+                                    <label>Name</label>
+                                    <input type="text" required
+                                           class="form-control" ng-model="appUser.name"
+                                           id="name"
+                                           name="name">
+                                </div>
+                                <div class="form-group"
+                                     ng-class="{ 'has-error': userForm.username.$invalid && userForm.username.$dirty }">
+                                    <label>Username</label>
+                                    <input type="text"
+                                           required class="form-control"
+                                           ng-model="appUser.username"
+                                           id="username" name="username">
+                                </div>
+                                <div class="form-group"
+                                     ng-class="{ 'has-error': userForm.username.$invalid && userForm.username.$dirty }">
+                                    <label>Role</label>
+                                    <input type="text"
+                                           required class="form-control"
+                                           ng-model="appUser.role"
+                                           id="role" name="role" disabled>
+                                </div>
+
+                                <div class="alert alert-info" ng-show="message">{{message}}</div>
+
                         </div>
-                        <div class="bsg-form register">
-                            <button type="submit" class="btn btn-default btn-info btn-lg"
-                                ng-disabled="userForm.$invalid">{{buttonText}}
-                            </button>
-                        </div>
-                        <br>
-                        <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-default btn-primary" ng-disabled="userForm.$invalid">{{buttonText}}</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
 </div>

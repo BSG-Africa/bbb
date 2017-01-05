@@ -15,11 +15,10 @@
             <i>No available meetings.</i>
         </div>
     </div>
-
     <div class="col-md-8 col-md-offset-2 your-meetings" ng-if="isAdmin">
         <h3>Manage Your Meetings</h3>
 
-        <table class="table table-condensed" id="table">
+        <table class="table" id="table">
             <thead>
             <tr>
                 <th>Title</th>
@@ -38,18 +37,12 @@
         </table>
         <button type="button" class="btn btn-default" ng-click="createMeeting()">Create</button>
         <div class="btn-group pull-right">
-            <button type="button" class="btn btn-default" ng-click="editMeeting()" ng-disabled="myMeetingsSelectedRow==undefined">
-                Edit <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-            </button>
-            <button type="button" class="btn btn-default" ng-click="deleteMeeting()" ng-disabled="myMeetingsSelectedRow==undefined">
-                Delete <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-            </button>
+            <button type="button" class="btn btn-default" ng-click="editMeeting()" ng-disabled="myMeetingsSelectedRow==undefined">Edit</button>
+            <button type="button" class="btn btn-default" ng-click="deleteMeeting()" ng-disabled="myMeetingsSelectedRow==undefined">Delete</button>
             <button type="button" class="btn btn-default btn-info start pull-right" ng-click="goToMeetingAsModerator()" ng-disabled="myMeetingsSelectedRow==undefined">
                 Start <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
             </button>
-            <button type="button" class="btn btn-default start pull-right" data-animation="am-flip-x" bs-dropdown aria-haspopup="true" aria-expanded="false" ng-disabled="myMeetingsSelectedRow==undefined">
-                Share <span class="glyphicon glyphicon-share"></span>
-            </button>
+            <button type="button" class="btn btn-default pull-right" data-animation="am-flip-x" bs-dropdown aria-haspopup="true" aria-expanded="false" ng-disabled="myMeetingsSelectedRow==undefined">Share</button>
             <ul class="dropdown-menu" role="menu">
                 <li>
                     <a ngclipboard data-clipboard-text={{myMeeting[myMeetingsSelectedRow].inviteURL}}>
