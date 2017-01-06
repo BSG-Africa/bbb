@@ -169,6 +169,15 @@ html {height:100%;}
     padding-top: 10px;
     padding-bottom: 10px;
 }
+    .btn-group-vertical button:hover {
+        border-color: #46b8da;
+
+        background: -moz-linear-gradient(left, rgba(19,148,202,1) 100%, rgba(38,167,222,1) 0%);
+        background: -webkit-linear-gradient(left, rgba(19,148,202,1) 100%, rgba(38,167,222,1) 0%);
+        background: linear-gradient(to right,rgba(19,148,202,1) 100%, rgba(38,167,222,1) 0%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1394ca', endColorstr='#26a7de',GradientType=1 );
+    }
+
 
         .btn-group-vertical button .glyphicon {
             padding: 0 10px 0 10px;

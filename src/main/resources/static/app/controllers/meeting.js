@@ -4,10 +4,9 @@ angular.module('BigBlueButton')
         $scope.name = $scope.user.principal.name;
         $scope.meetingName = $stateParams.meetingName;
 
-
         $scope.rowHighlighted = function (row) {
             $scope.myMeetingsSelectedRow = row;
-        }
+        };
 
         $scope.createMeeting = function () {
             $state.go('create-meeting');

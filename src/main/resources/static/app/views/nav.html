@@ -1,6 +1,6 @@
 <nav class="navbar navbar-default navbar-static-top">
     <div class="container">
-        <div class=" col-md-8 col-md-offset-2">
+        <div class="col-md-8 col-md-offset-2">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed"
                         data-toggle="collapse" data-target="#navbar" aria-expanded="false"
@@ -14,9 +14,9 @@
             </div>
 
             <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li ng-show="user.principal.name"><a ui-sref="users">Users</a></li>
+                <ul class="nav navbar-nav" ng-if="user.principal.role != 'USER'">
                     <li ng-show="user.principal.name"><a ui-sref="meeting">Meetings</a></li>
+                    <li ng-show="user.principal.name"><a ui-sref="users">Users</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="user" ng-show="user.principal.name">
