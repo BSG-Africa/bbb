@@ -272,14 +272,14 @@ html {height:100%;}
 .drop-box {
     background: #F8F8F8;
     border: 5px dashed #DDD;
-    width: auto;
+    width: 99%;
     height: auto;
     text-align: center;
     padding-top: 20px;
-    margin: 10px;
+    /*margin: 10px;*/
 }
 .dragover {
-    border: 5px dashed #3498db;
+    border: 5px dashed #1c9dd3;
 }
 
 @keyframes loading {
@@ -306,4 +306,9 @@ html {height:100%;}
 
 .dropdown-menu a {
     cursor: pointer;
+}
+
+.bg-primary {
+    color: #fff;
+    background-color: #1c9dd3;
 }

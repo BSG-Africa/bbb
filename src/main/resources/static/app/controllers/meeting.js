@@ -12,6 +12,22 @@ angular.module('BigBlueButton')
             $state.go('create-meeting');
         };
 
+        $scope.getUsersBySearchTerm = function (searchTerm) {
+            if (searchTerm !== '' && typeof searchTerm === 'string') {
+                var query = searchTerm.toLowerCase(),
+                    emp = $scope.allUsers.filter(function(user){
+                        return (user.role == 'ADMIN')
+                    }),
+                    employees = $.parseJSON(JSON.stringify(emp));
+
+                var result = _.filter(employees, function (i) {
+                    return ~i.name.toLowerCase().indexOf(query);
+                });
+                return result;
+            }
+            return null;
+        };
+
 
         $scope.editMeeting = function () {
             if ($scope.myMeetingsSelectedRow === undefined) {

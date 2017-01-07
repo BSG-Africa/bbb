@@ -73,14 +73,14 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form name="createForm" ng-submit="createMeeting()">
-                    <div class="modal-header">
+                    <div class="modal-header bg-primary">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Create Meeting</h4>
+                        <h3 class="modal-title" id="myModalLabel">Create Meeting</h3>
                     </div>
                     <div class="modal-body">
                         <div class="">
                             <div class="form-group">
-                                <label>Meeting name</label>
+                                <label>Meeting Name</label>
                                 <input type="txt" maxlength="30" class="form-control"
                                        ng-model="meeting.name"
                                        id="meetingName" required>
@@ -92,7 +92,7 @@
                                        id="meetingWelcomeMessage">
                             </div>
                             <div class="form-group">
-                                <label>Moderator name</label>
+                                <label>Moderator Name</label>
                                 <input type="txt"
                                        class="form-control"
                                        ng-model="meeting.moderator"
@@ -103,18 +103,18 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="checkbox">
-                                    <label data-placement="auto top-left" data-type="info" data-animation="am-fade-and-scale" bs-tooltip="tooltip" bs-enabled="tooltip.checked">
-                                        <input type="checkbox" value="" ng-model="tooltip.checked" ng-disabled="createForm.$invalid">
-                                        Preupload Slides (max-size 30MB)
-                                    </label>
-
-                                    <div ngf-drop ngf-select ng-model="file" class="drop-box btn btn-lg" ng-show="tooltip.checked"
+                                <input type="checkbox"
+                                       ng-model="tooltip.checked" ng-disabled="createForm.$invalid">
+                                <label data-placement="auto top-left" data-type="info" data-animation="am-fade-and-scale" bs-tooltip="tooltip" bs-enabled="tooltip.checked">
+                                    Pre-upload a presentation (max-size 30MB)
+                                </label>
+                                <div align="center" class="form-group">
+                                <div ngf-drop ngf-select ng-model="file" class="drop-box btn btn-lg" ng-show="tooltip.checked"
                                          ngf-drag-over-class="'dragover'" ngf-allow-dir="true"
                                          accept="application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.presentationml.presentation"
                                          ngf-pattern="'application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.presentationml.presentation'">Click to upload or Drop pdfs/slides here
-                                    </div>
-                                    <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+                                </div>
+                                <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
                                 </div>
                             </div>
 
@@ -136,7 +136,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-default btn-primary">Create</button>
+                        <button type="submit" class="btn btn-default btn-info">Create</button>
                     </div>
                 </form>
             </div>

@@ -58,29 +58,4 @@ angular.module('BigBlueButton')
             }
         };
 
-        $scope.getUsersBySearchTerm = function (searchTerm) {
-            if (searchTerm !== '' && typeof searchTerm === 'string') {
-                var query = searchTerm.toLowerCase(),
-                    emp = $scope.allUsers.filter(function(user){
-                        return (user.role == 'ADMIN')
-                    }),
-                    employees = $.parseJSON(JSON.stringify(emp));
-
-                var result = _.filter(employees, function (i) {
-                    return ~i.name.toLowerCase().indexOf(query);
-                });
-                return result;
-            }
-            return null;
-        };
-
-        function getAllUsers() {
-            $http.get('api/users').success(function (res) {
-                $scope.allUsers = res;
-            }).error(function (error) {
-                $scope.message = error.message;
-            });
-        };
-        getAllUsers();
-
     });
