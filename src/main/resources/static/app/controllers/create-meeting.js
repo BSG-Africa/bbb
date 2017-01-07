@@ -1,14 +1,47 @@
 angular.module('BigBlueButton')
-    .controller('CreateMeetingController', function ($http, $scope, AuthService, $state, $stateParams, $rootScope) {
+    .controller('CreateMeetingController', function ($http, $scope, AuthService, $state, $stateParams, Upload) {
         if ($stateParams.meeting !== undefined) {
             $scope.meeting = $stateParams.meeting;
             $scope.allUsers = $stateParams.allUsers;
         }
 
+        $scope.tooltip = {
+            "title": "Click below to Upload the file or Drag and Drop the file below",
+            "checked": false
+        };
+
+        // App variable to show the uploaded response
+        $scope.responseData = undefined;
+
+        $scope.$watch('file', function () {
+            if ($scope.file != null) {
+                $scope.upload($scope.file);
+            }
+        });
+
+        // upload on file select or drop
+        $scope.upload = function (file) {
+            Upload.upload({
+                url: 'upload',
+                file: file
+            }).then(function (resp) {
+                $scope.meeting.defaultPresentationURL = resp.data.url;
+                $scope.responseData = resp.data.response;
+                console.log($scope.meeting);
+            }, function (resp) {
+                $scope.responseData = 'Error: Failed to upload the file';
+                console.log(resp);
+            }, function (evt) {
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                $scope.responseData = 'Progress: ' + progressPercentage + '%';
+            });
+        };
+
         $scope.createMeeting = function () {
-            if ($scope.meeting.id > 0) {
+            if(!(typeof $scope.meeting.moderator == "object")){
+                $scope.message = 'Please select a valid Moderator Name';
+            } else if ($scope.meeting.id > 0) {
                 $http.post('api/meeting/edit', $scope.meeting).success(function (res) {
-                    $scope.message = "Meeting update successfull !";
                     $state.go('meeting');
                 }).error(function (error) {
                     $scope.message = error.message;
@@ -18,38 +51,11 @@ angular.module('BigBlueButton')
                 $scope.meeting.createdBy = $scope.user.principal;
                 $scope.meeting.status = "Not started";
                 $http.post('api/meeting/create', $scope.meeting).success(function (res) {
-
-                    $scope.message = "Meeting creation successfull !";
                     $state.go('meeting');
                 }).error(function (error) {
                     $scope.message = error.message;
                 });
             }
         };
-
-        $scope.getUsersBySearchTerm = function (searchTerm) {
-            if (searchTerm !== '' && typeof searchTerm === 'string') {
-                var query = searchTerm.toLowerCase(),
-                    emp = $scope.allUsers.filter(function(user){
-                        return (user.role == 'ADMIN')
-                    }),
-                    employees = $.parseJSON(JSON.stringify(emp));
-
-                var result = _.filter(employees, function (i) {
-                    return ~i.name.toLowerCase().indexOf(query);
-                });
-                return result;
-            }
-            return null;
-        };
-
-        function getAllUsers() {
-            $http.get('api/users').success(function (res) {
-                $scope.allUsers = res;
-            }).error(function (error) {
-                $scope.message = error.message;
-            });
-        };
-        getAllUsers();
 
     });

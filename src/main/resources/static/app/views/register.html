@@ -6,12 +6,12 @@
     <form ng-submit="submit()" name="register" novalidate>
 
         <div class="form-group" ng-class="{ 'has-error': register.name.$invalid && register.name.$dirty }">
-            <input type="text" required class="form-control input-lg" ng-model="appUser.name" id="name" name="name" placeholder="Name">
+            <input type="text" required maxlength="25" class="form-control input-lg" ng-model="appUser.name" id="name" name="name" placeholder="Name">
         </div>
 
         <div class="form-group"
              ng-class="{ 'has-error': register.username.$invalid && register.username.$dirty }">
-            <input type="text" required class="form-control input-lg" ng-model="appUser.username" id="username" name="username" placeholder="Username">
+            <input type="text" required maxlength="40" class="form-control input-lg" ng-model="appUser.username" id="username" name="username" placeholder="Username (email)">
         </div>
 
         <div class="form-group"
