@@ -3,7 +3,7 @@
         <h3>Available Meetings</h3>
         <div class="btn-group-vertical btn-group-md">
             <button class="btn btn-default btn-info"
-                    ng-repeat="meetup in meeting"
+                    ng-repeat="meetup in availableMeetings"
                     ng-click="goToMeetingAsAttendee($index)"
                     ng-class="{active:$index==selectedRow}">
                 <span class="pull-left">{{meetup.name}}  |   Moderator: {{meetup.moderator.name}}</span>

@@ -39,7 +39,7 @@ angular.module('BigBlueButton')
                 $state.go('edit-meeting/:id', {
                     id: $scope.myMeeting[$scope.myMeetingsSelectedRow].id,
                     allUsers: $scope.allUsers,
-                    meeting: $scope.myMeeting[$scope.myMeetingsSelectedRow]
+                    availableMeetings: $scope.myMeeting[$scope.myMeetingsSelectedRow]
                 });
             }
         };
@@ -71,14 +71,14 @@ angular.module('BigBlueButton')
                     $scope.message = undefined;
                 }, 4000);
             } else {
-                var meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
+                var selectedMeeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
 
                 // Open new tab for the meeting
                 var newTab = $window.open('', '_blank');
 
                 // Create BBB meeting whenever user starts meeting
-                $http.post('api/meeting/create', meeting).success(function (res) {
-                    newTab.location.href = meeting.moderatorURL;
+                $http.post('api/meeting/create', selectedMeeting).success(function (res) {
+                    newTab.location.href = selectedMeeting.moderatorURL;
                 }).error(function (error) {
                     $scope.message = error.message;
                 });
@@ -87,7 +87,7 @@ angular.module('BigBlueButton')
 
         $scope.goToMeetingAsAttendee = function (data) {
             $scope.selectedRow = data;
-            var selectedMeeting = $scope.meeting[data];
+            var selectedMeeting = $scope.availableMeetings[data];
             $scope.meetingName = selectedMeeting.name;
 
             var url = $state.href('loading-meeting', {meetingName: $scope.meetingName});
@@ -126,9 +126,9 @@ angular.module('BigBlueButton')
         function getAvailableMeetings () {
             var userId = $scope.user.principal.id;
             $http.get('api/meeting/available/' + userId).success(function (res) {
-                $scope.meeting = res;
+                $scope.availableMeetings = res;
 
-                if ($scope.meeting === undefined || $scope.meeting.length == 0) {
+                if ($scope.availableMeetings === undefined || $scope.availableMeetings.length == 0) {
                     $scope.isMeetingEmpty = true;
                 }
                 $scope.message = '';
