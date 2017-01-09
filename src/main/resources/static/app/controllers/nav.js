@@ -2,6 +2,7 @@ angular.module('BigBlueButton')
 // Creating the Angular Controller
     .controller('NavController', function ($http, $scope, AuthService, $state, $rootScope, $sessionStorage) {
         var res = $sessionStorage.loggedUser;
+        $scope.registerLink = true;
         if (res && res.authenticated) {
             $http.defaults.headers.common['Authorization'] = $sessionStorage.loggedAuth;
             $scope.user = $sessionStorage.loggedUser;
@@ -11,6 +12,15 @@ angular.module('BigBlueButton')
         });
         $scope.$on('LogoutSuccessful', function () {
             $scope.user = null;
+        });
+        $scope.$on('RegisterNotAllowed', function () {
+            $scope.registerLink = false;
+        });
+        $scope.$on('RegisterAllowed', function () {
+            $scope.registerLink = true;
+        });
+        $scope.$on('PageNotFound', function () {
+            $state.go('meeting');
         });
         $scope.logout = function () {
             AuthService.user = null;

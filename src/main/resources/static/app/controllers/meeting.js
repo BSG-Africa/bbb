@@ -4,13 +4,28 @@ angular.module('BigBlueButton')
         $scope.name = $scope.user.principal.name;
         $scope.meetingName = $stateParams.meetingName;
 
-
         $scope.rowHighlighted = function (row) {
             $scope.myMeetingsSelectedRow = row;
-        }
+        };
 
         $scope.createMeeting = function () {
             $state.go('create-meeting');
+        };
+
+        $scope.getUsersBySearchTerm = function (searchTerm) {
+            if (searchTerm !== '' && typeof searchTerm === 'string') {
+                var query = searchTerm.toLowerCase(),
+                    emp = $scope.allUsers.filter(function(user){
+                        return (user.role == 'ADMIN')
+                    }),
+                    employees = $.parseJSON(JSON.stringify(emp));
+
+                var result = _.filter(employees, function (i) {
+                    return ~i.name.toLowerCase().indexOf(query);
+                });
+                return result;
+            }
+            return null;
         };
 
 
@@ -112,6 +127,10 @@ angular.module('BigBlueButton')
             var userId = $scope.user.principal.id;
             $http.get('api/meeting/available/' + userId).success(function (res) {
                 $scope.meeting = res;
+
+                if ($scope.meeting === undefined || $scope.meeting.length == 0) {
+                    $scope.isMeetingEmpty = true;
+                }
                 $scope.message = '';
 
             }).error(function (error) {

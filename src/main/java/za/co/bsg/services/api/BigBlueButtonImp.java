@@ -85,7 +85,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         query.append("&record=");
         query.append("false");
         query.append("&logoutURL=");
-        query.append(getLogoutURL());
+        query.append(urlEncode(getLogoutURL()));
         query.append(getMetaData( meeting.getMeta() ));
         query.append(getCheckSumParameter(API_CREATE, query.toString()));
 

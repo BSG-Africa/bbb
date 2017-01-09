@@ -11,7 +11,7 @@
                    placeholder="Please provide a Welcome Message">
         </div>
         <div class="form-group">
-            <input type="text"
+            <input type="txt"
                    class="form-control input-lg"
                    ng-model="meeting.moderator"
                    bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
@@ -20,7 +20,26 @@
                    ng-model-options="{ debounce: 100 }"
                    required>
         </div>
+
+        <div align="center" class="form-group">
+            <input type="checkbox" class="form-control input-lg"
+                   ng-model="tooltip.checked" ng-disabled="createForm.$invalid">
+            <label data-placement="auto top-left" data-type="info" data-animation="am-fade-and-scale" bs-tooltip="tooltip" bs-enabled="tooltip.checked">
+                Preupload Slides (max-size 30MB)
+            </label>
+
+            <div ngf-drop ngf-select ng-model="file" class="drop-box btn btn-lg" ng-show="tooltip.checked"
+                 ngf-drag-over-class="'dragover'" ngf-allow-dir="true"
+                 accept="application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                 ngf-pattern="'application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.presentationml.presentation'">Click to upload or Drop pdfs/slides here
+            </div>
+            <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+        </div>
+
         <button type="submit" class="btn btn-default btn-info btn-lg" ng-disabled="createForm.$invalid">Submit</button>
         <div class="alert alert-danger margin-top-5" ng-show="message">{{message}}</div>
+        <div class="alert alert-info" ng-show="responseData">
+            <strong>{{responseData}}</strong>
+        </div>
     </form>
 </div>

@@ -59,6 +59,7 @@ public class UserController {
             }
             return new ResponseEntity<User>(appUser, HttpStatus.OK);
         }
+
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -79,10 +80,11 @@ public class UserController {
                 && userRepository.findUserByUsername(appUser.getUsername()).getId() != appUser.getId()) {
             throw new RuntimeException("Username already exist");
         }
-        else if (userRepository.findUserByUsername(appUser.getUsername()) != null
-                && userRepository.findUserByUsername(appUser.getUsername()).getId() == appUser.getId()) {
-            appUser.setPassword(userRepository.findUserByUsername(appUser.getUsername()).getPassword());
+        else if (userRepository.findOne(appUser.getId()) != null
+                && userRepository.findOne(appUser.getId()).getId() == appUser.getId()) {
+            appUser.setPassword(userRepository.findOne(appUser.getId()).getPassword());
         }
         return userRepository.save(appUser);
     }
+
 }

@@ -102,7 +102,6 @@ public class MeetingManagementService {
      * @param userId a long data type - Expected to be current logged in user
      */
     public List<Meeting> getMeetingsByUser(long userId) {
-        // TODO : This can be done in a single query.
         User user = userDataService.findUserById(userId);
         List<Meeting> creatorMeetings = meetingDataService.retrieveAllByUserId(user);
         List<Meeting> moderatorMeetings = meetingDataService.retrieveAllByModerator(user);

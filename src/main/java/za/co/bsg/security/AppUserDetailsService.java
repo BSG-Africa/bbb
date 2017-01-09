@@ -54,7 +54,6 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
             details = this.authenticateUser(username, password);
             if(details != null){
                 //Logged in successfully on our local db
-                System.out.println("Successfully authenticated " + username + " on BBB server");
                 return new UsernamePasswordAuthenticationToken(details, password, details.getAuthorities());
             } else if (utilService.usernameContainsCompanyEmail(username)) {
                 String sidUsername = utilService.getUsernameFromEmail(username);

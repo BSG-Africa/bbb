@@ -14,14 +14,7 @@
 </head>
 
 <style>
-    .margin-top-5 {
-        margin-top: 10px;
-    }
 
-    .panel-scroll {
-        height: 300px;
-        overflow-y: auto;
-    }
 </style>
 <body ng-app="BigBlueButton">
 
@@ -33,7 +26,7 @@
     <div ui-view="content"></div>
 </div>
 
-<div class="bsg-line"></div>
+<!--<div class="bsg-line"></div>-->
 
 <!-- build:js app/lib/angular.min.js -->
 <script src="app/lib/angular.js"></script>
@@ -67,6 +60,15 @@
 <!-- endbuild -->
 <!-- build:js app/lib/angular-socialshare.min.js -->
 <script src="app/lib/angular-socialshare.js"></script>
+<!-- endbuild -->
+<!-- build:js app/lib/fixed-table-header.min.js -->
+<script src="app/lib/fixed-table-header.js"></script>
+<!-- endbuild -->
+<!-- build:js app/lib/ng-file-upload-shim.min.js -->
+<script src="app/lib/ng-file-upload-shim.js"></script>
+<!-- endbuild -->
+<!-- build:js app/lib/ng-file-upload.min.js -->
+<script src="app/lib/ng-file-upload.js"></script>
 
 <!-- Including the app.js and route.js  -->
 <script type="text/javascript" src="app/app.js"></script>
@@ -74,6 +76,7 @@
 
 <!-- Including services -->
 <script type="text/javascript" src="app/services/auth-service.js"></script>
+<script type="text/javascript" src="app/services/login-service.js"></script>
 
 <!-- Including controllers -->
 <script type="text/javascript" src="app/controllers/nav.js"></script>
