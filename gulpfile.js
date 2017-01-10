@@ -48,7 +48,13 @@ gulp.task('copy-lib-files', function () {
             'node_modules/ngclipboard/dist/ngclipboard.js',
             'node_modules/ngclipboard/dist/ngclipboard.min.js',
             'node_modules/angular-socialshare/dist/angular-socialshare.js',
-            'node_modules/angular-socialshare/dist/angular-socialshare.min.js'
+            'node_modules/angular-socialshare/dist/angular-socialshare.min.js',
+            'node_modules/angular-fixed-table-header/src/fixed-table-header.js',
+            'node_modules/angular-fixed-table-header/src/fixed-table-header.min.js',
+            'node_modules/ng-file-upload/dist/ng-file-upload-shim.js',
+            'node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js',
+            'node_modules/ng-file-upload/dist/ng-file-upload.js',
+            'node_modules/ng-file-upload/dist/ng-file-upload.min.js'
         ])
         .pipe(gulp.dest('src/main/resources/static/app/lib/'));
 

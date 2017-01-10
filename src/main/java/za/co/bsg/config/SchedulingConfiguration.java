@@ -21,9 +21,9 @@ public class SchedulingConfiguration {
     @Autowired
     BigBlueButtonAPI bigBlueButtonAPI;
 
-    @Scheduled(cron = "0/60 * * * * ?") // Run every 30 seconds
+    @Scheduled(cron = "0/20 * * * * ?") // Run every 20 seconds
     public void scheduler() {
-        System.out.println("Big Blue Button Health Scheduling  " + new Date());
+        System.out.print("Big Blue Button Health Scheduling at " + new Date() + ": ");
         CheckMeetingStatus();
     }
 
@@ -33,29 +33,38 @@ public class SchedulingConfiguration {
 
     }
 
-    private void UpdatedEndedMeetings() {
-        List<Meeting> meetings = meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Started.toString());
-
-        for (Meeting meeting : meetings) {
-            boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
-            if (!meetingRunning) {
-                meeting.setStatus(MeetingStatusEnum.Ended.toString());
-            }
-        }
-
-        List<Meeting> savedMeetings = meetingDataService.save(meetings);
-    }
-
     private void UpdatedStartedMeetings() {
+        // TODO : Having a query to fetch all NOT started can simplify these two below request
+        // TODO : Some meetings are being saved for no reason, might cause lock if other are using them
         List<Meeting> meetings = meetingDataService.retrieveAllByStatus(MeetingStatusEnum.NotStarted.toString());
         meetings.addAll(meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Ended.toString()));
+        int started = 0;
         for (Meeting meeting : meetings) {
             boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
             if (meetingRunning) {
                 meeting.setStatus(MeetingStatusEnum.Started.toString());
+                started++;
             }
         }
 
-        List<Meeting> savedMeetings = meetingDataService.save(meetings);
+        meetingDataService.save(meetings);
+        System.out.print(started + " started, ");
+    }
+
+    private void UpdatedEndedMeetings() {
+        //TODO : Some meetings are being saved for no reason, might cause lock if other are using them
+        List<Meeting> meetings = meetingDataService.retrieveAllByStatus(MeetingStatusEnum.Started.toString());
+
+        int ended = 0;
+        for (Meeting meeting : meetings) {
+            boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
+            if (!meetingRunning) {
+                meeting.setStatus(MeetingStatusEnum.Ended.toString());
+                ended++;
+            }
+        }
+
+        meetingDataService.save(meetings);
+        System.out.println(ended + " ended.");
     }
 }

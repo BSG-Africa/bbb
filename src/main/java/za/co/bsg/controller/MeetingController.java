@@ -57,4 +57,9 @@ public class MeetingController {
     public ResponseEntity<Meeting> deleteMeeting(@PathVariable Long id) {
         return meetingManagementService.deleteMeeting(id);
     }
+
+    @RequestMapping(value = "/meeting/retrieve/{id}", method = RequestMethod.GET)
+    public Meeting getMeeting(@PathVariable Long id) {
+        return meetingManagementService.getMeeting(id);
+    }
 }

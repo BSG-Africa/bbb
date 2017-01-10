@@ -4,6 +4,10 @@ angular.module('BigBlueButton')
         var edit = false;
         $scope.buttonText = 'Create';
 
+        $scope.rowHighlighted = function (row) {
+            $scope.userSelectedRow = row;
+        }
+
         var init = function () {
             $http.get('api/users').success(function (res) {
                 $scope.users = res;
@@ -11,7 +15,7 @@ angular.module('BigBlueButton')
                 $scope.userForm.$setPristine();
                 $scope.message = '';
                 $scope.appUser = null;
-                $scope.buttonText = 'Create';
+                $scope.buttonText = 'Update';
 
             }).error(function (error) {
                 $scope.message = error.message;
@@ -33,7 +37,7 @@ angular.module('BigBlueButton')
 
         $scope.deleteUser = function (appUser) {
             $http.delete('api/user/' + appUser.id).success(function (res) {
-                $scope.deleteMessage = "Success!";
+                $scope.deleteMessage = "Deleted successfully.";
                 init();
             }).error(function (error) {
                 $scope.deleteMessage = error.message;
@@ -44,7 +48,7 @@ angular.module('BigBlueButton')
                 $scope.appUser = null;
                 $scope.confirmPassword = null;
                 $scope.userForm.$setPristine();
-                $scope.message = "Editing Success";
+                $scope.message = "Updated successfully";
                 init();
             }).error(function (error) {
                 $scope.message = error.message;

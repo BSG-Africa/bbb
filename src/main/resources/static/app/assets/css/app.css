@@ -1,3 +1,59 @@
+.panel-scroll {
+    height: 300px;
+    overflow-y: auto;
+}
+
+/*-- Misc --*/
+
+html {height:100%;}
+
+    body {
+        height:100%;
+        background-color: #fafafa;
+    }
+
+        h3 {
+            font-family: 'Open Sans', sans-serif;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            background: url(../img/logo.png) no-repeat center center;
+            width: 121px;
+            height: 75px;
+            margin: 30px auto 20px auto;
+        }
+
+        .message {text-align: center;}
+
+        .bsg-line {
+            background: url(../img/bsg-lines.jpg) repeat-y center;
+            width: 100%;
+            height: 12px;
+            position: fixed;
+            bottom: 0;
+            background-size: cover;
+        }
+
+        button {transition: all 0.3s ease-out;}
+
+        .btn-info {
+            background: rgb(38,167,222);
+            background: -moz-linear-gradient(left,  rgba(38,167,222,1) 0%, rgba(19,148,202,1) 100%);
+            background: -webkit-linear-gradient(left,  rgba(38,167,222,1) 0%,rgba(19,148,202,1) 100%);
+            background: linear-gradient(to right,  rgba(38,167,222,1) 0%,rgba(19,148,202,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#26a7de', endColorstr='#1394ca',GradientType=1 );
+        }
+
+        .containment {
+            text-align: left;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
 /*-- Navbar --*/
 .user {
     font-weight: bold;
@@ -9,36 +65,22 @@
     margin-left: 5px;
 }
 
-/*-- Common --*/
-h3 {
-    font-family: 'Open Sans', sans-serif;
+.navbar-default {
     text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 20px;
+    font-size: 12px;
+    background-color: #fff;
+    background-image: url(../img/bsg-lines.jpg);
+    background-repeat: no-repeat;
+    background-position: top;
+    background-size: contain;
 }
 
-.logo {
-    background: url(../img/logo.png) no-repeat center center;
-    width: 121px;
-    height: 75px;
-    margin: 30px auto 20px auto;
-}
-
-.message {
-    text-align: center;
-}
-
-.bsg-line {
-    background: url(../img/bsg-lines.gif) repeat-y center;
-    width: 100%;
-    height: 12px;
-    position: fixed;
-    bottom: 0;
-    background-size: cover;
-}
-
-button {
-    transition: all 0.5s ease;
+.navbar-brand {
+    background-image: url(../img/logo.png);
+    background-repeat: no-repeat;
+    background-size: 50px;
+    background-position-y: 10px;
+    width: 60px;
 }
 
 /*-- Forms (Shared) --*/
@@ -54,7 +96,9 @@ button {
         border-radius: 0;
         border: none;
         text-align: center;
-        padding: 27px 0;
+        /*padding: 27px 0;*/
+        padding: 4px 0;
+        box-sizing: content-box;
     }
 
         .bsg-form input::-webkit-input-placeholder {color: #cccccc;}
@@ -66,19 +110,23 @@ button {
         border-radius: 0;
         width: 100%;
         margin: 0;
+        background: rgb(38,167,222); /* Old browsers */
+        background: -moz-linear-gradient(left,  rgba(38,167,222,1) 0%, rgba(19,148,202,1) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(left,  rgba(38,167,222,1) 0%,rgba(19,148,202,1) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to right,  rgba(38,167,222,1) 0%,rgba(19,148,202,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#26a7de', endColorstr='#1394ca',GradientType=1 ); /* IE6-9 */
     }
         .bsg-form button .glyphicon{
             margin-left:0;
             transition: all 0.5s ease;
         }
-        .bsg-form button:hover .glyphicon{
-            margin-left:10px;
-        }
+        .bsg-form button:hover .glyphicon{margin-left:10px;}
 
     .alert {
+        margin-top: 20px;
         text-align: center;
-        width: 400px;
-        margin: 0 auto;
+        float: left;
+        width: 100%;
     }
 
 /*-- Login --*/
@@ -102,6 +150,9 @@ button {
             height: 108px;
         }
 
+/*-- User Update --*/
+.user-filter { margin-bottom: 15px; }
+
 /*-- Register --*/
 .register .form-group{margin-bottom: 0;}
 
@@ -110,47 +161,71 @@ button {
     .register .alert{margin-bottom: 0;}
 
 /*-- Available Meetings --*/
+.available-meetings {margin-bottom: 20px;}
+
 .btn-group-vertical {width: 100%;}
+
+.btn-group-vertical button {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+    .btn-group-vertical button:hover {
+        border-color: #46b8da;
+
+        background: -moz-linear-gradient(left, rgba(19,148,202,1) 100%, rgba(38,167,222,1) 0%);
+        background: -webkit-linear-gradient(left, rgba(19,148,202,1) 100%, rgba(38,167,222,1) 0%);
+        background: linear-gradient(to right,rgba(19,148,202,1) 100%, rgba(38,167,222,1) 0%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1394ca', endColorstr='#26a7de',GradientType=1 );
+    }
+
 
         .btn-group-vertical button .glyphicon {
             padding: 0 10px 0 10px;
             transition: all 0.5s ease;
+            line-height: 19px;
         }
         .btn-group-vertical button:hover .glyphicon {padding: 0 5px 0 15px;}
 
+        .btn-group-vertical button span .ng-binding {line-height: 20px;}
+
+        .btn-group-vertical button span.meeting-name {
+            max-width: 600px;
+        }
+
 /*-- Your Meetings --*/
-.your-meetings {margin-top: 40px;}
+.my-meetings {margin-top: 40px;}
+
+.my-meetings .alert {width:100%;}
 
 .table {
     border: 1px solid #ddd;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 1px 5px 0 rgba(0,0,0,0.12),0 3px 1px -2px rgba(0,0,0,0.2);
 }
 
-    .table thead {
-        background-color: #f5f5f5;
-    }
+        .table thead {background-color: #f5f5f5;}
 
-    .table > tbody > tr.active > td {
-        background-color: #5bc0de;
-        color: #ffffff;
-        box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-    }
-
-        .table tbody tr:hover {cursor: pointer;}
-
-        .table thead th {
-            font-family: 'Open Sans', sans-serif;
-            text-transform: uppercase;
+        .table > tbody > tr.active > td {
+            background-color: #1c9dd3;
+            color: #ffffff;
+            box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
         }
 
-        .table td {color: #777777;}
+            .table tbody tr:hover {cursor: pointer;}
 
-        .table .checked {width:35px;}
-        .table .glyphicon {color: #ffffff;}
+            .table thead th {
+                font-family: 'Open Sans', sans-serif;
+                text-transform: uppercase;
+            }
 
-    .start {
-        padding-left: 20px;
-        padding-right: 10px;
-    }
+            .table td {
+                color: #777777;
+                background-color: #fff;
+            }
+
+            .table td.check {text-align: center;}
+
+            .table .checked {width:35px;}
+            .table .glyphicon {color: #ffffff;}
 
     .start .glyphicon {
         padding: 0 0 0 10px;
@@ -158,3 +233,82 @@ button {
     .start .glyphicon {
         padding: 0 5px 0 5px;
     }
+
+/*-- loader --*/
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.loading-bar {
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    border-radius: 4px;
+    animation: loading 1s ease-in-out infinite;
+}
+
+.loading-bar:nth-child(1) {
+    background-color: #3498db;
+    animation-delay: 0s;
+}
+
+.loading-bar:nth-child(2) {
+    background-color: #c0392b;
+    animation-delay: 0.09s;
+}
+
+.loading-bar:nth-child(3) {
+    background-color: #f1c40f;
+    animation-delay: .18s;
+}
+
+.loading-bar:nth-child(4) {
+    background-color: #27ae60;
+    animation-delay: .27s;
+}
+
+.drop-box {
+    background: #F8F8F8;
+    border: 5px dashed #DDD;
+    width: 99%;
+    height: auto;
+    text-align: center;
+    padding-top: 20px;
+    /*margin: 10px;*/
+}
+.dragover {
+    border: 5px dashed #1c9dd3;
+}
+
+@keyframes loading {
+    0% {
+        transform: scale(1);
+    }
+    20% {
+        transform: scale(1, 2.2);
+    }
+    40% {
+        transform: scale(1);
+    }
+}        button.start {
+            padding-left: 20px;
+            padding-right: 10px;
+        }
+
+            button.start .glyphicon {
+                padding: 0 10px 0 5px;
+                transition: all 0.5s ease;
+            }
+
+                button.start:hover .glyphicon {padding: 0 5px 0 10px;}
+
+.dropdown-menu a {
+    cursor: pointer;
+}
+
+.bg-primary {
+    color: #fff;
+    background-color: #1c9dd3;
+}
