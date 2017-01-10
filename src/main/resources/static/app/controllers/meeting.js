@@ -9,6 +9,11 @@ angular.module('BigBlueButton')
         // App variable to show the uploaded response
         $scope.responseData = undefined;
 
+        $scope.tooltip = {
+            "title": "Click below to Upload the file or Drag and Drop the file below",
+            "checked": false
+        };
+
         $scope.$watch('file', function () {
             if ($scope.file != null) {
                 $scope.upload($scope.file);
@@ -17,13 +22,6 @@ angular.module('BigBlueButton')
 
         $scope.rowHighlighted = function (row) {
             $scope.myMeetingsSelectedRow = row;
-        };
-
-        $scope.addMeeting = function () {
-            edit = false;
-            $scope.myMeetingsSelectedRow = undefined;
-            $scope.meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
-            $scope.buttonText = 'Create';
         };
 
         $scope.getUsersBySearchTerm = function (searchTerm) {
@@ -42,28 +40,34 @@ angular.module('BigBlueButton')
             return null;
         };
 
+        $scope.addMeeting = function () {
+            edit = false;
+            $scope.message = '';
+            $scope.responseData = '';
+            $scope.tooltip.checked = false;
+            $scope.myMeetingsSelectedRow = undefined;
+            $scope.meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
+            $scope.buttonText = 'Create';
+        };
+
         $scope.editMeeting = function () {
             edit = true;
             $scope.message = '';
+            $scope.responseData = '';
+            $scope.tooltip.checked = false;
             $scope.meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
             $scope.buttonText = 'Update';
-        };
-
-        $scope.tooltip = {
-            "title": "Click below to Upload the file or Drag and Drop the file below",
-            "checked": false
         };
 
         // upload on file select or drop
         $scope.upload = function (file) {
             $scope.responseData = '';
             Upload.upload({
-                url: 'upload',
+                url: 'api/meeting/upload',
                 file: file
             }).then(function (resp) {
                 $scope.meeting.defaultPresentationURL = resp.data.url;
                 $scope.responseData = resp.data.response;
-                console.log($scope.meeting);
             }, function (resp) {
                 $scope.responseData = 'Error: Failed to upload the file';
                 console.log(resp);
