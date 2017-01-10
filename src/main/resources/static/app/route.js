@@ -52,28 +52,6 @@ angular.module('BigBlueButton').config(function ($stateProvider, $urlRouterProvi
             'fullName': '',
             'meetingName': ''
         }
-    }).state('create-meeting', {
-        parent: 'meeting',
-        url: '/meeting/create',
-        views: {
-            'content@': {
-                templateUrl: 'app/views/create-meeting.html',
-                controller: 'CreateMeetingController'
-            }
-        }
-    }).state('edit-meeting/:id', {
-        parent: 'meeting',
-        params: {
-            meeting: null,
-            allUsers: null
-        },
-        url: '/meeting/edit/:id',
-        views: {
-            'content@': {
-                templateUrl: 'app/views/create-meeting.html',
-                controller: 'CreateMeetingController'
-            }
-        }
     }).state('users', {
         parent: 'nav',
         url: '/users',

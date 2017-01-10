@@ -66,6 +66,7 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
     @Override
     public String createPublicMeeting(Meeting meeting, User user) {
         String base_url_join = getBaseURL(API_SERVER_PATH, API_JOIN);
+        boolean uploadPresentation = false;
 
         // build query
         StringBuilder query = new StringBuilder();
@@ -73,8 +74,6 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         query.append(urlEncode(meeting.getName()));
         query.append("&meetingID=");
         query.append(urlEncode(meeting.getMeetingId()));
-        query.append("&welcome=");
-        query.append(urlEncode("<br>" + meeting.getWelcomeMessage() + "<br>"));
         query.append("&voiceBridge=");
         query.append(meeting.getVoiceBridge() == 0 ? urlEncode("011 215 6666") : urlEncode(String.valueOf(meeting.getVoiceBridge())));
         query.append("&attendeePW=");
@@ -87,13 +86,25 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         query.append("&logoutURL=");
         query.append(urlEncode(getLogoutURL()));
         query.append(getMetaData( meeting.getMeta() ));
+        query.append("&welcome=");
+        query.append(urlEncode("<br>" + meeting.getWelcomeMessage() + "<br>"));
+        if (meeting.getDefaultPresentationURL() != "" && meeting.getDefaultPresentationURL() != null) {
+            uploadPresentation = true;
+            query.append(urlEncode("<br><br><br>" + "The presentation will appear in a moment.  To download click <a href=\"event:" + meeting.getDefaultPresentationURL() + "\"><u>" + meeting.getDefaultPresentationURL() + "</u></a>.<br>" + "<br>"));
+        }
         query.append(getCheckSumParameter(API_CREATE, query.toString()));
 
         //Make API call
         CreateMeeting response = null;
         String responseCode = "";
         try {
-            response = makeAPICall(API_CREATE, query.toString(), CreateMeeting.class);
+            //pre-upload presentation
+            if (uploadPresentation) {
+                String xml_presentation = "<modules> <module name=\"presentation\"> <document url=\"" + meeting.getDefaultPresentationURL() + "\" /> </module> </modules>";
+                response = makeAPICall(API_CREATE, query.toString(), xml_presentation, CreateMeeting.class);
+            } else {
+                response = makeAPICall(API_CREATE, query.toString(), CreateMeeting.class);
+            }
             responseCode = response.getReturncode();
         } catch (BigBlueButtonException e) {
             e.printStackTrace();
