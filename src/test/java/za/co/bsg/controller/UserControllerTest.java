@@ -2,19 +2,23 @@ package za.co.bsg.controller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
+import za.co.bsg.BigBlueButtonApplication;
+import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.model.User;
+import za.co.bsg.resources.CustomUserDetailsTestUtil;
 import za.co.bsg.util.UtilService;
 
 import javax.persistence.EntityManager;
@@ -28,6 +32,7 @@ import static org.hamcrest.core.Is.is;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase( replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED, connection = EmbeddedDatabaseConnection.H2)
+@SpringBootTest(classes = { BigBlueButtonApplication.class, TestConfiguration.class })
 public class UserControllerTest {
 
     @Autowired
@@ -38,12 +43,9 @@ public class UserControllerTest {
     @Autowired
     UtilService utilService;
 
-    @Mock
+    private CustomUserDetailsTestUtil customUserDetails;
+
     private SecurityContextHolder securityContextHolder;
-    @Mock
-    private SecurityContext securityContext;
-    @Mock
-    private Authentication authentication;
 
     @Test
     public void testUsers_ShouldReturnListOfExistingUsers() throws Exception {
@@ -152,6 +154,110 @@ public class UserControllerTest {
         }
     }
 
+    @Test
+    public void testDeleteUserWhereDoesNotExist_ShouldReturnNoContentResponseEntity() {
+
+        // Setup Fixture
+        long userToBeDeletedId = 301L;
+        User user = new User();
+        user.setUsername("User");
+        user.setRole(UserRoleEnum.ADMIN.toString());
+
+        initContext(user);
+
+        // Set Expectation
+        ResponseEntity<User> expectedResponseEntity = new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+
+        // Exercise SUT
+        ResponseEntity<User> actualResponseEntity = userController.deleteUser(userToBeDeletedId);
+
+        // Verify
+        assertThat(actualResponseEntity, is(sameBeanAs(expectedResponseEntity)));
+    }
+
+    @Test
+    public void testDeleteUserWhereUserCurrentlyLoggedOn_ShouldThrowRuntimeExceptionUserCantDeleteAccount() {
+
+        // Setup Fixture
+        User userToBeDeleted = new User();
+        userToBeDeleted.setUsername("Zanele@abc.org");
+        userToBeDeleted.setRole(UserRoleEnum.ADMIN.toString());
+        entityManager.persist(userToBeDeleted);
+
+        User loggedOnUser = new User();
+        loggedOnUser.setUsername("Zanele@abc.org");
+        loggedOnUser.setRole(UserRoleEnum.ADMIN.toString());
+        initContext(loggedOnUser);
+
+        // Set Expectation
+         RuntimeException expectedRuntimeException  = new RuntimeException("You cannot delete your account");
+
+        // Exercise SUT
+        RuntimeException actualRuntimeException  = new RuntimeException("");
+        try {
+            userController.deleteUser(userToBeDeleted.getId());
+        }catch (RuntimeException e){
+            actualRuntimeException = e;
+        }
+
+        // Verify
+        assertThat(actualRuntimeException, is(sameBeanAs(expectedRuntimeException)));
+    }
+
+
+    @Test
+    public void testDeleteUserWhereUserRoleIsAdmin_ShouldThrowRuntimeExceptionUserCantDeleteAdminAccount() {
+
+        // Setup Fixture
+        User userToBeDeleted = new User();
+        userToBeDeleted.setUsername("Zanele@abc.org");
+        userToBeDeleted.setRole(UserRoleEnum.ADMIN.toString());
+        entityManager.persist(userToBeDeleted);
+
+        User loggedOnUser = new User();
+        loggedOnUser.setUsername("Lucia@abc.org");
+        loggedOnUser.setRole(UserRoleEnum.ADMIN.toString());
+        initContext(loggedOnUser);
+
+        // Set Expectation
+        RuntimeException expectedRuntimeException  = new RuntimeException("You cannot delete an admin account");
+
+        // Exercise SUT
+        RuntimeException actualRuntimeException  = new RuntimeException("");
+        try {
+            userController.deleteUser(userToBeDeleted.getId());
+        }catch (RuntimeException e){
+            actualRuntimeException = e;
+        }
+
+        // Verify
+        assertThat(actualRuntimeException, is(sameBeanAs(expectedRuntimeException)));
+    }
+
+    @Test
+    public void testDeleteUserIsNotLoggedOnAndUserRoleIsUser_ShouldDeleteUser() {
+
+        // Setup Fixture
+        User userToBeDeleted = new User();
+        userToBeDeleted.setUsername("Zanele@abc.org");
+        userToBeDeleted.setRole(UserRoleEnum.USER.toString());
+        entityManager.persist(userToBeDeleted);
+
+        User loggedOnUser = new User();
+        loggedOnUser.setUsername("Lucia@abc.org");
+        loggedOnUser.setRole(UserRoleEnum.ADMIN.toString());
+        initContext(loggedOnUser);
+
+        // Set Expectation
+        ResponseEntity<User> expectedResponseEntity  = new ResponseEntity<User> (userToBeDeleted, HttpStatus.OK);
+
+        // Exercise SUT
+        ResponseEntity<User> actualResponseEntity = userController.deleteUser(userToBeDeleted.getId());
+
+        // Verify
+        assertThat(actualResponseEntity, is(sameBeanAs(expectedResponseEntity)));
+    }
+
     public User buildUser(String name, String username, String password){
         User user = new User();
         user.setName(name);
@@ -160,11 +266,13 @@ public class UserControllerTest {
         return user;
     }
 
-    public SecurityContext createSecurityContext(User user) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
-        return context;
+    protected void initContext(User user) {
+        customUserDetails = new CustomUserDetailsTestUtil();
+        securityContextHolder = new SecurityContextHolder();
+
+        UserDetails userDetails =  customUserDetails.loadUserByUsername(user);
+        Authentication authentication= new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()) ;
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     public void Clear(List<User> users) {

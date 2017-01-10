@@ -68,6 +68,7 @@ public class MeetingManagementServiceTest {
 
     }
 
+
     @Test
     public void CreateMeetingWhenHasAlreadyBeenAssignedBBBDetails_ShouldReturnMeeting() throws Exception {
         // Setup fixture
@@ -96,6 +97,22 @@ public class MeetingManagementServiceTest {
     }
 
     @Test
+    public void GetAllMeetingsShouldReturnAllMeetingsInDatabase() throws Exception {
+        // Setup fixture
+        Meeting meeting = new Meeting();
+        meeting.setName("C1/D1 Induction");
+        long userId = 12;
+
+        // Expectations
+        when(meetingDataService.retrieveAllExcludeStatus(MeetingStatusEnum.Ended.toString())).thenReturn(Collections.singletonList(meeting));
+
+        // Exercise SUT
+        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
+
+        assertThat(actualMeetings, is(sameBeanAs(Collections.singletonList(meeting))));
+    }
+
+    @Test
     public void GetAllMeetingsShouldReturnAllNotEndedMeetingsInDatabase() throws Exception {
         // Setup fixture
         Meeting meeting = new Meeting();
@@ -113,32 +130,34 @@ public class MeetingManagementServiceTest {
     }
 
     @Test
-    public void DeleteMeetingWhenMeetingIsNotDeletedShouldReturnNoContent() throws Exception {
+    public void GetMeetingsByUserShouldReturnAllMeetingsByUserId() throws Exception {
+        // Setup fixture
+        long userId = 12;
+        User user= new User();
+        user.setId(userId);
+
+        Meeting meeting = new Meeting();
+        meeting.setName("C1/D1 Induction");
+        meeting.setCreatedBy(user);
+        meeting.setStatus("Not Started");
+        // Expectations
+
+        when(meetingDataService.retrieveAllExcludeStatus(MeetingStatusEnum.Ended.toString())).thenReturn(Collections.singletonList(meeting));
+
+        // Exercise SUT
+        List<Meeting> actualMeetings = meetingManagementService.getAllMeetings(userId);
+
+        assertThat(actualMeetings, is(sameBeanAs(Collections.singletonList(meeting))));
+    }
+
+    @Test
+    public void DeleteMeetingWhenMeetingExists_ShouldReturnNoContent() throws Exception {
         // Setup fixture
         long meetingId = 101;
         Meeting meeting = new Meeting();
         meeting.setName("C1/D1 Induction");
 
         // Expectations
-        when(meetingDataService.retrieve(meetingId)).thenReturn(meeting);
-        ResponseEntity<Meeting> expectedMeeting = new ResponseEntity<Meeting>(meeting, HttpStatus.NO_CONTENT);
-        // Exercise SUT
-        ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting(meetingId);
-
-        assertThat(actualMeetings, is(sameBeanAs(expectedMeeting)));
-    }
-
-
-
-    @Test
-    public void getMeetingStatusShouldReturnMeetingStatusFromBBBApi() throws Exception {
-    public void DeleteMeetingWhenMeetingExists_ShouldReturnNoContent() throws Exception {
-        // Setup fixture
-        String meetingId = "dfe32fgdf";
-
-        // Expectations
-        when(bigBlueButtonAPI.isMeetingRunning(meetingId)).thenReturn(true);
-
         when(meetingDataService.retrieve(meetingId)).thenReturn(meeting);
         ResponseEntity<Meeting> expectedMeeting = new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
 
@@ -156,6 +175,37 @@ public class MeetingManagementServiceTest {
         // Expectations
         when(meetingDataService.retrieve(meetingId)).thenReturn(null);
         ResponseEntity<Meeting> expectedMeeting = new ResponseEntity<Meeting>(HttpStatus.NO_CONTENT);
+        // Exercise SUT
+        ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting(meetingId);
+
+        assertThat(actualMeetings, is(sameBeanAs(expectedMeeting)));
+    }
+
+    @Test
+    public void DeleteMeetingWhenMeetingIsNotDeletedShouldReturnNoContent() throws Exception {
+        // Setup fixture
+        long meetingId = 101;
+        Meeting meeting = new Meeting();
+        meeting.setName("C1/D1 Induction");
+
+        // Expectations
+        when(meetingDataService.retrieve(meetingId)).thenReturn(null);
+        ResponseEntity<Meeting> expectedMeeting = new ResponseEntity<Meeting>(HttpStatus.NO_CONTENT);
+
+        // Exercise SUT
+        ResponseEntity<Meeting> actualMeetings = meetingManagementService.deleteMeeting(meetingId);
+
+        assertThat(actualMeetings, is(sameBeanAs(expectedMeeting)));
+    }
+
+    @Test
+    public void getMeetingStatusShouldReturnMeetingStatusFromBBBApi() throws Exception {
+        // Setup fixture
+        String meetingId = "dfe32fgdf";
+
+
+        when(bigBlueButtonAPI.isMeetingRunning(meetingId)).thenReturn(true);
+
         // Exercise SUT
         boolean actualMeetingStatus = meetingManagementService.isBBBMeetingRunning(meetingId);
 

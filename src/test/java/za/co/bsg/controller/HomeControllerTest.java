@@ -65,18 +65,6 @@ public class HomeControllerTest {
         // Verify
         assertThat(actualResponseEntity, is(sameBeanAs(expectedResponseEntity)));
 
-
-    }
-
-    @Test
-    public void testJoinInvite(){
-
-    }
-
-    @Test
-    public void testUser(){
-
-      //  this.mvc.perform(get("/user").contentType(MediaType.)
     }
 
     public User buildUser(String name, String username, String password){
