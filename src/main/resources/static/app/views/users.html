@@ -29,7 +29,7 @@
             </tbody>
         </table>
 
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">Create</button>
+        <!--<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">Create</button>-->
 
         <div class="btn-group pull-right">
             <button type="button" class="btn btn-default" ng-click="initEdit(users[userSelectedRow])"
@@ -39,13 +39,13 @@
         </div>
     </div>
 
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" show-modal id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <form ng-submit="submit()" name="userForm" novalidate>
-                    <div class="modal-header">
+                    <div class="modal-header bg-primary">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Update User</h4>
+                        <h3 class="modal-title" id="myModalLabel">Update User</h3>
                     </div>
                     <div class="modal-body">
                         <div class="">
