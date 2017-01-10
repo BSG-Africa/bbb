@@ -1,15 +1,27 @@
 angular.module('BigBlueButton')
-    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout, $location) {
+    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout, Upload, $modal) {
+        var edit = false;
         $scope.user = AuthService.user;
         $scope.name = $scope.user.principal.name;
         $scope.meetingName = $stateParams.meetingName;
+        $scope.buttonText = 'Create';
+
+        // App variable to show the uploaded response
+        $scope.responseData = undefined;
+
+        $scope.tooltip = {
+            "title": "Click below to Upload the file or Drag and Drop the file below",
+            "checked": false
+        };
+
+        $scope.$watch('file', function () {
+            if ($scope.file != null) {
+                $scope.upload($scope.file);
+            }
+        });
 
         $scope.rowHighlighted = function (row) {
             $scope.myMeetingsSelectedRow = row;
-        };
-
-        $scope.createMeeting = function () {
-            $state.go('create-meeting');
         };
 
         $scope.getUsersBySearchTerm = function (searchTerm) {
@@ -28,18 +40,61 @@ angular.module('BigBlueButton')
             return null;
         };
 
+        $scope.addMeeting = function () {
+            edit = false;
+            $scope.message = '';
+            $scope.responseData = '';
+            $scope.tooltip.checked = false;
+            $scope.myMeetingsSelectedRow = undefined;
+            $scope.meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
+            $scope.buttonText = 'Create';
+        };
 
         $scope.editMeeting = function () {
-            if ($scope.myMeetingsSelectedRow === undefined) {
-                $scope.message = 'Please select a row';
-                $timeout(function () {
-                    $scope.message = undefined;
-                }, 4000);
+            edit = true;
+            $scope.message = '';
+            $scope.responseData = '';
+            $scope.tooltip.checked = false;
+            $scope.meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
+            $scope.buttonText = 'Update';
+        };
+
+        // upload on file select or drop
+        $scope.upload = function (file) {
+            $scope.responseData = '';
+            Upload.upload({
+                url: 'api/meeting/upload',
+                file: file
+            }).then(function (resp) {
+                $scope.meeting.defaultPresentationURL = resp.data.url;
+                $scope.responseData = resp.data.response;
+            }, function (resp) {
+                $scope.responseData = 'Error: Failed to upload the file';
+                console.log(resp);
+            }, function (evt) {
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                $scope.responseData = 'Progress: ' + progressPercentage + '%';
+            });
+        };
+
+        $scope.createMeeting = function () {
+            if(!(typeof $scope.meeting.moderator == "object")){
+                $scope.message = 'Please select a valid Moderator Name';
+            } else if ($scope.meeting.id > 0) {
+                $http.post('api/meeting/edit', $scope.meeting).success(function (res) {
+                    $scope.closeModal();
+                }).error(function (error) {
+                    $scope.message = error.message;
+                });
             } else {
-                $state.go('edit-meeting/:id', {
-                    id: $scope.myMeeting[$scope.myMeetingsSelectedRow].id,
-                    allUsers: $scope.allUsers,
-                    meeting: $scope.myMeeting[$scope.myMeetingsSelectedRow]
+                $scope.user = AuthService.user;
+                $scope.meeting.createdBy = $scope.user.principal;
+                $scope.meeting.status = "Not started";
+                $http.post('api/meeting/create', $scope.meeting).success(function (res) {
+                    getMyMeetings ();
+                    $scope.closeModal();
+                }).error(function (error) {
+                    $scope.message = error.message;
                 });
             }
         };
@@ -71,14 +126,14 @@ angular.module('BigBlueButton')
                     $scope.message = undefined;
                 }, 4000);
             } else {
-                var meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
+                var selectedMeeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
 
                 // Open new tab for the meeting
                 var newTab = $window.open('', '_blank');
 
                 // Create BBB meeting whenever user starts meeting
-                $http.post('api/meeting/create', meeting).success(function (res) {
-                    newTab.location.href = meeting.moderatorURL;
+                $http.post('api/meeting/create', selectedMeeting).success(function (res) {
+                    newTab.location.href = selectedMeeting.moderatorURL;
                 }).error(function (error) {
                     $scope.message = error.message;
                 });
@@ -87,7 +142,7 @@ angular.module('BigBlueButton')
 
         $scope.goToMeetingAsAttendee = function (data) {
             $scope.selectedRow = data;
-            var selectedMeeting = $scope.meeting[data];
+            var selectedMeeting = $scope.availableMeetings[data];
             $scope.meetingName = selectedMeeting.name;
 
             var url = $state.href('loading-meeting', {meetingName: $scope.meetingName});
@@ -126,9 +181,9 @@ angular.module('BigBlueButton')
         function getAvailableMeetings () {
             var userId = $scope.user.principal.id;
             $http.get('api/meeting/available/' + userId).success(function (res) {
-                $scope.meeting = res;
+                $scope.availableMeetings = res;
 
-                if ($scope.meeting === undefined || $scope.meeting.length == 0) {
+                if ($scope.availableMeetings === undefined || $scope.availableMeetings.length == 0) {
                     $scope.isMeetingEmpty = true;
                 }
                 $scope.message = '';

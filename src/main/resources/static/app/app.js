@@ -8,6 +8,16 @@ angular.module('BigBlueButton', ['ui.router', 'mgcrea.ngStrap', 'ngStorage', 'ng
     .config(['$httpProvider', function ($httpProvider) {
         $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     }])
+    .directive('showModal', function() {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attr) {
+                scope.closeModal = function() {
+                    $(element).modal('hide');
+                };
+            }
+        }
+    })
 // the following method will run at the time of initializing the module. That
 // means it will run only one time.
     .run(function (AuthService, $rootScope, $state) {
