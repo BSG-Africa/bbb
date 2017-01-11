@@ -50,6 +50,7 @@ angular.module('BigBlueButton')
                 $scope.userForm.$setPristine();
                 $scope.message = "Updated successfully";
                 init();
+                $scope.closeModal();
             }).error(function (error) {
                 $scope.message = error.message;
             });
@@ -61,6 +62,7 @@ angular.module('BigBlueButton')
                 $scope.userForm.$setPristine();
                 $scope.message = "User Created";
                 init();
+                $scope.closeModal();
             }).error(function (error) {
                 $scope.message = error.message;
             });
