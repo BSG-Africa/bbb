@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import za.co.bsg.controller.MeetingController;
+import za.co.bsg.enums.MeetingStatusEnum;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 import za.co.bsg.services.MeetingManagementService;
@@ -35,7 +36,7 @@ public class MeetingControllerIT {
     private MeetingManagementService meetingManagementService;
 
     @Test
-    public void testCreateMeeting_ShouldCMeeting(){
+    public void createMeeting_ShouldReturnResponseEntityOfPersistedMeeting(){
 
         // Setup Fixtures
         User user = new User();
@@ -43,7 +44,7 @@ public class MeetingControllerIT {
         user.setUsername("Candice.Peterson@gmail.com");
         this.entityManager.persist(user);
 
-        Meeting meetingToBeCreated = buildMeeting("Technology Meeting", user, user, "Not Started");
+        Meeting meetingToBeCreated = buildMeeting("Technology Meeting", user, user, MeetingStatusEnum.NotStarted.toString());
 
         // Set Expectation
         ResponseEntity<Meeting> expectedResponseEntity = new ResponseEntity<Meeting>(meetingToBeCreated, HttpStatus.OK);
@@ -57,7 +58,7 @@ public class MeetingControllerIT {
     }
 
     @Test
-    public void testEditMeeting_ShouldCMeeting() {
+    public void editMeeting_ShouldReturnResponseEntityOfUpdatedMeeting() {
 
         // Setup Fixtures
         User user = new User();
@@ -66,34 +67,36 @@ public class MeetingControllerIT {
 
         User moderator = new User();
         moderator.setName("Tina Rosehope");
-        moderator.setUsername("Tina@Rosehope@gmail.com");
+        moderator.setUsername("Tina.Rosehope@gmail.com");
         this.entityManager.persist(user);
         this.entityManager.persist(moderator);
 
-        Meeting meetingToBeEdited = buildMeeting("Technology Meeting", user, moderator, "Not Started");
-        Meeting existingMeeting = buildMeeting("A&D Meeting", user, user, "Not Started");
-        this.entityManager.persist(existingMeeting);
-        meetingToBeEdited.setId(existingMeeting.getId());
+        String status = MeetingStatusEnum.NotStarted.toString();
+        Meeting existingDBMeetingAfterEdit = buildMeeting("Technology Meeting", user, moderator, status);
+        Meeting existingDBMeetingToBeEdited = buildMeeting("A&D Meeting", user, user, status);
+        this.entityManager.persist(existingDBMeetingToBeEdited);
+        existingDBMeetingAfterEdit.setId(existingDBMeetingToBeEdited.getId());
 
         // Set Expectation
-        ResponseEntity<Meeting> expectedResponseEntity = new ResponseEntity<Meeting>(meetingToBeEdited, HttpStatus.OK);
+        ResponseEntity<Meeting> expectedResponseEntity = new ResponseEntity<Meeting>(existingDBMeetingAfterEdit, HttpStatus.OK);
 
         // Exercise SUT
-        ResponseEntity<Meeting> actualResponseEntity = meetingController.editMeeting(meetingToBeEdited);
+        ResponseEntity<Meeting> actualResponseEntity = meetingController.editMeeting(existingDBMeetingAfterEdit);
 
         // Verify
         assertThat(actualResponseEntity, is(sameBeanAs(expectedResponseEntity)));
     }
 
     @Test
-    public void testDeleteMeetingWhereMeetingExists_ShouldMeeting() {
+    public void deleteMeetingWhereMeetingExists_ShouldReturnHttpStatusOkResponseEntityOfDeletedMeeting() {
 
         // Setup Fixtures
         User user = new User();
         user.setName("Harry Peterson");
-        user.setUsername("Harry Peterson");
+        user.setUsername("Harry.Peterson@gmail.com");
 
-        Meeting meetingToBeDeleted = buildMeeting("A&D Meeting", user, null, "Not Started");
+        String status = MeetingStatusEnum.NotStarted.toString();
+        Meeting meetingToBeDeleted = buildMeeting("A&D Meeting", user, null, status);
         this.entityManager.persist(meetingToBeDeleted);
 
         // Set Expectation
@@ -108,7 +111,7 @@ public class MeetingControllerIT {
     }
 
     @Test
-    public void testDeleteMeetingByIdWhereMeetingDoesNotExist_ShouldMeeting() {
+    public void deleteMeetingByIdWhereMeetingDoesNotExist_ShouldReturnHttpStatusNoContentResponseEntityOfMeetingNotDeleted() {
         // Setup Fixtures
         long meetingToBeDeletedId = 3L;
 
