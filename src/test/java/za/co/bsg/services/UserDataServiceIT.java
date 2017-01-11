@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.is;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class UserDataServiceTest {
+public class UserDataServiceIT {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -26,7 +26,7 @@ public class UserDataServiceTest {
     private UserDataService userDataService;
 
     @Test
-    public void testFindByUserId_ShouldOnlyReturnSpecifiedUser(){
+    public void findByUserId_ShouldOnlyReturnSpecifiedUser(){
         // Setup Fixtures
         User userToBeFound= buildUser("Helen Jones");
         User user= buildUser("James Roos");

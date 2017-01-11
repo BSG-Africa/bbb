@@ -1,4 +1,4 @@
-package za.co.bsg.controller.Integration;
+package za.co.bsg.controller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
