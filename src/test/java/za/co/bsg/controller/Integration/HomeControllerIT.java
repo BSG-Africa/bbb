@@ -14,6 +14,7 @@ import za.co.bsg.dto.MeetingInvite;
 import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
+import za.co.bsg.util.UtilService;
 
 import javax.persistence.EntityManager;
 
@@ -28,6 +29,9 @@ public class HomeControllerIT {
 
    @Autowired
    private EntityManager entityManager;
+
+    @Autowired
+    UtilService utilService;
 
    @Autowired
    private HomeController homeController;
@@ -60,44 +64,42 @@ public class HomeControllerIT {
 
         // Setup Fixtures
         User userToBeCreated = new User();
-        userToBeCreated.setUsername("Non ExistingUser");
+       String username = "Non ExistingUser";
+       userToBeCreated.setUsername(username);
 
         // Set Expectations
         User expectedUser = new User();
-        expectedUser.setUsername("Non ExistingUser");
+        expectedUser.setUsername(username);
         expectedUser.setRole(UserRoleEnum.USER.toString());
-        expectedUser.setPassword("password");
         expectedUser.setBlocked(false);
         ResponseEntity<User> expectedCreatedUser = new ResponseEntity<User>(expectedUser, HttpStatus.CREATED);
 
         // Exercise SUT
         ResponseEntity<User> actualCreatedUser =  homeController.createUser(userToBeCreated);
-        expectedCreatedUser.getBody().setPassword(actualCreatedUser.getBody().getPassword());
-        expectedCreatedUser.getBody().setId(actualCreatedUser.getBody().getId());
 
-        // Verify Behaviour
-        assertThat(actualCreatedUser, is(sameBeanAs(expectedCreatedUser)));
+        // Verify Behaviour ignoring password and Id as these are auto-generated
+        assertThat(actualCreatedUser, is(sameBeanAs(expectedCreatedUser).ignoring("body.id").ignoring("body.password")));
     }
 
    @Test
-    public void joinInvite_ShouldReturnMessageInvite(){
-
+    public void joinInvite_ShouldReturnMeetingInvite(){
        // Setup Fixtures
        String  meetingId= "dfe32fgdf";
+       String status = "Started";
+       String fullName = "A&D Meeting";
        Meeting meetingToJoin = new Meeting();
-       meetingToJoin.setStatus("Started");
-       meetingToJoin.setName("A&D Meeting");
+       meetingToJoin.setStatus(status);
+       meetingToJoin.setName(fullName);
        meetingToJoin.setMeetingId(meetingId);
        entityManager.persist(meetingToJoin);
 
        // Set Expectations
        MeetingInvite expectedMeetingInvite = new MeetingInvite();
-       expectedMeetingInvite.setFullName("A&D Meeting");
-       expectedMeetingInvite.setMeetingName("A&D Meeting");
-       expectedMeetingInvite.setMeetingStatus("Started");
+       expectedMeetingInvite.setFullName(fullName);
+       expectedMeetingInvite.setMeetingName(fullName);
+       expectedMeetingInvite.setMeetingStatus(status);
 
        // Exercise SUT
-       String fullName = "A&D Meeting";
        MeetingInvite actualMeetingInvite = homeController.joinInvite(fullName, meetingId);
        expectedMeetingInvite.setInviteURL(actualMeetingInvite.getInviteURL());
 
