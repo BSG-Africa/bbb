@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestData
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
+import za.co.bsg.enums.MeetingStatusEnum;
 import za.co.bsg.model.Meeting;
 import za.co.bsg.model.User;
 
@@ -22,7 +23,7 @@ import static org.hamcrest.Matchers.is;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class MeetingDataServiceTest {
+public class MeetingDataServiceIT {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -31,71 +32,69 @@ public class MeetingDataServiceTest {
     private MeetingDataService meetingDataService;
 
     @Test
-    public void testRetrieveAllByUserId_ShouldReturnOnlyMeetingsForUser(){
+    public void retrieveAllByUserId_ShouldReturnOnlyMeetingsForRelevantUser(){
         // Setup Fixtures
-        User userToFindMeetingBy = buildUser("Helen Rose");
-        User otherUser = buildUser("Deon Smith");
+        String meetingStatus = MeetingStatusEnum.NotStarted.toString();
+        User relevantUser = buildUser("Helen Rose");
+        User irrelevantUser = buildUser("Deon Smith");
+        this.entityManager.persist(relevantUser);
+        this.entityManager.persist(irrelevantUser);
 
-        this.entityManager.persist(userToFindMeetingBy);
-        this.entityManager.persist(otherUser);
-
-        Meeting userToFindByMeeting = buildMeeting("A&D Forum","Not Started", userToFindMeetingBy, null);
-        Meeting otherUserMeeting = buildMeeting("Technology Meeting","Not Started", otherUser, null);
-
-        this.entityManager.persist(userToFindByMeeting);
-        this.entityManager.persist(otherUserMeeting);
+        Meeting relevantUserMeeting = buildMeeting("A&D Forum",meetingStatus, relevantUser, null);
+        Meeting irrelevantUserMeeting = buildMeeting("Technology Meeting",meetingStatus, irrelevantUser, null);
+        this.entityManager.persist(relevantUserMeeting);
+        this.entityManager.persist(irrelevantUserMeeting);
 
         // Set Expectations
-        List<Meeting> expectedMeetings = singletonList(userToFindByMeeting);
+        List<Meeting> expectedMeetings = singletonList(relevantUserMeeting);
 
         // Exercise SUT
-        List<Meeting> actualMeetings = meetingDataService.retrieveAllByUserId(userToFindMeetingBy);
+        List<Meeting> actualMeetings = meetingDataService.retrieveAllByUserId(relevantUser);
 
         // Verify
         assertThat(actualMeetings, is(sameBeanAs(expectedMeetings)));
     }
 
     @Test
-    public void testRetrieveAllByModerator_ShouldOnlyReturnMeetingsUserIsModeratorOf() {
+    public void retrieveAllByModerator_ShouldOnlyReturnMeetingsWhereUserIsModerator() {
         // Setup Fixtures
+        String meetingStatus = MeetingStatusEnum.NotStarted.toString();
         User moderatorUser= buildUser("Helen Jones");
-        User otherUser= buildUser("Helen Rose");
-        User moderatorToFindBy = buildUser("Deon Smith");
-        User otherModerator = buildUser("Kurt Swart");
-
+        User nonModeratorUser= buildUser("Deon Smith");
         this.entityManager.persist(moderatorUser);
-        this.entityManager.persist(otherUser);
-        this.entityManager.persist(moderatorToFindBy);
-        this.entityManager.persist(otherModerator);
+        this.entityManager.persist(nonModeratorUser);
 
-        Meeting moderatorToFindByMeetingSelfCreated = buildMeeting("A&D Forum","Not Started", moderatorUser, moderatorToFindBy);
-        Meeting moderatorToFindByMeetingNonSelfCreated = buildMeeting("Technology Meeting","Not Started", otherUser, moderatorToFindBy);
-        Meeting otherModeratorMeetingNonSelfCreated = buildMeeting("Strategy Meeting","Not Started", otherUser, otherModerator);
+        Meeting meetingCreatedByModeratorModeratedByModerator = buildMeeting("A&D Forum",meetingStatus, moderatorUser, moderatorUser);
+        Meeting meetingCreatedByNonModeratorModeratedByModerator = buildMeeting("A&D Forum",meetingStatus, nonModeratorUser, moderatorUser);
+        Meeting meetingCreatedByModeratorModeratedByNonModerator = buildMeeting("A&D Forum",meetingStatus, moderatorUser, nonModeratorUser);
 
-        this.entityManager.persist(moderatorToFindByMeetingSelfCreated);
-        this.entityManager.persist(moderatorToFindByMeetingNonSelfCreated);
-        this.entityManager.persist(otherModeratorMeetingNonSelfCreated);
+        this.entityManager.persist(meetingCreatedByModeratorModeratedByModerator);
+        this.entityManager.persist(meetingCreatedByNonModeratorModeratedByModerator);
+        this.entityManager.persist(meetingCreatedByModeratorModeratedByNonModerator);
 
         // Set Expectations
-        List<Meeting> expectedMeetings = asList(moderatorToFindByMeetingSelfCreated, moderatorToFindByMeetingNonSelfCreated);
+        List<Meeting> expectedMeetings = asList(meetingCreatedByModeratorModeratedByModerator, meetingCreatedByNonModeratorModeratedByModerator);
 
         // Exercise SUT
-        List<Meeting> actualMeetings = meetingDataService.retrieveAllByModerator(moderatorToFindBy);
+        List<Meeting> actualMeetings = meetingDataService.retrieveAllByModerator(moderatorUser);
 
         // Verify
         assertThat(actualMeetings, is(sameBeanAs(expectedMeetings)));
     }
 
     @Test
-    public void testRetrieveAllByStatus_ShouldReturnOnlyMeetingsWithSpecifiedStatus() {
+    public void retrieveAllByStatus_ShouldReturnOnlyMeetingsWithSpecifiedStatus() {
 
         // Setup Fixtures
         User user= buildUser("Helen Jones");
         this.entityManager.persist(user);
+        String notStartedMeetingStatus = MeetingStatusEnum.NotStarted.toString();
+        String endedMeetingStatus = MeetingStatusEnum.Ended.toString();
+        String startedMeetingStatus = MeetingStatusEnum.Started.toString();
 
-        Meeting notStartedMeeting = buildMeeting("A&D Forum","Not Started", user, null);
-        Meeting endedMeeting = buildMeeting("Technology Meeting","Ended", user, null);
-        Meeting startedMeeting = buildMeeting("Strategy Meeting","Started", user, null);
+        Meeting notStartedMeeting = buildMeeting("A&D Forum",notStartedMeetingStatus, user, null);
+        Meeting endedMeeting = buildMeeting("Technology Meeting",endedMeetingStatus, user, null);
+        Meeting startedMeeting = buildMeeting("Strategy Meeting",startedMeetingStatus, user, null);
 
         this.entityManager.persist(notStartedMeeting);
         this.entityManager.persist(endedMeeting);
@@ -105,23 +104,26 @@ public class MeetingDataServiceTest {
         List<Meeting> expectedMeetings = asList(notStartedMeeting);
 
         // Exercise SUT
-        List<Meeting> actualMeetings = meetingDataService.retrieveAllByStatus("Not Started");
+        List<Meeting> actualMeetings = meetingDataService.retrieveAllByStatus(notStartedMeetingStatus);
 
         // Verify
         assertThat(actualMeetings, is(sameBeanAs(expectedMeetings)));
     }
 
     @Test
-    public void testRetrieveAll_ShouldReturnAllMeetings() {
+    public void retrieveAll_ShouldReturnAllMeetings() {
         // Setup Fixtures
         User user1= buildUser("Helen Jones");
-        User user2= buildUser("Helen Jones");
+        User user2= buildUser("Helen Smith");
         this.entityManager.persist(user1);
         this.entityManager.persist(user2);
+        String notStartedMeetingStatus = MeetingStatusEnum.NotStarted.toString();
+        String endedMeetingStatus = MeetingStatusEnum.Ended.toString();
+        String startedMeetingStatus = MeetingStatusEnum.Started.toString();
 
-        Meeting meeting1 = buildMeeting("A&D Forum","Not Started", user1, null);
-        Meeting meeting2 = buildMeeting("Technology Meeting","Ended", user1, null);
-        Meeting meeting3 = buildMeeting("Strategy Meeting","Started", user2, null);
+        Meeting meeting1 = buildMeeting("A&D Forum",notStartedMeetingStatus, user1, null);
+        Meeting meeting2 = buildMeeting("Technology Meeting",endedMeetingStatus, user1, null);
+        Meeting meeting3 = buildMeeting("Strategy Meeting",startedMeetingStatus, user2, null);
 
         this.entityManager.persist(meeting1);
         this.entityManager.persist(meeting2);
@@ -138,36 +140,38 @@ public class MeetingDataServiceTest {
     }
 
     @Test
-    public void testRetrieve_ShouldOnlyReturnSpecifiedMeeting() {
+    public void retrieve_ShouldOnlyReturnSpecifiedMeeting() {
         // Setup Fixtures
         User user= buildUser("Helen Jones");
         this.entityManager.persist(user);
+        String notStartedMeetingStatus = MeetingStatusEnum.NotStarted.toString();
+        String endedMeetingStatus = MeetingStatusEnum.Ended.toString();
 
-        Meeting meetingToFind = buildMeeting("A&D Forum","Not Started", user, null);
-        Meeting otherMeeting = buildMeeting("Technology Meeting","Ended", user, null);
+        Meeting specifiedMeeting = buildMeeting("A&D Forum",notStartedMeetingStatus, user, null);
+        Meeting otherMeeting = buildMeeting("Technology Meeting",endedMeetingStatus, user, null);
 
-        this.entityManager.persist(meetingToFind);
+        this.entityManager.persist(specifiedMeeting);
         this.entityManager.persist(otherMeeting);
 
         // Set Expectations
-        Meeting expectedMeeting = meetingToFind;
+        Meeting expectedMeeting = specifiedMeeting;
 
         // Exercise SUT
-        Meeting actualMeeting = meetingDataService.retrieve(meetingToFind.getId());
+        Meeting actualMeeting = meetingDataService.retrieve(specifiedMeeting.getId());
 
         // Verify
         assertThat(actualMeeting, is(sameBeanAs(expectedMeeting)));
     }
 
     @Test
-    public void testUnion_ShouldReturnResultSetContainingDataOfTwoList(){
+    public void union_ShouldJoinListsAndReturnResult(){
         // Setup Fixture
         User user= buildUser("Helen Jones");
-        this.entityManager.persist(user);
+        String meetingStatus = MeetingStatusEnum.NotStarted.toString();
 
-        Meeting meetingToBeSaved1 = buildMeeting("A&D Forum","Not Started", user, null);
-        Meeting meetingToBeSaved2 = buildMeeting("Technology Forum","Not Started", user, null);
-        Meeting meetingToBeSaved3 = buildMeeting("Strategy Forum","Not Started", user, null);
+        Meeting meetingToBeSaved1 = buildMeeting("A&D Forum",meetingStatus, user, null);
+        Meeting meetingToBeSaved2 = buildMeeting("Technology Forum",meetingStatus, user, null);
+        Meeting meetingToBeSaved3 = buildMeeting("Strategy Forum",meetingStatus, user, null);
 
         List<Meeting> meetingsList1 = asList(meetingToBeSaved1);
         List<Meeting> meetingsList2 = asList(meetingToBeSaved2, meetingToBeSaved3);
@@ -183,13 +187,14 @@ public class MeetingDataServiceTest {
     }
 
     @Test
-    public void testSave_ShouldSaveAndReturnMeetingSaved() {
+    public void save_ShouldSaveAndReturnSavedMeeting() {
 
         // Setup Fixtures
         User user= buildUser("Helen Jones");
         this.entityManager.persist(user);
+        String meetingStatus = MeetingStatusEnum.NotStarted.toString();
 
-        Meeting meetingToBeSaved = buildMeeting("A&D Forum","Not Started", user, null);
+        Meeting meetingToBeSaved = buildMeeting("A&D Forum",meetingStatus, user, null);
 
         // Set Expectations
         Meeting expectedMeeting = meetingToBeSaved;
@@ -203,35 +208,36 @@ public class MeetingDataServiceTest {
     }
 
     @Test
-    public void testSave_ShouldSaveAndReturnMultipleMeetingsSaved(){
+    public void save_ShouldSaveAndReturnMultipleMeetingsSaved(){
 
         // Setup Fixtures
         User user= buildUser("Helen Jones");
         this.entityManager.persist(user);
+        String meetingStatus = MeetingStatusEnum.NotStarted.toString();
 
-        Meeting meetingToBeSaved1 = buildMeeting("A&D Forum","Not Started", user, null);
-        Meeting meetingToBeSaved2 = buildMeeting("Technology Forum","Not Started", user, null);
-        Meeting meetingToBeSaved3 = buildMeeting("Strategy Forum","Not Started", user, null);
+        Meeting meetingToBeSaved1 = buildMeeting("A&D Forum",meetingStatus, user, null);
+        Meeting meetingToBeSaved2 = buildMeeting("Technology Forum",meetingStatus, user, null);
+        Meeting meetingToBeSaved3 = buildMeeting("Strategy Forum",meetingStatus, user, null);
 
         // Set Expectations
         List<Meeting> expectedMeetings = asList(meetingToBeSaved1, meetingToBeSaved2, meetingToBeSaved3);
 
         // Exercise SUT
-        meetingDataService.save(asList(meetingToBeSaved1, meetingToBeSaved2, meetingToBeSaved3));
-        List<Meeting> actualMeetings = meetingDataService.retrieveAll();
+        List<Meeting> actualMeetings = meetingDataService.save(asList(meetingToBeSaved1, meetingToBeSaved2, meetingToBeSaved3));;
 
         // Verify
         assertThat(actualMeetings, is(sameBeanAs(expectedMeetings)));
     }
 
     @Test
-    public void testDelete_ShouldDeleteSpecifiedMeeting() {
+    public void delete_ShouldDeleteSpecifiedMeeting() {
 
         // Setup Fixtures
         User user= buildUser("Helen Jones");
         this.entityManager.persist(user);
+        String meetingStatus = MeetingStatusEnum.NotStarted.toString();
 
-        Meeting meetingToBeDeleted = buildMeeting("A&D Forum","Not Started", user, null);
+        Meeting meetingToBeDeleted = buildMeeting("A&D Forum",meetingStatus, user, null);
         Meeting otherMeeting = buildMeeting("Technology Meeting","Ended", user, null);
 
         this.entityManager.persist(meetingToBeDeleted);
