@@ -1,5 +1,5 @@
 angular.module('BigBlueButton')
-    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout, Upload, $modal) {
+    .controller('MeetingController', function ($http, $scope, AuthService, $state, $stateParams, $window, $rootScope, $timeout, Upload) {
         var edit = false;
         $scope.user = AuthService.user;
         $scope.name = $scope.user.principal.name;
