@@ -19,6 +19,7 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -105,35 +106,6 @@ public class MeetingDataServiceIT {
 
         // Exercise SUT
         List<Meeting> actualMeetings = meetingDataService.retrieveAllByStatus(notStartedMeetingStatus);
-
-        // Verify
-        assertThat(actualMeetings, is(sameBeanAs(expectedMeetings)));
-    }
-
-    @Test
-    public void retrieveAll_ShouldReturnAllMeetings() {
-        // Setup Fixtures
-        User user1= buildUser("Helen Jones");
-        User user2= buildUser("Helen Smith");
-        this.entityManager.persist(user1);
-        this.entityManager.persist(user2);
-        String notStartedMeetingStatus = MeetingStatusEnum.NotStarted.toString();
-        String endedMeetingStatus = MeetingStatusEnum.Ended.toString();
-        String startedMeetingStatus = MeetingStatusEnum.Started.toString();
-
-        Meeting meeting1 = buildMeeting("A&D Forum",notStartedMeetingStatus, user1, null);
-        Meeting meeting2 = buildMeeting("Technology Meeting",endedMeetingStatus, user1, null);
-        Meeting meeting3 = buildMeeting("Strategy Meeting",startedMeetingStatus, user2, null);
-
-        this.entityManager.persist(meeting1);
-        this.entityManager.persist(meeting2);
-        this.entityManager.persist(meeting3);
-
-        // Set Expectations
-        List<Meeting> expectedMeetings = asList(meeting1, meeting2, meeting3);
-
-        // Exercise SUT
-        List<Meeting> actualMeetings = meetingDataService.retrieveAll();
 
         // Verify
         assertThat(actualMeetings, is(sameBeanAs(expectedMeetings)));
@@ -238,20 +210,14 @@ public class MeetingDataServiceIT {
         String meetingStatus = MeetingStatusEnum.NotStarted.toString();
 
         Meeting meetingToBeDeleted = buildMeeting("A&D Forum",meetingStatus, user, null);
-        Meeting otherMeeting = buildMeeting("Technology Meeting","Ended", user, null);
-
         this.entityManager.persist(meetingToBeDeleted);
-        this.entityManager.persist(otherMeeting);
-
-        // Set Expectations
-        List<Meeting> expectedMeetings = asList(otherMeeting);
 
         // Exercise SUT
         meetingDataService.delete(meetingToBeDeleted.getId());
-        List<Meeting> actualMeetings = meetingDataService.retrieveAll();
+        Meeting actualMeeting = meetingDataService.retrieve(meetingToBeDeleted.getId());
 
         // Verify
-        assertThat(actualMeetings, is(sameBeanAs(expectedMeetings)));
+        assertThat(actualMeeting, is(nullValue()));
     }
 
     public Meeting buildMeeting(String name, String status, User user, User moderator){
