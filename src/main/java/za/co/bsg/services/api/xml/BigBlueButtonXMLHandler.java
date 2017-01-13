@@ -24,6 +24,15 @@ import java.util.Map;
 @Service
 public class BigBlueButtonXMLHandler extends ObjectMapper{
 
+    /**
+     * This nethod processes an XML response returned to API calls
+     *
+     * @param responseType
+     * @param responseXML
+     * @param <T>
+     * @return
+     * @throws BigBlueButtonException
+     */
     public <T extends BigBlueButtonResponse> T processXMLResponse(Class<T> responseType, String responseXML) throws BigBlueButtonException {
         // Initialize XML libraries
         Document dom = null;
@@ -55,6 +64,11 @@ public class BigBlueButtonXMLHandler extends ObjectMapper{
         return responseType.cast(bigBlueButtonResponse);
     }
 
+    /**
+     *
+     * @param _node
+     * @return
+     */
     protected Map<String, Object> processNode(Node _node) {
         Map<String, Object> map = new HashMap<String, Object>();
         NodeList responseNodes = _node.getChildNodes();

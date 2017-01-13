@@ -1,8 +1,10 @@
 angular.module('BigBlueButton')
-// Creating the Angular Controller
     .controller('LoginController', function ($http, $scope, $state, AuthService, LoginService) {
 
-        // method for login
+        /**
+         * This function calls the login service to authenticate user parsing
+         * the provided username and password
+         */
         $scope.login = function () {
             LoginService.loginUser($scope.username, $scope.password, $scope);
         };

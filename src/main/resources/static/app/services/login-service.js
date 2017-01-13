@@ -5,6 +5,14 @@ angular.module('BigBlueButton')
             loginUser: loginUser,
         }
 
+        /**
+         *  This function authenticates user by creating a base64 encoded string that is used to authenticate user
+         *  Once the authentication is successful the user gets redirected to a meetings page.
+         *  If the authentication fails or has an error, a message indicating authentication failure is displayed
+         *
+         * @param username  - username of the user to be authenticated
+         * @param password - password of the user to be authenticated
+         */
         function loginUser(username, password, $scope) {
             // creating base64 encoded String from user name and password
             var base64Credential = btoa(username + ':' + password);
