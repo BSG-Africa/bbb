@@ -63,6 +63,12 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return appPropertiesConfiguration.getLogoutURL();
     }
 
+    /**
+     *
+     * @param meeting
+     * @param user
+     * @return
+     */
     @Override
     public String createPublicMeeting(Meeting meeting, User user) {
         String base_url_join = getBaseURL(API_SERVER_PATH, API_JOIN);
@@ -122,6 +128,12 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return ""+response;
     }
 
+    /**
+     * This method check whether or not meeting is running using meeting id
+     *
+     * @param meeting a Meeting object data type - which is used to get meeting id
+     * @return boolean value indicating whether or not meeting is running
+     */
     @Override
     public boolean isMeetingRunning(Meeting meeting) {
         try {
@@ -132,6 +144,16 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return false;
     }
 
+    /**
+     * This method ends a bbb meeting if the user ending the meeting is a moderator,
+     * by building a query containing meetingId and moderator password.
+     * This query is then used to make an API call to end the bbb meeting,
+     * if meeting has ended successfully or meeting does not exists return true boolean value
+     *
+     * @param meetingID a String data type - is used to query a meeting to be ended
+     * @param moderatorPassword a String data type - a moderator password used to end a meeting
+     * @return boolean value indicating whether meeting has ended
+     */
     @Override
     public boolean endMeeting(String meetingID, String moderatorPassword) {
 
@@ -157,6 +179,12 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return true;
     }
 
+    /**
+     *
+     * @param name
+     * @param meetingID
+     * @return
+     */
     @Override
     public String getPublicJoinURL(String name, String meetingID) {
         String base_url_join = getUrl() + "api/join?";
@@ -198,6 +226,16 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return metadata_params;
     }
 
+    /**
+     * This method check whether a bbb meeting is running
+     * by building a query containing meetingId to get meeting by.
+     * This query is then used to make an API call to check whether
+     * the bbb meeting is running.
+     *
+     * @param meetingID a String data type - is used to query a meeting that is running
+     * @return boolean value
+     * @throws BigBlueButtonException
+     */
     public boolean isMeetingRunning(String meetingID)
             throws BigBlueButtonException {
         try {
@@ -213,6 +251,13 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         }
     }
 
+    /**
+     * This method gets check sum for a api call
+     *
+     * @param apiCall a String type
+     * @param queryString a String type
+     * @return a String object
+     */
     private String getCheckSumParameter(String apiCall, String queryString) {
         if (getSalt() != null){
             return "&checksum=" + DigestUtils.sha1Hex(apiCall + queryString + getSalt());
@@ -222,6 +267,12 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
 
     }
 
+    /**
+     * This method generates a checksum
+     *
+     * @param s
+     * @return a String object
+     */
     private String getCheckSumParameter(String s) {
         String checksum = "";
         try {
@@ -232,11 +283,35 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
         return checksum;
     }
 
+    /**
+     * This method returns a bbb response, by making an api call taking api call type,
+     * query and response type as parameters.
+     *
+     * @param apiCall a String data type - type of api call being made
+     * @param query a String data type - query to query bbb data
+     * @param responseType - a generic Class type - used to determine response type
+     * @return a generic object
+     * @throws BigBlueButtonException
+     */
     protected <T extends BigBlueButtonResponse> T makeAPICall(String apiCall, String query, Class<T> responseType)
             throws BigBlueButtonException {
         return makeAPICall(apiCall, query, "", responseType);
     }
 
+    /**
+     * This method returns a bbb response, by making an api call taking api call type,
+     * query, a presentation and response type as parameters.
+     * The api call is used to generate a base url that is used to open a connection.
+     * Once there a connection an XML response to be returned to a api call is processed
+     * Else a BigBlueButtonException is thrown
+     *
+     * @param apiCall a String data type - used to get the base url
+     * @param query a String data type - used to query bbb data
+     * @param presentation a String type - presentation
+     * @param responseType a generic class type - response type
+     * @return a BigBlueButtonResponse
+     * @throws BigBlueButtonException
+     */
     protected <T extends BigBlueButtonResponse> T makeAPICall(String apiCall, String query, String presentation, Class<T> responseType)
             throws BigBlueButtonException {
         StringBuilder urlStr = new StringBuilder(getBaseURL(API_SERVER_PATH, apiCall));

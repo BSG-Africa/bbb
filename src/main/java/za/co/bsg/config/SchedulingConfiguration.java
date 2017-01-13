@@ -57,6 +57,7 @@ public class SchedulingConfiguration {
 
         int ended = 0;
         for (Meeting meeting : meetings) {
+            // TODO: why is the Meeting object parsed if we only using the ID
             boolean meetingRunning = bigBlueButtonAPI.isMeetingRunning(meeting);
             if (!meetingRunning) {
                 meeting.setStatus(MeetingStatusEnum.Ended.toString());
