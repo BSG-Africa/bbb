@@ -14,16 +14,31 @@ angular.module('BigBlueButton')
             "checked": false
         };
 
+        /**
+         * This function used for initializing the upload of presentation file
+         */
         $scope.$watch('file', function () {
             if ($scope.file != null) {
                 $scope.upload($scope.file);
             }
         });
 
+        /**
+         * This function sets selected row for meeting item to be edited
+         *
+         * @param row - row containing details to be edited
+         */
         $scope.rowHighlighted = function (row) {
             $scope.myMeetingsSelectedRow = row;
         };
 
+        /**
+         * This function searches for admin user using a provided search term.
+         * If user exists return results, else return null.
+         *
+         * @param searchTerm - search term used for find a user by
+         * @returns {*}
+         */
         $scope.getUsersBySearchTerm = function (searchTerm) {
             if (searchTerm !== '' && typeof searchTerm === 'string') {
                 var query = searchTerm.toLowerCase(),
@@ -40,6 +55,9 @@ angular.module('BigBlueButton')
             return null;
         };
 
+        /**
+         * This function initializes components that will be used to create a meeting
+         */
         $scope.addMeeting = function () {
             edit = false;
             $scope.message = '';
@@ -50,6 +68,9 @@ angular.module('BigBlueButton')
             $scope.buttonText = 'Create';
         };
 
+        /**
+         * This function initializes components that will be used to edit a meeting
+         */
         $scope.editMeeting = function () {
             edit = true;
             $scope.message = '';
@@ -59,8 +80,15 @@ angular.module('BigBlueButton')
             $scope.buttonText = 'Update';
         };
 
-        // upload on file select or drop
-        $scope.upload = function (file) {
+        /**
+         * This function used for the upload on file select or drop,
+         * If file is uploaded successfully return file details,
+         * else if upload failed return status message
+         * else if file is still loading indicate progress of file upload
+         *
+         * @param file - file to be uploaded or dropped on meeting create or edit
+         */
+         $scope.upload = function (file) {
             $scope.responseData = '';
             Upload.upload({
                 url: 'api/meeting/upload',
@@ -75,8 +103,16 @@ angular.module('BigBlueButton')
                 var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                 $scope.responseData = 'Progress: ' + progressPercentage + '%';
             });
-        };
+         };
 
+        /**
+         * This function creates/edits a bbb meeting based on whether a already exists
+         * First a check is done to check that a valid moderator was selected
+         *
+         * If a meeting already exists a post http request is sent to edit meeting
+         * If a meeting does not exist, current logged on user is set as a principal user,
+         * as well as the createdBy and meeting status, then a meeting is created
+         */
         $scope.createMeeting = function () {
             if(!(typeof $scope.meeting.moderator == "object")){
                 $scope.message = 'Please select a valid Moderator Name';
@@ -99,6 +135,13 @@ angular.module('BigBlueButton')
             }
         };
 
+        /**
+         *  This function deletes a selected meeting
+         *  If a meeting is not selected, the current user will be prompted
+         *  to select a tow to delete.
+         *  Else a http delete request will be called taking selected meeting id as a parameter
+         *  User meetings are then updated to reflect change
+         */
         $scope.deleteMeeting = function () {
 
             if ($scope.myMeetingsSelectedRow === undefined) {
@@ -107,7 +150,8 @@ angular.module('BigBlueButton')
                     $scope.message = undefined;
                 }, 4000);
             } else {
-                $http.delete('api/meeting/delete/' + $scope.myMeeting[$scope.myMeetingsSelectedRow].id).success(function (res) {
+                $http.delete('api/meeting/delete/' + $scope.myMeeting[$scope.myMeetingsSelectedRow].id)
+                    .success(function (res) {
                     $scope.message = "Success!";
                     var current = $state.current;
                     var params = angular.copy($stateParams);
@@ -119,6 +163,12 @@ angular.module('BigBlueButton')
             }
         };
 
+        /**
+         * This function goes to a selected BBB meeting the current user is moderating.
+         * If a bbb meeting is not selected the current user will be prompted to select a meeting.
+         * Else create a BBB meeting and redirect user to the meeting on BBB.
+         * When moderator logout of the meeting the bbb meeting gets ended.
+         */
         $scope.goToMeetingAsModerator = function () {
             if ($scope.myMeetingsSelectedRow === undefined) {
                 $scope.message = 'Please select a row';
@@ -140,6 +190,15 @@ angular.module('BigBlueButton')
             }
         };
 
+        /**
+         * This function allows user to join an available BBB meeting as an attendee by
+         * Using selected meeting details to redirect attendee to BBB meeting page.
+         * If a BBB meeting has not been started a attendee will be redirected to the
+         * meeting loading page and redirects attendee to the BBB meeting once the
+         * BBB meeting is started
+         *
+         * @param data - data of meeting to be attended as attendee
+         */
         $scope.goToMeetingAsAttendee = function (data) {
             $scope.selectedRow = data;
             var selectedMeeting = $scope.availableMeetings[data];
@@ -151,7 +210,14 @@ angular.module('BigBlueButton')
             $scope.redirectToMeeting(selectedMeeting, newTab);
         };
 
-
+        /**
+         * This function redirects user to the BBB meeting if the meeting is started
+         * Else user is redirected to the meeting loading page until the BBB meeting
+         * is started
+         * @param selectedMeeting - BBB meeting the a user either starts as moderator
+         *                          or joins as an attendee
+         * @param newTab - new tab to be user for a BBB meeting or meeting loading page
+         */
         $scope.redirectToMeeting = function (selectedMeeting, newTab) {
             if (selectedMeeting.status === 'Started') {
                 var meetingId = selectedMeeting.meetingId;
@@ -178,6 +244,10 @@ angular.module('BigBlueButton')
 
         };
 
+        /**
+         * This function gets all available meetings for a user to join.
+         * These are meetings not created or moderated by current user.
+         */
         function getAvailableMeetings () {
             var userId = $scope.user.principal.id;
             $http.get('api/meeting/available/' + userId).success(function (res) {
@@ -193,6 +263,9 @@ angular.module('BigBlueButton')
             });
         };
 
+        /**
+         * This function gets all the meetings created or moderator by current user
+         */
         function getMyMeetings () {
             var userId = $scope.user.principal.id;
 
@@ -205,6 +278,9 @@ angular.module('BigBlueButton')
             });
         };
 
+        /**
+         * This function gets all the admin users of the system
+         */
         function getAuthority() {
             $scope.isAdmin = false;
 
@@ -216,6 +292,9 @@ angular.module('BigBlueButton')
             }
         };
 
+        /**
+         * This function gets all the users in a user table
+         */
         function getAllUsers() {
             $http.get('api/users').success(function (res) {
                 $scope.allUsers = res;
