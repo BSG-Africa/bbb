@@ -1,133 +1,133 @@
-<div class="container">
-    <div class="col-md-8 col-md-offset-2 available-meetings">
-        <h3>Available Meetings</h3>
-        <div class="btn-group-vertical btn-group-md">
-            <button class="btn btn-default btn-info"
-                    ng-repeat="meetup in availableMeetings"
-                    ng-click="goToMeetingAsAttendee($index)"
-                    ng-class="{active:$index==selectedRow}">
-                <span class="pull-left">{{meetup.name}}  |   Moderator: {{meetup.moderator.name}}</span>
-                <span class="glyphicon glyphicon-circle-arrow-right pull-right" aria-hidden="true"></span>
-                <span class="pull-right">{{meetup.status}}</span>
-            </button>
-        </div>
-        <div class="well well-sm" ng-if="isMeetingEmpty" align="center">
-            <i>No available meetings.</i>
-        </div>
+<div class="col-md-8 col-md-offset-2 available-meetings">
+    <h3>Available Meetings</h3>
+
+    <div class="btn-group-vertical btn-group-md">
+        <button class="btn btn-default btn-info"
+                ng-repeat="meetup in availableMeetings"
+                ng-click="goToMeetingAsAttendee($index)"
+                ng-class="{active:$index==selectedRow}">
+            <span class="pull-left">{{meetup.name}}  |   Moderator: {{meetup.moderator.name}}</span>
+            <span class="glyphicon glyphicon-circle-arrow-right pull-right" aria-hidden="true"></span>
+            <span class="pull-right">{{meetup.status}}</span>
+        </button>
     </div>
-    <div class="col-md-8 col-md-offset-2 your-meetings" ng-if="isAdmin">
-        <h3>Manage Your Meetings</h3>
-
-        <table class="table" id="table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Moderator</th>
-                <th>Status</th>
-                <th class="checked"></th>
-            </tr>
-            </thead>
-            <tr ng-repeat="meetup in myMeeting" ng-class="{active:$index==myMeetingsSelectedRow}"
-                data-ng-click="rowHighlighted($index)">
-                <td>{{meetup.name}}</td>
-                <td>{{meetup.moderator.name}}</td>
-                <td>{{meetup.status}}</td>
-                <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-            </tr>
-        </table>
-        <button type="button" class="btn btn-default" ng-click="addMeeting()" data-toggle="modal" data-target="#myModal">Create</button>
-        <div class="btn-group pull-right">
-            <button type="button" class="btn btn-default" ng-click="editMeeting()" ng-disabled="myMeetingsSelectedRow==undefined" data-toggle="modal" data-target="#myModal">Edit</button>
-            <button type="button" class="btn btn-default" ng-click="deleteMeeting()" ng-disabled="myMeetingsSelectedRow==undefined">Delete</button>
-            <button type="button" class="btn btn-default btn-info start pull-right" ng-click="goToMeetingAsModerator()" ng-disabled="myMeetingsSelectedRow==undefined">
-                Start <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
-            </button>
-            <button type="button" class="btn btn-default pull-right" data-animation="am-flip-x" bs-dropdown aria-haspopup="true" aria-expanded="false" ng-disabled="myMeetingsSelectedRow==undefined">Share</button>
-            <ul class="dropdown-menu" role="menu">
-                <li>
-                    <a ngclipboard data-clipboard-text={{myMeeting[myMeetingsSelectedRow].inviteURL}}>
-                        <i class="fa fa-files-o"></i> Copy
-                    </a>
-                </li>
-                <li>
-                    <a socialshare socialshare-provider="email" socialshare-trigger="click" socialshare-subject="BSG - Big Blue Button shared link" socialshare-body={{myMeeting[myMeetingsSelectedRow].inviteURL}} socialshare-to="" >
-                        <i class="fa fa-envelope-o"></i> Email
-                    </a>
-                </li>
-                <li>
-                    <a socialshare socialshare socialshare-provider="twitter" socialshare-text="Unlocking Potential > Accelerating Performance @bsgafrica - online meeting link " socialshare-url={{myMeeting[myMeetingsSelectedRow].inviteURL}} socialshare-hashtags="BSG" >
-                        <i class="fa fa-twitter"></i> Twitter
-                    </a>
-                </li>
-                <li>
-                    <a socialshare socialshare-provider="facebook" socialshare-url={{myMeeting[myMeetingsSelectedRow].inviteURL}} >
-                        <i class="fa fa-facebook"></i> Facebook
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
+    <div class="well well-sm" ng-if="isMeetingEmpty" align="center">
+        <i>No available meetings.</i>
     </div>
+</div>
+<div class="col-md-8 col-md-offset-2 your-meetings" ng-if="isAdmin">
+    <h3>Manage Your Meetings</h3>
 
-    <div class="modal fade" show-modal id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <form name="createForm" ng-submit="createMeeting()">
-                    <div class="modal-header bg-primary">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h3 class="modal-title" id="myModalLabel">Create Meeting</h3>
-                    </div>
-                    <div class="modal-body">
-                        <div class="">
-                            <div class="form-group">
-                                <label>Meeting Name</label>
-                                <input type="txt" maxlength="30" class="form-control"
-                                       ng-model="meeting.name"
-                                       id="meetingName" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Welcome Message</label>
-                                <input type="txt"  maxlength="60" class="form-control"
-                                       ng-model="meeting.welcomeMessage"
-                                       id="meetingWelcomeMessage">
-                            </div>
-                            <div class="form-group">
-                                <label>Moderator Name</label>
-                                <input type="txt"
-                                       class="form-control"
-                                       ng-model="meeting.moderator"
-                                       bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
-                                       bs-typeahead
-                                       ng-model-options="{ debounce: 100 }"
-                                       required>
-                            </div>
+    <table class="table" id="table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Moderator</th>
+            <th>Status</th>
+            <th class="checked"></th>
+        </tr>
+        </thead>
+        <tr ng-repeat="meetup in myMeeting" ng-class="{active:$index==myMeetingsSelectedRow}"
+            data-ng-click="rowHighlighted($index)">
+            <td>{{meetup.name}}</td>
+            <td>{{meetup.moderator.name}}</td>
+            <td>{{meetup.status}}</td>
+            <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+        </tr>
+    </table>
+    <button type="button" class="btn btn-default" ng-click="addMeeting()" data-toggle="modal" data-target="#myModal">Create</button>
+    <div class="btn-group pull-right">
+        <button type="button" class="btn btn-default" ng-click="editMeeting()" ng-disabled="myMeetingsSelectedRow==undefined" data-toggle="modal" data-target="#myModal">Edit</button>
+        <button type="button" class="btn btn-default" ng-click="deleteMeeting()" ng-disabled="myMeetingsSelectedRow==undefined">Delete</button>
+        <button type="button" class="btn btn-default btn-info start pull-right" ng-click="goToMeetingAsModerator()" ng-disabled="myMeetingsSelectedRow==undefined">
+            Start <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn-default pull-right" data-animation="am-flip-x" bs-dropdown aria-haspopup="true" aria-expanded="false" ng-disabled="myMeetingsSelectedRow==undefined">Share</button>
+        <ul class="dropdown-menu" role="menu">
+            <li>
+                <a ngclipboard data-clipboard-text={{myMeeting[myMeetingsSelectedRow].inviteURL}}>
+                    <i class="fa fa-files-o"></i> Copy
+                </a>
+            </li>
+            <li>
+                <a socialshare socialshare-provider="email" socialshare-trigger="click" socialshare-subject="BSG - Big Blue Button shared link" socialshare-body={{myMeeting[myMeetingsSelectedRow].inviteURL}} socialshare-to="" >
+                    <i class="fa fa-envelope-o"></i> Email
+                </a>
+            </li>
+            <li>
+                <a socialshare socialshare socialshare-provider="twitter" socialshare-text="Unlocking Potential > Accelerating Performance @bsgafrica - online meeting link " socialshare-url={{myMeeting[myMeetingsSelectedRow].inviteURL}} socialshare-hashtags="BSG" >
+                    <i class="fa fa-twitter"></i> Twitter
+                </a>
+            </li>
+            <li>
+                <a socialshare socialshare-provider="facebook" socialshare-url={{myMeeting[myMeetingsSelectedRow].inviteURL}} >
+                    <i class="fa fa-facebook"></i> Facebook
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
+</div>
 
-                            <div class="form-group">
-                                <input type="checkbox"
-                                       ng-model="tooltip.checked" ng-disabled="createForm.$invalid">
-                                <label data-placement="auto top-left" data-type="info" data-animation="am-fade-and-scale" bs-tooltip="tooltip" bs-enabled="tooltip.checked">
-                                    Pre-upload a presentation (max-size 30MB)
-                                </label>
-                                <div align="center" class="form-group">
-                                <div ngf-drop ngf-select ng-model="file" class="drop-box btn btn-lg" ng-show="tooltip.checked"
-                                         ngf-drag-over-class="'dragover'" ngf-allow-dir="true"
-                                         accept="application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.presentationml.presentation"
-                                         ngf-pattern="'application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.presentationml.presentation'">Click to upload or Drop pdfs/slides here
-                                </div>
-                                <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
-                                </div>
+<!-- Modal -->
+<div class="modal fade" show-modal id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form name="createForm" ng-submit="createMeeting()">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="myModalLabel">Create Meeting</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="">
+                        <div class="form-group">
+                            <label>Meeting Name</label>
+                            <input type="txt" maxlength="30" class="form-control"
+                                   ng-model="meeting.name"
+                                   id="meetingName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Welcome Message</label>
+                            <input type="txt"  maxlength="60" class="form-control"
+                                   ng-model="meeting.welcomeMessage"
+                                   id="meetingWelcomeMessage">
+                        </div>
+                        <div class="form-group">
+                            <label>Moderator Name</label>
+                            <input type="txt"
+                                   class="form-control"
+                                   ng-model="meeting.moderator"
+                                   bs-options="user as user.name for user in getUsersBySearchTerm($viewValue)"
+                                   bs-typeahead
+                                   ng-model-options="{ debounce: 100 }"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="checkbox"
+                                   ng-model="tooltip.checked" ng-disabled="createForm.$invalid">
+                            <label data-placement="auto top-left" data-type="info" data-animation="am-fade-and-scale" bs-tooltip="tooltip" bs-enabled="tooltip.checked">
+                                Pre-upload a presentation (max-size 30MB)
+                            </label>
+                            <div align="center" class="form-group">
+                            <div ngf-drop ngf-select ng-model="file" class="drop-box btn btn-lg" ng-show="tooltip.checked"
+                                     ngf-drag-over-class="'dragover'" ngf-allow-dir="true"
+                                     accept="application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                                     ngf-pattern="'application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.presentationml.presentation'">Click to upload or Drop pdfs/slides here
+                            </div>
+                            <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-default btn-primary" ng-disabled="createForm.$invalid">{{buttonText}}</button>
-                        <div class="alert alert-info" ng-show="responseData">
-                            <strong>{{responseData}}</strong>
-                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-default btn-primary" ng-disabled="createForm.$invalid">{{buttonText}}</button>
+                    <div class="alert alert-info" ng-show="responseData">
+                        <strong>{{responseData}}</strong>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
