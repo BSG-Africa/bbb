@@ -38,11 +38,24 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     @Autowired
     private AppPropertiesConfiguration appPropertiesConfiguration;
 
+    /**
+     * This method returns user details of the user logging on the system
+     *
+     * @param username a String data type - username of the user logging on
+     * @return a UserDetails object
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findUserByUsername(username);
     }
 
+    /**
+     *  This method authenticate user by
+     *
+     * @return a Authentication object
+     * @throws AuthenticationException
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         User details;
@@ -88,12 +101,32 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         }
     }
 
+    /**
+     *
+     * @param context
+     * @param sidUsername
+     * @param username
+     * @param password
+     * @return
+     */
     private User createUser(DirContext context, String sidUsername, String username, String password) {
         String passwordHashed = utilService.hashPassword(password);
         User details = this.loadUserByUsername(context, sidUsername, username, passwordHashed);
         return userRepository.save(details);
     }
 
+    /**
+     * This method loads
+     * if user is not found a UsernameNotFoundException is thrown
+     *
+     *
+     * @param context
+     * @param sidUsername
+     * @param username
+     * @param password
+     * @return a User object
+     * @throws UsernameNotFoundException
+     */
     private User loadUserByUsername(DirContext context, String sidUsername, String username, String password) throws UsernameNotFoundException {
         try {
             SearchControls controls = new SearchControls();
@@ -131,6 +164,15 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         }
     }
 
+    /**
+     * This method creates a User object and sets user fields to parsed parameters
+     *
+     * @param username a String data type - used to set a user's username
+     * @param password a String data type - user to set a user's password
+     * @param displayName a String data type - used to set a user's Name
+     * @param blocked a boolean data type - used to set a user's blocked status
+     * @return a User object
+     */
     private User getAppUser(String username, String password, String displayName, boolean blocked) {
         User appUser = new User();
         appUser.setName(displayName);
@@ -141,6 +183,17 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         return appUser;
     }
 
+    /**
+     * This method sets initial context using specified properties,
+     * if credentials are invalid a NamingException is thrown indicating that authentication failed
+     *
+     * @param username a String data type - username used to specify name of user/program
+     *                 doing the authentication
+     * @param password a String data type - password used to specify credentials of user/program
+     *                 doing authentication
+     * @return a DirContext object
+     * @throws NamingException
+     */
     private DirContext getActiveDirectoryContext(String username, String password) throws NamingException {
         final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
@@ -162,6 +215,19 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
         return context;
     }
 
+    /**
+     * This method finds a user by the username in the user table.
+     * If the user exists, a comparison is done between the hashed
+     * user password parsed as a parameter and the existing password
+     * in the user table.  If the passwords match the User object
+     * is returned otherwise a null value is returned.
+     *
+     * @param username a String data type - Which is the username
+     *                 provided by a user for authentication
+     * @param password a String data type - Which is the user password
+     *                 provided by a user for authentication
+     * @return a User object or null value
+     */
     private User authenticateUser(String username, String password) {
         User user = userRepository.findUserByUsername(username);
         String passwordHash = utilService.hashPassword(password == null ? "" : password);

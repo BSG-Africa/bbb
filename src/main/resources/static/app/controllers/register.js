@@ -1,9 +1,13 @@
 angular.module('BigBlueButton')
-// Creating the Angular Controller
     .controller('RegisterController', function ($http, $scope, $state, $rootScope, LoginService) {
         if($state.current.name == 'register'){
             $rootScope.$broadcast('RegisterNotAllowed');
         }
+
+        /**
+         * This function registers a new user and calls the login servcve to log user on
+         * once registration is successful
+         */
         $scope.submit = function () {
             $http.post('register', $scope.appUser).success(function (res) {
                 $scope.register.$setPristine();

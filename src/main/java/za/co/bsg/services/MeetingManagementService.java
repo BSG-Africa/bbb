@@ -34,7 +34,6 @@ public class MeetingManagementService {
     }
 
     /**
-     * Returns a Meeting object that was created.
      * This method always checks if meeting has been created before
      * by checking if a meetingId has been assigned to the meeting,
      * If the meeting hasnt been created before, create a bbb meeting
@@ -43,6 +42,7 @@ public class MeetingManagementService {
      * ensures that all meetings exist on bbb server.
      *
      * @param meeting a meeting object created as the front end form is submitted
+     * @return a Meeting object that was created.
      */
     public Meeting createMeeting(Meeting meeting) throws UnsupportedEncodingException {
         User user = userDataService.findUserById(meeting.getModerator().getId());
@@ -64,27 +64,34 @@ public class MeetingManagementService {
     }
 
     /**
-     * Returns a Meeting object that was saved(Updated).
      * This method takes a meeiting object and updates the database
      * with the updated
      *
      * @param meeting a meeting object to be updated in the database
+     * @return a Meeting object that was saved(Updated).
      */
     public Meeting editMeeting(Meeting meeting) {
         return meetingDataService.save(meeting);
     }
 
+    /**
+     * This method gets the bbb meeting invite url using the meeting name and meetingId
+     *
+     * @param name a String data type - Which is the name of the meeting to get invite url by
+     * @param meetingId a String data type - Which the bbb meetingId to get invite ul by
+     * @return a String Objects
+     */
     public String getInviteURL(String name, String meetingId)  {
         return bigBlueButtonAPI.getPublicJoinURL(name, meetingId);
     }
 
     /**
-     * Returns a list of Meeting objects.
      * This method retrieve all meetings except the one with ended status in the meeting table and
      * removes all meetings that are either created by or being
      * moderated by the supplied in user
      *
      * @param userId a long data type - Expected to be current logged in user
+     * @return a list of Meeting objects.
      */
     public List<Meeting> getAllMeetings(long userId) {
         // TODO : This can be done in a single query.
@@ -95,14 +102,13 @@ public class MeetingManagementService {
     }
 
     /**
-     * Returns a list of Meeting objects.
      * This method retrieve all meetings in the meeting table that
      * are either created by or being moderated by the supplied in user
      *
      * @param userId a long data type - Expected to be current logged in user
+     * @return a list of Meeting objects.
      */
     public List<Meeting> getMeetingsByUser(long userId) {
-        // TODO : This can be done in a single query.
         User user = userDataService.findUserById(userId);
         List<Meeting> creatorMeetings = meetingDataService.retrieveAllByUserId(user);
         List<Meeting> moderatorMeetings = meetingDataService.retrieveAllByModerator(user);
@@ -110,17 +116,13 @@ public class MeetingManagementService {
     }
 
     /**
-     * Returns ResponseEntity of Meeting object.
-<<<<<<< HEAD
-     * This method attempts to delete a meeting from the data base if it exists,
-=======
      * This method attempts to delete a meeting from the database if it exists,
->>>>>>> 63165e223e0d0a2ea573616b944ea19f17d1300f
      * And if the meeting does not exist in the database, it returns an
      * HttpStatus of no content
      *
      * @param meetingId a long data type - Which is the Id of the meeting
      *                  to be deleted
+     * @return a ResponseEntity of Meeting object.
      */
     public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {
         Meeting meetingToDelete = meetingDataService.retrieve(meetingId);
@@ -135,33 +137,33 @@ public class MeetingManagementService {
     }
 
     /**
-     * Returns a Meeting object.
      * This method retrieves a meeting from the database,
      *
      * @param meetingId a long data type - Which is the Id of the meeting
      *                  to be retrieved
+     * @return a Meeting object.
      */
     public Meeting getMeeting(Long meetingId) {
         return meetingDataService.retrieve(meetingId);
     }
 
     /**
-     * Returns a Meeting object.
      * This method retrieves a meeting from the database,
      *
      * @param meetingId a String object- Which is the bbb meetingId of the meeting
      *                  to be retrieved
+     * @retrun a Meeting object.
      */
     public Meeting getMeetingByMeetingId(String meetingId) {
         return meetingDataService.retrieveByMeetingId(meetingId);
     }
 
     /**
-     * Returns a boolean.
      * This method retrieves the meeting status through the bbb api ,
      *
      * @param meetingId a String object- Which is the bbb meetingId of the meeting
      *                  to be retrieved
+     * @return a boolean
      */
     public boolean isBBBMeetingRunning(String meetingId) throws BigBlueButtonException {
         return bigBlueButtonAPI.isMeetingRunning(meetingId);
