@@ -4,7 +4,7 @@ angular.module('BigBlueButton')
          * Hide register menu while user accessing invite or invite is loading
          */
         if($state.current.name == 'invite' || $state.current.name == 'loading-invite'){
-            $rootScope.$broadcast('RegisterNotAllowed');
+            $rootScope.$broadcast('RegisterAndLoginNotAllowed');
         }
 
         $scope.user = AuthService.user;

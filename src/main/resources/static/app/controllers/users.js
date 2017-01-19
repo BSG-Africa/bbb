@@ -96,7 +96,6 @@ angular.module('BigBlueButton')
          * This function creates a user when a user registers
          */
         var createUser = function () {
-            console.log($scope.appUser.password);
             if(!$scope.edit && ($scope.appUser.password === undefined || !$scope.appUser.password)){
                 $scope.message = 'Please enter a valid password';
             } else {

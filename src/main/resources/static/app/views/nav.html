@@ -32,6 +32,7 @@
                     <a><span ng-click="logout()" href="">Logout</span></a>
                 </li>
                 <li ng-show="!user.principal.name && registerLink"><a ui-sref="register">Register</a></li>
+                <li ng-show="!user.principal.name && loginLink"><a ui-sref="login">Login</a></li>
             </ul>
         </div>
     </div>
