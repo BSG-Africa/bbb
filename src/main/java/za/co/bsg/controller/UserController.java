@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import za.co.bsg.enums.UserRoleEnum;
 import za.co.bsg.model.User;
-import za.co.bsg.repository.UserRepository;
+import za.co.bsg.services.UserDataService;
 import za.co.bsg.util.UtilService;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping(value = "/api")
 public class UserController {
     @Autowired
-    private UserRepository userRepository;
+    private UserDataService userDataService;
     @Autowired
     UtilService utilService;
 
@@ -29,7 +29,7 @@ public class UserController {
     */
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public List<User> users() {
-        return userRepository.findAll();
+        return userDataService.findAll();
     }
 
     /**
@@ -43,7 +43,7 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> userById(@PathVariable Long id) {
-        User appUser = userRepository.findOne(id);
+        User appUser = userDataService.findUserById(id);
         if (appUser == null) {
             return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
         } else {
@@ -67,7 +67,7 @@ public class UserController {
      */
     @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<User> deleteUser(@PathVariable Long id) {
-        User appUser = userRepository.findOne(id);
+        User appUser = userDataService.findUserById(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String loggedUsername = auth.getName();
         if (appUser == null) {
@@ -79,7 +79,7 @@ public class UserController {
         }
         else {
             try {
-                userRepository.delete(appUser);
+                userDataService.delete(appUser);
             }
             catch (RuntimeException e){
                 throw new RuntimeException("Delete unsuccessful!");
@@ -100,12 +100,12 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestBody User appUser) {
-        if (userRepository.findUserByUsername(appUser.getUsername()) != null) {
+        if (userDataService.findUserByUsername(appUser.getUsername()) != null) {
             throw new RuntimeException("Username already exist");
         }
         String passwordHashed = utilService.hashPassword(appUser.getPassword());
         appUser.setPassword(passwordHashed);
-        return new ResponseEntity<User>(userRepository.save(appUser), HttpStatus.CREATED);
+        return new ResponseEntity<User>(userDataService.save(appUser), HttpStatus.CREATED);
     }
 
     /**
@@ -121,15 +121,21 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/user", method = RequestMethod.PUT)
     public User editUser(@RequestBody User appUser) {
-        if (userRepository.findUserByUsername(appUser.getUsername()) != null
-                && userRepository.findUserByUsername(appUser.getUsername()).getId() != appUser.getId()) {
+        if (userDataService.findUserByUsername(appUser.getUsername()) != null
+                && userDataService.findUserByUsername(appUser.getUsername()).getId() != appUser.getId()) {
             throw new RuntimeException("Username already exist");
         }
-        else if (userRepository.findOne(appUser.getId()) != null
-                && userRepository.findOne(appUser.getId()).getId() == appUser.getId()) {
-            appUser.setPassword(userRepository.findOne(appUser.getId()).getPassword());
+        else if (userDataService.findUserById(appUser.getId()) != null
+                && userDataService.findUserById(appUser.getId()).getId() == appUser.getId()) {
+            String passwordHashed = utilService.hashPassword(appUser.getPassword());
+            String oldPasswordHashed = userDataService.findUserById(appUser.getId()).getPassword();
+            if (appUser.getPassword() != null && !passwordHashed.equals(oldPasswordHashed)) {
+                appUser.setPassword(passwordHashed);
+            } else{
+                appUser.setPassword(oldPasswordHashed);
+            }
         }
-        return userRepository.save(appUser);
+        return userDataService.save(appUser);
     }
 
 }
