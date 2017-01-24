@@ -7,8 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 @Entity
 @Table(name = "user")
@@ -28,6 +27,12 @@ public class User implements UserDetails {
     private String role;
     @Column
     private boolean blocked;
+
+    @OneToMany(fetch=FetchType.EAGER, mappedBy = "moderator", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Meeting> moderators = new HashSet();
+
+    @OneToMany(fetch=FetchType.EAGER, mappedBy = "createdBy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Meeting> creators = new HashSet();
 
     public long getId() {
         return id;
@@ -75,6 +80,16 @@ public class User implements UserDetails {
 
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
+    }
+
+    @JsonIgnore
+    public Set<Meeting> getModerators() {
+        return moderators;
+    }
+
+    @JsonIgnore
+    public Set<Meeting> getCreators() {
+        return creators;
     }
 
     @JsonIgnore

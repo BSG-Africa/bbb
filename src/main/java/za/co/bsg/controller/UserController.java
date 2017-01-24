@@ -74,10 +74,7 @@ public class UserController {
             return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
         } else if (appUser.getUsername().equalsIgnoreCase(loggedUsername)) {
             throw new RuntimeException("You cannot delete your account");
-        } else if(appUser.getRole().equalsIgnoreCase(UserRoleEnum.ADMIN.toString())){
-            throw new RuntimeException("You cannot delete an admin account");
-        }
-        else {
+        } else {
             try {
                 userDataService.delete(appUser);
             }

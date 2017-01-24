@@ -286,12 +286,8 @@ angular.module('BigBlueButton')
          */
         function getAuthority() {
             $scope.isAdmin = false;
-
-            for (var i = 0; i < $scope.user.authorities.length; i++) {
-                var auth = $scope.user.authorities[i];
-                if (auth.authority === 'ADMIN') {
-                    $scope.isAdmin = true;
-                }
+            if ($scope.user.principal.role === 'ADMIN') {
+                $scope.isAdmin = true;
             }
         };
 
