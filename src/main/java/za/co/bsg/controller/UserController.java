@@ -134,9 +134,8 @@ public class UserController {
             throw new RuntimeException("You cannot change your role");
         } else if (userDataService.findUserByUsername(appUser.getUsername()) != null
                 && userDataService.findUserByUsername(appUser.getUsername()).getId() != appUser.getId()) {
-            throw new RuntimeException("Username already exist");
-        }
-        else if (userDataService.findUserById(appUser.getId()) != null
+            throw new RuntimeException("Username already exists");
+        } else if (userDataService.findUserById(appUser.getId()) != null
                 && userDataService.findUserById(appUser.getId()).getId() == appUser.getId()) {
             String passwordHashed = utilService.hashPassword(appUser.getPassword());
             String oldPasswordHashed = userDataService.findUserById(appUser.getId()).getPassword();
