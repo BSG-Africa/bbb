@@ -1,8 +1,10 @@
 angular.module('BigBlueButton')
     .controller('UsersController', function ($http, $scope, AuthService) {
+        $scope.user = AuthService.user;
         $scope.edit = false;
         $scope.buttonText = 'Create';
         $scope.modalText = 'Create User';
+        getAuthority();
 
         /**
          * This function returns user details in the selected row
@@ -15,6 +17,19 @@ angular.module('BigBlueButton')
         $scope.tooltip = {
             "title": "",
             "checked": false
+        };
+
+        /**
+         * This function gets all the admin users of the system and will be used to filter what normal user can or can't see
+         */
+        function getAuthority() {
+            $scope.isSuperAdmin = false;
+            for (var i = 0; i < $scope.user.authorities.length; i++) {
+                var auth = $scope.user.authorities[i];
+                if (auth.authority === 'SUPER_ADMIN') {
+                    $scope.isSuperAdmin = true;
+                }
+            }
         };
 
         /**

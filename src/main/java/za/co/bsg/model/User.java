@@ -7,7 +7,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -33,6 +36,13 @@ public class User implements UserDetails {
 
     @OneToMany(fetch=FetchType.EAGER, mappedBy = "createdBy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Meeting> creators = new HashSet();
+
+    @OneToMany(fetch=FetchType.EAGER, mappedBy = "modifiedBy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Meeting> modifiers = new HashSet();
+
+    @Column
+    @ElementCollection(fetch=FetchType.EAGER, targetClass=String.class)
+    private Set<String> additionalRoles = new HashSet();
 
     public long getId() {
         return id;
@@ -74,6 +84,16 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+    @JsonIgnore
+    public Set<String> getAdditionalRoles() {
+        return additionalRoles;
+    }
+
+    @JsonIgnore
+    public void setAdditionalRoles(Set<String> additionalRoles) {
+        this.additionalRoles = additionalRoles;
+    }
+
     public boolean isBlocked() {
         return blocked;
     }
@@ -90,6 +110,11 @@ public class User implements UserDetails {
     @JsonIgnore
     public Set<Meeting> getCreators() {
         return creators;
+    }
+
+    @JsonIgnore
+    public Set<Meeting> getModifiers() {
+        return modifiers;
     }
 
     @JsonIgnore
@@ -121,6 +146,9 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList();
         authorities.add(new SimpleGrantedAuthority(role));
+        for (String additionalRole : additionalRoles) {
+            authorities.add(new SimpleGrantedAuthority(additionalRole));
+        }
         return authorities;
     }
 }

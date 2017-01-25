@@ -64,8 +64,8 @@ public class MeetingManagementService {
     }
 
     /**
-     * This method takes a meeiting object and updates the database
-     * with the updated
+     * This method takes a meeting object and updates the database
+     * with the updated version
      *
      * @param meeting a meeting object to be updated in the database
      * @return a Meeting object that was saved(Updated).

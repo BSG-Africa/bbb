@@ -22,13 +22,13 @@ public class Meeting implements Serializable {
     @Column
     private String attendeePassword;
     @ManyToOne
+    private User moderator;
+    @ManyToOne
     private User createdBy;
     @ManyToOne
-    private User moderator;
+    private User modifiedBy;
     @Column
     private Date createdDate;
-    @Column
-    private int modifiedBy;
     @Column
     private Date modifiedDate;
     @Column
@@ -51,6 +51,16 @@ public class Meeting implements Serializable {
     private String inviteURL;
     @Transient
     private Map<String, String> meta = new HashMap<String, String>();
+
+    @PrePersist
+    protected void onCreate() {
+        createdDate = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifiedDate = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -124,24 +134,16 @@ public class Meeting implements Serializable {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public int getModifiedBy() {
+    public User getModifiedBy() {
         return modifiedBy;
     }
 
-    public void setModifiedBy(int modifiedBy) {
+    public void setModifiedBy(User modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
 
     public Date getModifiedDate() {
         return modifiedDate;
-    }
-
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
     }
 
     public Date getStartDate() {

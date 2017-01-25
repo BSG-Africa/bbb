@@ -2,7 +2,8 @@ package za.co.bsg.enums;
 
 public enum UserRoleEnum {
     ADMIN(1, "ADMIN"),
-    USER(2, "USER");
+    USER(2, "USER"),
+    SUPER_ADMIN(3, "SUPER_ADMIN");
     //Enum variables
     final int id;
     final String userRole;

@@ -2,7 +2,6 @@ package za.co.bsg.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import za.co.bsg.config.AppPropertiesConfiguration;
 import za.co.bsg.model.User;
 import za.co.bsg.repository.UserRepository;
 
@@ -14,8 +13,6 @@ public class UserDataService {
 
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    private AppPropertiesConfiguration appPropertiesConfiguration;
 
     /**
      * This method retrieves a user object from the user table by id
@@ -56,11 +53,11 @@ public class UserDataService {
     }
 
     /**
-     * This method retrieves all users except the super user
+     * This method retrieves all users
      *
      * @return a list of User objects
      */
     public List<User> findAll() {
-        return userRepository.findByUsernameNot(appPropertiesConfiguration.getSuperUser());
+        return userRepository.findAll();
     }
 }

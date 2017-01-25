@@ -23,7 +23,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.*;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
-import java.util.Properties;
+import java.util.*;
 
 
 @Service
@@ -111,7 +111,16 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     private User createUser(DirContext context, String sidUsername, String username, String password) {
         String passwordHashed = utilService.hashPassword(password);
         User details = this.loadUserByUsername(context, sidUsername, username, passwordHashed);
+        addAdditionalRoles(context, details, sidUsername);
         return userRepository.save(details);
+    }
+
+    private void addAdditionalRoles(DirContext context, User appUser, String sidUsername){
+        String superAdminGroup = getActiveDirectorySuperAdminGroup();
+        Set<String> groups = getUserGroups(context, sidUsername);
+        if(groups.contains(superAdminGroup)){
+            appUser.getAdditionalRoles().add(UserRoleEnum.SUPER_ADMIN.toString());
+        }
     }
 
     /**
@@ -161,6 +170,57 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
             System.out.println("Could not find user '" + sidUsername + ": " + ex);
             throw new UsernameNotFoundException(ex.getMessage());
         }
+    }
+
+    /**
+     * This method returns the groups the user belongs to
+     *
+     * @param ctx the ldap context
+     * @param username the user sid username
+     * @return Set of user groups
+     */
+    private Set<String> getUserGroups(DirContext ctx, String username){
+        final Set<String> groups = new HashSet();
+        try {
+            //Create the search controls
+            SearchControls searchCtls = new SearchControls();
+
+            //Specify the attributes to return
+            String returnedAttributes[]={"memberOf"};
+            searchCtls.setReturningAttributes(returnedAttributes);
+
+            //Specify the search scope
+            searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+
+            //specify the LDAP search filter
+            String searchFilter = "(&(objectClass=user)(sAMAccountName=" + username + "))";
+
+            // Search for objects using the filter
+            NamingEnumeration answer = ctx.search(getSearchBase(), searchFilter, searchCtls);
+
+
+            //Loop through the search results
+            while (answer.hasMoreElements()) {
+                SearchResult sr = (SearchResult)answer.next();
+                Attributes attrs = sr.getAttributes();
+                System.out.println(attrs);
+                Attribute groupMembers = attrs.get("memberOf");
+
+                for (int i=0; i<groupMembers.size(); i++) {
+                    Attribute attr = ctx.getAttributes(groupMembers.get(i).toString(), new String[]{"CN"}).get("CN");
+                    if (attr != null) {
+                        final String group = attr.get().toString();
+                        System.out.println("GROUP: "+group);
+                        groups.add(group);
+                    }
+                }
+            }
+        }catch (NamingException e) {
+            System.err.println("Failed to find user "+username + " Active Directory group: " + e);
+        }
+
+        return groups;
     }
 
     /**
@@ -240,7 +300,9 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
 
     /**
      * This supposedly provides faster auth against AD.
-     * See: http://forums.sun.com/thread.jspa?threadID=726601
+     * See: https://msdn.microsoft.com/en-us/library/aa366981(v=vs.85).aspx
+     * See: http://stackoverflow.com/questions/11493742/fastbind-for-authentication-against-active-directory-using-spring-ldap
+     * See: https://community.oracle.com/thread/1157584?tstart=0
      */
     private static class FastBindConnectionControl implements Control {
         private static final long serialVersionUID = -606709308560478694L;
@@ -278,5 +340,9 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
 
     private String getSearchBase() {
         return appPropertiesConfiguration.getLdapSearchBase();
+    }
+
+    private String getActiveDirectorySuperAdminGroup() {
+        return appPropertiesConfiguration.getSuperAdminGroup();
     }
 }

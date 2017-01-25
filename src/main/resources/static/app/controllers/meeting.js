@@ -120,6 +120,8 @@ angular.module('BigBlueButton')
             if(!(typeof $scope.meeting.moderator == "object")){
                 $scope.message = 'Please select a valid Moderator Name';
             } else if ($scope.meeting.id > 0) {
+                $scope.user = AuthService.user;
+                $scope.meeting.modifiedBy = $scope.user.principal;
                 $http.post('api/meeting/edit', $scope.meeting).success(function (res) {
                     $scope.closeModal();
                 }).error(function (error) {
@@ -286,8 +288,11 @@ angular.module('BigBlueButton')
          */
         function getAuthority() {
             $scope.isAdmin = false;
-            if ($scope.user.principal.role === 'ADMIN') {
-                $scope.isAdmin = true;
+            for (var i = 0; i < $scope.user.authorities.length; i++) {
+                var auth = $scope.user.authorities[i];
+                if (auth.authority === 'ADMIN') {
+                    $scope.isAdmin = true;
+                }
             }
         };
 
