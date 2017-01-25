@@ -39,6 +39,9 @@ public class AppPropertiesConfiguration {
     @Value("${bbb.upload.url}")
     private String uploadURL;
 
+    @Value("${bbb.super.user}")
+    private String superUser;
+
     public String getLdapUrl() {
         return ldapUrl;
     }
@@ -81,5 +84,9 @@ public class AppPropertiesConfiguration {
 
     public String getUploadURL() {
         return uploadURL;
+    }
+
+    public String getSuperUser() {
+        return superUser;
     }
 }

@@ -3,6 +3,7 @@ angular.module('BigBlueButton')
     .controller('NavController', function ($http, $scope, AuthService, $state, $rootScope, $sessionStorage) {
         var res = $sessionStorage.loggedUser;
         $scope.registerLink = true;
+        $scope.loginLink = false;
 
         if (res && res.authenticated) {
             $http.defaults.headers.common['Authorization'] = $sessionStorage.loggedAuth;
@@ -24,17 +25,27 @@ angular.module('BigBlueButton')
         });
 
         /**
-         *  This function hides the register link when user has logged on to the system
+         *  This function hides the register link when user has logged on to the system but unhide the login
          */
         $scope.$on('RegisterNotAllowed', function () {
             $scope.registerLink = false;
+            $scope.loginLink = true;
         });
 
         /**
-         * This function unhides the registration link when user is not logged on to the system
+         * This function unhides the registration link when user is not logged on to the system but hide the login
          */
         $scope.$on('RegisterAllowed', function () {
             $scope.registerLink = true;
+            $scope.loginLink = false;
+        });
+
+        /**
+         *  This function hides the register and login link
+         */
+        $scope.$on('RegisterAndLoginNotAllowed', function () {
+            $scope.registerLink = false;
+            $scope.loginLink = false;
         });
 
         /**

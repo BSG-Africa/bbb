@@ -1,8 +1,7 @@
 <div class="logo"></div>
+<h3>Register with our online learning portal</h3>
 
-<h3>Register</h3>
-
-<div class="bsg-form register">
+<div class="bsg-form">
     <form ng-submit="submit()" name="register" novalidate>
 
         <div class="form-group" ng-class="{ 'has-error': register.name.$invalid && register.name.$dirty }">
@@ -23,14 +22,12 @@
              ng-class="{ 'has-error': register.confirmPassword.$invalid && register.confirmPassword.$dirty }">
             <input type="password" name="confirmPassword" required class="form-control input-lg" id="cpwd" ng-model="confirmPassword" placeholder="Confirm Password">
         </div>
-
-        <div class="alert alert-warning" ng-show="confirmPassword != appUser.password ">
-            Passwords do not Match!
-        </div>
-
         <button type="submit" class="btn btn-default btn-info btn-lg"
                 ng-disabled="register.$invalid || (confirmPassword != appUser.password)">Register
         </button>
-        <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
+        <div class="alert alert-info" ng-show="message">{{message}}</div>
     </form>
+    <div class="alert alert-warning" ng-show="confirmPassword != appUser.password ">
+        Passwords do not Match!
+    </div>
 </div>

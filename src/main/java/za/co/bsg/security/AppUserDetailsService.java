@@ -84,7 +84,6 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
                         details = this.createUser(context, sidUsername, username, password);
                     } else{
                         //Password has changed, update in our db
-                        System.out.println("Password updated on BBB server for "+username);
                         details.setPassword(utilService.hashPassword(password));
                         details = userRepository.save(details);
                     }

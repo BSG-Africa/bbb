@@ -1,17 +1,15 @@
 <div class="logo"></div>
+<h3>Login to our online learning portal</h3>
 
-<h3>Login</h3>
-
-<div class="bsg-form login">
+<div class="bsg-form">
     <form ng-submit="login()">
-        <div class="input-container pull-left">
+        <div class="form-group">
             <input type="txt" class="form-control input-lg" ng-model="username" id="username" placeholder="Email">
+        </div>
+        <div class="form-group">
             <input type="password" class="form-control input-lg" id="pwd" ng-model="password" placeholder="Password">
         </div>
-        <div class="login-btn pull-right">
-            <button type="submit" class="btn btn-default btn-info"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></button>
-        </div>
+        <button type="submit" class="btn btn-default btn-info btn-lg">Login</button>
     </form>
-
-    <div class="alert alert-info" ng-show="message">{{message}}</div>
+    <div class="alert alert-warning" ng-show="message">{{message}}</div>
 </div>

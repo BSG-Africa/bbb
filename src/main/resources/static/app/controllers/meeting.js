@@ -5,6 +5,7 @@ angular.module('BigBlueButton')
         $scope.name = $scope.user.principal.name;
         $scope.meetingName = $stateParams.meetingName;
         $scope.buttonText = 'Create';
+        $scope.modalText = 'Create Meeting';
 
         // App variable to show the uploaded response
         $scope.responseData = undefined;
@@ -66,6 +67,7 @@ angular.module('BigBlueButton')
             $scope.myMeetingsSelectedRow = undefined;
             $scope.meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
             $scope.buttonText = 'Create';
+            $scope.modalText = 'Create Meeting';
         };
 
         /**
@@ -78,6 +80,7 @@ angular.module('BigBlueButton')
             $scope.tooltip.checked = false;
             $scope.meeting = $scope.myMeeting[$scope.myMeetingsSelectedRow];
             $scope.buttonText = 'Update';
+            $scope.modalText = 'Update Meeting';
         };
 
         /**
@@ -106,7 +109,7 @@ angular.module('BigBlueButton')
          };
 
         /**
-         * This function creates/edits a bbb meeting based on whether a already exists
+         * This function creates/edits a bbb meeting based on whether a meeting already exists
          * First a check is done to check that a valid moderator was selected
          *
          * If a meeting already exists a post http request is sent to edit meeting
@@ -279,7 +282,7 @@ angular.module('BigBlueButton')
         };
 
         /**
-         * This function gets all the admin users of the system
+         * This function gets all the admin users of the system and will be used to filter what normal user can or can't see
          */
         function getAuthority() {
             $scope.isAdmin = false;
@@ -293,7 +296,7 @@ angular.module('BigBlueButton')
         };
 
         /**
-         * This function gets all the users in a user table
+         * This function gets all the users in a user table and it used in the type ahead component to find user quickly
          */
         function getAllUsers() {
             $http.get('api/users').success(function (res) {
