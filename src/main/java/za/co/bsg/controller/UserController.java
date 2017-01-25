@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import za.co.bsg.enums.UserRoleEnum;
@@ -70,10 +72,13 @@ public class UserController {
         User appUser = userDataService.findUserById(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String loggedUsername = auth.getName();
+        boolean isSuperUser = auth.getAuthorities().contains(new SimpleGrantedAuthority(UserRoleEnum.SUPER_ADMIN.toString()));
         if (appUser == null) {
             return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
         } else if (appUser.getUsername().equalsIgnoreCase(loggedUsername)) {
             throw new RuntimeException("You cannot delete your account");
+        } else if(appUser.getRole().equalsIgnoreCase(UserRoleEnum.ADMIN.toString()) && !isSuperUser){
+            throw new RuntimeException("You cannot delete an admin account");
         } else {
             try {
                 userDataService.delete(appUser);
