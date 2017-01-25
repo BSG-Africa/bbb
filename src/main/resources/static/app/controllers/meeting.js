@@ -290,7 +290,7 @@ angular.module('BigBlueButton')
             $scope.isAdmin = false;
             for (var i = 0; i < $scope.user.authorities.length; i++) {
                 var auth = $scope.user.authorities[i];
-                if (auth.authority === 'ADMIN') {
+                if (auth.authority === 'ADMIN' || auth.authority === 'SUPER_ADMIN') {
                     $scope.isAdmin = true;
                 }
             }

@@ -126,7 +126,13 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/user", method = RequestMethod.PUT)
     public User editUser(@RequestBody User appUser) {
-        if (userDataService.findUserByUsername(appUser.getUsername()) != null
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String loggedUsername = auth.getName();
+        if (appUser == null) {
+            throw new RuntimeException("Cannot edit the user");
+        } else if (appUser.getUsername().equalsIgnoreCase(loggedUsername) && !userDataService.findUserByUsername(appUser.getUsername()).getRole().equals(appUser.getRole())) {
+            throw new RuntimeException("You cannot change your role");
+        } else if (userDataService.findUserByUsername(appUser.getUsername()) != null
                 && userDataService.findUserByUsername(appUser.getUsername()).getId() != appUser.getId()) {
             throw new RuntimeException("Username already exist");
         }
