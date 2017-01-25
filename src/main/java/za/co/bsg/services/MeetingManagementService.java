@@ -126,12 +126,10 @@ public class MeetingManagementService {
      */
     public ResponseEntity<Meeting> deleteMeeting(Long meetingId) {
         Meeting meetingToDelete = meetingDataService.retrieve(meetingId);
-        meetingDataService.delete(meetingId);
-        Meeting deletedMeeting = meetingDataService.retrieve(meetingId);
-
-        if (deletedMeeting == null || (meetingToDelete.getId().equals(deletedMeeting.getId()))) {
-            return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.NO_CONTENT);
+        if (meetingToDelete == null ) {
+            return new ResponseEntity<Meeting>(HttpStatus.NO_CONTENT);
         } else {
+            meetingDataService.delete(meetingId);
             return new ResponseEntity<Meeting>(meetingToDelete, HttpStatus.OK);
         }
     }

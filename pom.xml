@@ -80,6 +80,12 @@
             <version>2.0.43-beta</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.193</version>
+        </dependency>
         <!--UTIL-->
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>

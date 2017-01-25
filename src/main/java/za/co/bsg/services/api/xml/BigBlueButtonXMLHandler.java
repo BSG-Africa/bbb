@@ -25,12 +25,13 @@ import java.util.Map;
 public class BigBlueButtonXMLHandler extends ObjectMapper{
 
     /**
-     * This nethod processes an XML response returned to API calls
+     * This method processes an XML response returned to API calls
+     * If xml response has content get response item and convert it
+     * to a response type
      *
-     * @param responseType
-     * @param responseXML
-     * @param <T>
-     * @return
+     * @param responseType - return code of an api call
+     * @param responseXML - xml response associated with an api call
+     * @return generic BigBlueButtonResponse object
      * @throws BigBlueButtonException
      */
     public <T extends BigBlueButtonResponse> T processXMLResponse(Class<T> responseType, String responseXML) throws BigBlueButtonException {
@@ -65,9 +66,11 @@ public class BigBlueButtonXMLHandler extends ObjectMapper{
     }
 
     /**
+     * This method processes xml element/ node an returns a mapped object,
+     * by traversing the node and node children to extract attributes and values to be mapped
      *
-     * @param _node
-     * @return
+     * @param _node xml node to be be processed
+     * @return Map<String Obj>
      */
     protected Map<String, Object> processNode(Node _node) {
         Map<String, Object> map = new HashMap<String, Object>();

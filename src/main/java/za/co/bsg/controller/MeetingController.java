@@ -64,7 +64,7 @@ public class MeetingController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/meeting/create", method = RequestMethod.POST)
     public ResponseEntity<Meeting> createMeeting(@RequestBody Meeting meeting) {
-        Meeting persistedMeeting = null;
+        Meeting persistedMeeting = new Meeting();
         try {
             persistedMeeting = meetingManagementService.createMeeting(meeting);
         } catch (UnsupportedEncodingException e) {

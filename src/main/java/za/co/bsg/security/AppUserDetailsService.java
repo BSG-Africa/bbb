@@ -51,7 +51,12 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     }
 
     /**
-     *  This method authenticate user by
+     *  This method authenticate user by getting user details
+     *  If user exists, return UsernamePasswordAuthenticationToken
+     *  If user does not exist, check if user name exists in the active directory.
+     *  If user exists in the active directory, create user if a user is logging
+     *  in for the first time.
+     *  Otherwise return UsernamePasswordAuthenticationToken
      *
      * @return a Authentication object
      * @throws AuthenticationException
@@ -101,12 +106,13 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     }
 
     /**
+     * This method create a user by hashing user password and using loadUserByUsername
      *
-     * @param context
-     * @param sidUsername
-     * @param username
-     * @param password
-     * @return
+     * @param context a DirContext object type - context that will be used to search user
+     * @param sidUsername a String date type - username that will be set as display name
+     * @param username a String data type- username of user to be created
+     * @param password a String data type - password of user to be created
+     * @return a User object
      */
     private User createUser(DirContext context, String sidUsername, String username, String password) {
         String passwordHashed = utilService.hashPassword(password);
@@ -124,14 +130,16 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
     }
 
     /**
-     * This method loads
+     * This method loads User details by first checking existence of a user using the contezt to search user
      * if user is not found a UsernameNotFoundException is thrown
+     * If user exists, then display name is set using attributes if display name is not null
+     * Otherwise display name is set to sidUsername
+     * The method then checks if user is blocked and return app user
      *
-     *
-     * @param context
-     * @param sidUsername
-     * @param username
-     * @param password
+     * @param context a DirContext objct data type - context that will be used to search user
+     * @param sidUsername a String data type - sidUsername user to set display name if attr displayname is null
+     * @param username a String data type - username of user to load by
+     * @param password a String data type - password of user to load by
      * @return a User object
      * @throws UsernameNotFoundException
      */
@@ -166,6 +174,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
             }
 
             return getAppUser(username, password, displayName, blocked);
+
         } catch (NamingException ex) {
             System.out.println("Could not find user '" + sidUsername + ": " + ex);
             throw new UsernameNotFoundException(ex.getMessage());
