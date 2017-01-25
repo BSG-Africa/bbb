@@ -101,7 +101,7 @@ public class UserController {
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestBody User appUser) {
         if (userDataService.findUserByUsername(appUser.getUsername()) != null) {
-            throw new RuntimeException("Username already exist");
+            throw new RuntimeException("Username already exists");
         }
         String passwordHashed = utilService.hashPassword(appUser.getPassword());
         appUser.setPassword(passwordHashed);
