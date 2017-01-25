@@ -4,6 +4,7 @@ angular.module('BigBlueButton')
         $scope.edit = false;
         $scope.buttonText = 'Create';
         $scope.modalText = 'Create User';
+        $scope.notAllowed = true;
         getAuthority();
 
         /**
@@ -31,6 +32,17 @@ angular.module('BigBlueButton')
                 }
             }
         };
+
+        $scope.$watch('userSelectedRow', function () {
+            if ($scope.userSelectedRow !== undefined) {
+                var selected = $scope.users[$scope.userSelectedRow];
+                if (selected.role === 'ADMIN' && !$scope.isSuperAdmin) {
+                    $scope.notAllowed = true;
+                } else {
+                    $scope.notAllowed = false;
+                }
+            }
+        });
 
         /**
          * This function gets all the users in the user table and

@@ -204,15 +204,12 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
             while (answer.hasMoreElements()) {
                 SearchResult sr = (SearchResult)answer.next();
                 Attributes attrs = sr.getAttributes();
-                System.out.println(attrs);
                 Attribute groupMembers = attrs.get("memberOf");
 
                 for (int i=0; i<groupMembers.size(); i++) {
                     Attribute attr = ctx.getAttributes(groupMembers.get(i).toString(), new String[]{"CN"}).get("CN");
                     if (attr != null) {
-                        final String group = attr.get().toString();
-                        System.out.println("GROUP: "+group);
-                        groups.add(group);
+                        groups.add(attr.get().toString());
                     }
                 }
             }

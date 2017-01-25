@@ -31,9 +31,9 @@
 
     <div class="btn-group pull-right">
         <button type="button" class="btn btn-default" ng-click="initEdit(users[userSelectedRow])"
-                ng-disabled="userSelectedRow==undefined" data-toggle="modal" data-target="#myModal">Edit</button>
+                ng-disabled="userSelectedRow==undefined || notAllowed" data-toggle="modal" data-target="#myModal">Edit</button>
         <button type="button" class="btn btn-default" ng-click="deleteUser(users[userSelectedRow])"
-                ng-disabled="userSelectedRow==undefined">Delete</button>
+                ng-disabled="userSelectedRow==undefined || notAllowed">Delete</button>
     </div>
     <div class="alert alert-info margin-top-5" ng-show="message">{{message}}</div>
 </div>
@@ -70,9 +70,9 @@
                         <div class="form-group"
                              ng-class="{ 'has-error': userForm.username.$invalid && userForm.username.$dirty }">
                             <label>Role</label>
-                            <select required
+                            <select
                                     class="form-control" ng-model="appUser.role" id="role"
-                                    name="role">
+                                    name="role" ng-disabled="!isSuperAdmin">
                                 <option value="ADMIN">Administrator</option>
                                 <option value="USER">User</option>
                             </select>

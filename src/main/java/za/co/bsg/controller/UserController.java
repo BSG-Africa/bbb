@@ -102,6 +102,9 @@ public class UserController {
         }
         String passwordHashed = utilService.hashPassword(appUser.getPassword());
         appUser.setPassword(passwordHashed);
+        if(appUser.getRole() == null){
+            appUser.setRole(UserRoleEnum.USER.toString());
+        }
         return new ResponseEntity<User>(userDataService.save(appUser), HttpStatus.CREATED);
     }
 
