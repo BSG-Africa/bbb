@@ -36,7 +36,7 @@ angular.module('BigBlueButton')
         $scope.$watch('userSelectedRow', function () {
             if ($scope.userSelectedRow !== undefined) {
                 var selected = $scope.users[$scope.userSelectedRow];
-                if (selected.role === 'ADMIN' && !$scope.isSuperAdmin) {
+                if (selected.role === 'ADMIN' && !$scope.isSuperAdmin && selected.username !== $scope.user.name) {
                     $scope.notAllowed = true;
                 } else {
                     $scope.notAllowed = false;
