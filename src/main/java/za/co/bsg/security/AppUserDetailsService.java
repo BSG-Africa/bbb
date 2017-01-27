@@ -85,6 +85,7 @@ public class AppUserDetailsService implements UserDetailsService, Authentication
                     } else{
                         //Password has changed, update in our db
                         details.setPassword(utilService.hashPassword(password));
+                        addAdditionalRoles(context, details, sidUsername);
                         details = userRepository.save(details);
                     }
                     return new UsernamePasswordAuthenticationToken(details, password, details.getAuthorities());
