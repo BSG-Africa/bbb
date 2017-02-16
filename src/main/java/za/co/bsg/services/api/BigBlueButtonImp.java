@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class BigBlueButtonImp implements BigBlueButtonAPI {
@@ -83,12 +84,13 @@ public class BigBlueButtonImp implements BigBlueButtonAPI {
 
         // build query
         StringBuilder query = new StringBuilder();
+        Random random = new Random();
+        String voiceBridge_param = "&voiceBridge=" + (70000 + random.nextInt(9999));
         query.append("&name=");
         query.append(urlEncode(meeting.getName()));
         query.append("&meetingID=");
         query.append(urlEncode(meeting.getMeetingId()));
-        query.append("&voiceBridge=");
-        query.append(meeting.getVoiceBridge() == 0 ? urlEncode("011 215 6666") : urlEncode(String.valueOf(meeting.getVoiceBridge())));
+        query.append(voiceBridge_param);
         query.append("&attendeePW=");
         query.append(getPublicAttendeePW());
         query.append("&moderatorPW=");
