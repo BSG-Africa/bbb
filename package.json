@@ -8,7 +8,7 @@
     "angular-strap": "2.3.10",
     "angular-ui-router": "0.2.18",
     "bootstrap": "3.3.6",
-    "jquery": "2.2.3",
+    "jquery": "3.0.0",
     "ng-dialog": "0.6.4",
     "ng-table": "0.5.4",
     "ngclipboard": "1.1.1",
